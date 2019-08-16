@@ -86,6 +86,9 @@
     <Content Include="UI\Resources\AskAlfred-icon.png" />
     <Content Include="UI\Resources\AskAlfred.ico" />
     <Content Include="UI\Resources\AskAlfred.png" />
+    <Content Include="UI\Resources\eye.png" />
+    <Content Include="UI\Resources\loading.png" />
+    <Content Include="UI\Resources\Mock-Up-Ask-Alfred-Extenstion.png" />
     <VSCTCompile Include="UI\AskAlfredCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
