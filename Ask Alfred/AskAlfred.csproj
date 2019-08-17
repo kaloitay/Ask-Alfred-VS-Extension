@@ -65,10 +65,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowPage.cs" />
     <Compile Include="UI\AskAlfredCommandPackage.cs" />
-    <Compile Include="UI\Errors\ErrorsToolWindow.cs" />
-    <Compile Include="UI\Errors\ErrorsToolWindowCommand.cs" />
-    <Compile Include="UI\Errors\ErrorsToolWindowControl.xaml.cs">
-      <DependentUpon>ErrorsToolWindowControl.xaml</DependentUpon>
+    <Compile Include="UI\Errors\AskAlfredWindow.cs" />
+    <Compile Include="UI\Errors\AskAlfredWindowCommand.cs" />
+    <Compile Include="UI\Errors\AskAlfredWindowControl.xaml.cs">
+      <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ESupportedProgrramingLanguages.cs" />
   </ItemGroup>
@@ -369,7 +369,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Errors\ErrorsToolWindowControl.xaml">
+    <Page Include="UI\Errors\AskAlfredWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
