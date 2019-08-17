@@ -6,39 +6,17 @@
   <Extern href="vsshlids.h" />
 
   <Commands package="guidAskAlfredCommandPackage">
-    
     <Groups>
       <Group guid="guidAskAlfredCommandPackageCmdSet" id="MyMenuGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
       </Group>
-      <Group guid="guidAskAlfredCommandPackageCmdSet" id="SubMenuGroup" priority="0x0000">
-        <Parent guid="guidAskAlfredCommandPackageCmdSet" id="SubMenu" />
-      </Group>
     </Groups>
     
-    <Menus>
-      <Menu guid="guidAskAlfredCommandPackageCmdSet" id="SubMenu" priority="0x0100" type="Menu">
+    <Buttons>
+      <Button guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" priority="0x0100" type="Button">
         <Parent guid="guidAskAlfredCommandPackageCmdSet" id="MyMenuGroup" />
         <Strings>
           <ButtonText>Ask Alfred</ButtonText>
-          <CommandName>Ask Alfred</CommandName>
-        </Strings>
-      </Menu>
-    </Menus>
-    
-    <Buttons>
-      <!--<Button guid="guidAskAlfredCommandPackageCmdSet" id="AskAlfredCommandId" priority="0x0100" type="Button">
-        <Parent guid="guidAskAlfredCommandPackageCmdSet" id="SubMenuGroup" />
-        <Icon guid="guidImages" id="bmpPic1" />
-        <Strings>
-          <ButtonText>Invoke AskAlfredCommand</ButtonText>
-        </Strings>
-      </Button>-->
-
-      <Button guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" priority="0x0100" type="Button">
-        <Parent guid="guidAskAlfredCommandPackageCmdSet" id="SubMenuGroup" />
-        <Strings>
-          <ButtonText>Errors</ButtonText>
         </Strings>
       </Button>
     </Buttons>
@@ -49,10 +27,7 @@
 
     <GuidSymbol name="guidAskAlfredCommandPackageCmdSet" value="{d4677dee-3ed3-4fa4-8483-2eea77c80219}">
       <IDSymbol name="MyMenuGroup" value="0x1020" />
-      <!--<IDSymbol name="AskAlfredCommandId" value="0x0100" />-->
-      <IDSymbol name="SubMenu" value="0x1100" />
-      <IDSymbol name="SubMenuGroup" value="0x1150" />
-      <IDSymbol value="4436" name="cmdidErrorsToolWindowCommand" />
+      <IDSymbol name="cmdidErrorsToolWindowCommand" value="4436" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{57db15c5-8e0b-4100-823b-20b10d041eb6}">
@@ -65,51 +40,6 @@
     </GuidSymbol>
   
     <GuidSymbol value="{c4f4dda9-ecfc-4c87-b35f-fb95d809bc55}" name="guidImages1">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
-    </GuidSymbol>
-  
-    <GuidSymbol value="{e7cd2ec5-b23d-4c5a-974f-fa5a0448dac5}" name="guidImages2">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
-    </GuidSymbol>
-  
-    <GuidSymbol value="{db41dd5d-5574-4533-8ac1-a31fa0147a39}" name="guidImages3">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
-    </GuidSymbol>
-  
-    <GuidSymbol value="{804d8deb-2e09-4927-8cb8-21664603f018}" name="guidImages4">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
-    </GuidSymbol>
-  
-    <GuidSymbol value="{fc88111f-6b5d-4ee8-a6aa-17884e60894e}" name="guidImages5">
-      <IDSymbol name="bmpPic1" value="1" />
-      <IDSymbol name="bmpPic2" value="2" />
-      <IDSymbol name="bmpPicSearch" value="3" />
-      <IDSymbol name="bmpPicX" value="4" />
-      <IDSymbol name="bmpPicArrows" value="5" />
-      <IDSymbol name="bmpPicStrikethrough" value="6" />
-    </GuidSymbol>
-  
-    <GuidSymbol value="{26ec73e0-4e93-4a46-8e74-4a565b5701c5}" name="guidImages6">
       <IDSymbol name="bmpPic1" value="1" />
       <IDSymbol name="bmpPic2" value="2" />
       <IDSymbol name="bmpPicSearch" value="3" />
