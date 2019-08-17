@@ -28,10 +28,11 @@
         {
             this.InitializeComponent();
             m_Engine = new AlfredEngine();
-            m_Engine.AddPageHandler += onPageAdded;
+            m_Engine.OnPageAdded += pageAddedHandler;
+            m_Engine.OnTimeoutExpired += timeoutExpiredHandler;
         }
 
-        private void onPageAdded(IPage page)
+        private void pageAddedHandler(IPage page)
         {
             StackoverflowPage stackoverflowPage = page as StackoverflowPage;
             if (stackoverflowPage != null)
@@ -39,6 +40,11 @@
                 this.dataGridViewPages.Items.Add(stackoverflowPage);
             }
             // else...
+        }
+        private void timeoutExpiredHandler()
+        {
+            System.Windows.MessageBox.Show("Timeout Expired", "Timeout Expired",
+                MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         /// <summary>
