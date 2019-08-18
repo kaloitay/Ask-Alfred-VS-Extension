@@ -5,7 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Threading.Tasks;
+using EnvDTE;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
@@ -72,6 +72,7 @@ namespace Ask_Alfred.UI
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
           //  await AskAlfredCommand.InitializeAsync(this);
             await Ask_Alfred.UI.Errors.AskAlfredWindowCommand.InitializeAsync(this);
+
         }
 
         #endregion

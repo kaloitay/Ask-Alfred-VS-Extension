@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,8 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ask_Alfred.Infrasructure;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextManager;
 using Task = System.Threading.Tasks.Task;
 
 namespace Ask_Alfred.UI.Errors
@@ -82,6 +85,7 @@ namespace Ask_Alfred.UI.Errors
             Instance = new AskAlfredWindowCommand(package, commandService);
         }
 
+
         /// <summary>
         /// Shows the tool window when the menu item is clicked.
         /// </summary>
@@ -103,6 +107,54 @@ namespace Ask_Alfred.UI.Errors
 
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+            string selectedText = GetSelectedText();
+            string selectedError = GetSelectedErrorDescription();
+
+            // i want if where the cursor is there is a bleeding text - search for that error
+
+            if (window is AskAlfredWindow && !String.IsNullOrEmpty(selectedText))
+            {
+                (window as AskAlfredWindow).AutoSearchSelectedText(selectedText);
+            }
+            
         }
+
+        public string GetSelectedText()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+            string selectedText = null;
+
+            if (dte.ActiveDocument != null)
+            {
+                var selection = (TextSelection)dte.ActiveDocument.Selection;
+                selectedText = selection.Text;
+            }
+
+            return selectedText;
+        }
+
+        public string GetSelectedErrorDescription()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+
+            var errorList = dte.ToolWindows.ErrorList;
+            var tableControl = errorList as IErrorList;
+            var selected = tableControl.TableControl.SelectedOrFirstEntry;
+
+            var temp = errorList.SelectedItems;
+            string description = null;
+
+            if (temp != null && temp.Count > 0)
+            {
+                description = temp.Item(1).Description;
+            }
+
+            return description;
+        }
+
     }
 }
