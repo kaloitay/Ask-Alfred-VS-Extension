@@ -109,15 +109,18 @@ namespace Ask_Alfred.UI.Errors
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
             string selectedText = GetSelectedText();
-            string selectedError = GetSelectedErrorDescription();
+            string selectedOrFirstErrorDescription = GetSelectedOrFirstErrorValue("text");
+            //  string selectedErrorCode = GetSelectedOrFirstErrorCode();
 
-            // i want if where the cursor is there is a bleeding text - search for that error
-
-            if (window is AskAlfredWindow && !String.IsNullOrEmpty(selectedText))
+            if (!String.IsNullOrEmpty(selectedText))
             {
                 (window as AskAlfredWindow).AutoSearchSelectedText(selectedText);
             }
-            
+            if (!String.IsNullOrEmpty(selectedOrFirstErrorDescription))
+            {
+                (window as AskAlfredWindow).AutoSearchSelectedText(selectedOrFirstErrorDescription);
+            }
+
         }
 
         public string GetSelectedText()
@@ -136,25 +139,28 @@ namespace Ask_Alfred.UI.Errors
             return selectedText;
         }
 
-        public string GetSelectedErrorDescription()
+        // Values -> description == "text", errorCode == "errorcode"
+        public string GetSelectedOrFirstErrorValue(string i_Value)
         {
+            string errorValue = null;
+
             ThreadHelper.ThrowIfNotOnUIThread();
             var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            var errorList = dte.ToolWindows.ErrorList as IErrorList;
+            var selected = errorList.TableControl.SelectedOrFirstEntry;
 
-            var errorList = dte.ToolWindows.ErrorList;
-            var tableControl = errorList as IErrorList;
-            var selected = tableControl.TableControl.SelectedOrFirstEntry;
-
-            var temp = errorList.SelectedItems;
-            string description = null;
-
-            if (temp != null && temp.Count > 0)
+            if (selected != null)
             {
-                description = temp.Item(1).Description;
+                object content;
+
+                if (selected.TryGetValue(i_Value, out content))
+                {
+                    errorValue = (string)content;
+                }
+
             }
 
-            return description;
+            return errorValue;
         }
-
     }
 }
