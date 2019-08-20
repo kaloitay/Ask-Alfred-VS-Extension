@@ -30,5 +30,10 @@
             // the object returned by the Content property.
             this.Content = new AskAlfredWindowControl();
         }
+
+        public void AutoSearchSelectedText(string i_SelectedText)
+        {
+            (Content as AskAlfredWindowControl).SearchBySelectedText(i_SelectedText);
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,8 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Ask_Alfred.Infrasructure;
 using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.TextManager;
 using Task = System.Threading.Tasks.Task;
 
 namespace Ask_Alfred.UI.Errors
@@ -82,6 +85,7 @@ namespace Ask_Alfred.UI.Errors
             Instance = new AskAlfredWindowCommand(package, commandService);
         }
 
+
         /// <summary>
         /// Shows the tool window when the menu item is clicked.
         /// </summary>
@@ -103,6 +107,60 @@ namespace Ask_Alfred.UI.Errors
 
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+            string selectedText = GetSelectedText();
+            string selectedOrFirstErrorDescription = GetSelectedOrFirstErrorValue("text");
+            //  string selectedErrorCode = GetSelectedOrFirstErrorCode();
+
+            if (!String.IsNullOrEmpty(selectedText))
+            {
+                (window as AskAlfredWindow).AutoSearchSelectedText(selectedText);
+            }
+            if (!String.IsNullOrEmpty(selectedOrFirstErrorDescription))
+            {
+                (window as AskAlfredWindow).AutoSearchSelectedText(selectedOrFirstErrorDescription);
+            }
+
+        }
+
+        public string GetSelectedText()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+            string selectedText = null;
+
+            if (dte.ActiveDocument != null)
+            {
+                var selection = (TextSelection)dte.ActiveDocument.Selection;
+                selectedText = selection.Text;
+            }
+
+            return selectedText;
+        }
+
+        // Values -> description == "text", errorCode == "errorcode"
+        public string GetSelectedOrFirstErrorValue(string i_Value)
+        {
+            string errorValue = null;
+
+            ThreadHelper.ThrowIfNotOnUIThread();
+            var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            var errorList = dte.ToolWindows.ErrorList as IErrorList;
+            var selected = errorList.TableControl.SelectedOrFirstEntry;
+
+            if (selected != null)
+            {
+                object content;
+
+                if (selected.TryGetValue(i_Value, out content))
+                {
+                    errorValue = (string)content;
+                }
+
+            }
+
+            return errorValue;
         }
     }
 }

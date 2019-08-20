@@ -64,6 +64,20 @@
             }
         }
 
+        public void SearchBySelectedText(string i_SelectedText)
+        {
+            AlfredResponse response = m_Engine.Search(i_SelectedText);
+
+            // IPage or IWebDataSource?
+            foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+                 .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
+            {
+                var props = mytype.GetFields();
+
+                //Console.WriteLine(props[0].GetValue(null));
+            }
+        }
+
         private void getResultsAsText(string i_ErrorDescription)
         {
             // TODO: find a normal way to do it
