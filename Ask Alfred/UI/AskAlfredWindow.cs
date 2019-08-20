@@ -33,7 +33,7 @@
 
         public void AutoSearchSelectedText(string i_SelectedText)
         {
-            (Content as AskAlfredWindowControl).SearchBySelectedText(i_SelectedText);
+            (Content as AskAlfredWindowControl).SearchBySelectedTextAsync(i_SelectedText);
         }
     }
 }

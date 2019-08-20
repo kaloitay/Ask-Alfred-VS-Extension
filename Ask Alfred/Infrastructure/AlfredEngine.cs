@@ -18,12 +18,19 @@ namespace Ask_Alfred.Infrasructure
         public AlfredResponse Response { get; }
         private GoogleSearchEngine m_GoogleSearchEngine;
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
+        private int m_ResultsAmount;
+        private const int k_ResultsThreshold = 5;
+
         public event Action<IPage> OnPageAdded;
-        public event Action OnTimeoutExpired;
-        private const int timeoutDurationInSeconds = 7; // shouldn't be const
+        public event Action<int> OnSearchIsFinished;
+        public event Action<int> OnTimeoutExpired;
+        private const int timeoutDurationInSeconds = 15; // shouldn't be const
         private eStatus m_Status;
         private Timer m_TimeoutTimer = new System.Timers.Timer();
 
+        // TODO:
+        // should be thread safe beacuse other thread is invoking timeoutExpired
+        // so m_Status, m_ResultsAmount should be thread-safe?
 
         private enum eWebSite
         {
@@ -33,6 +40,7 @@ namespace Ask_Alfred.Infrasructure
         private enum eStatus
         {
             Searching,
+            Finished,
             TimeoutExpired
         }
 
@@ -51,8 +59,13 @@ namespace Ask_Alfred.Infrasructure
             m_TimeoutTimer.Interval = timeoutDurationInSeconds * 1000;
         }
 
-        public AlfredResponse Search(string i_SearchKey)
+        public void Clear()
         {
+            WebDataList.Clear();
+        }
+        public async Task<AlfredResponse> SearchAsync(string i_SearchKey)
+        {
+            m_ResultsAmount = 0;
             m_Status = eStatus.Searching;
             m_TimeoutTimer.Enabled = true;
 
@@ -61,6 +74,7 @@ namespace Ask_Alfred.Infrasructure
             // TODO: not always stackoverflow should be the only website to search in
             // TODO: maximum of X urls for each search?
 
+            m_GoogleSearchEngine.Clear();
             m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
                 r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey);
             //m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
@@ -69,7 +83,7 @@ namespace Ask_Alfred.Infrasructure
             //    r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey + " C#");
 
             //insertGoogleSearchResultToResponse();
-            CreateWebDataListFromGoogleResultsAsync(); // TODO: await is needed here?
+            await CreateWebDataListFromGoogleResultsAsync(); // TODO: await is needed here?
 
             return Response;
         }
@@ -77,24 +91,42 @@ namespace Ask_Alfred.Infrasructure
         // currently this method is where we are checking all of the functionallity
         public async Task CreateWebDataListFromGoogleResultsAsync()
         {
+            // TODO: link can refer to a specific answer (like https://stackoverflow.com/q/16333625)
+            // TODO: or to the tagged page
+
             foreach (GoogleSearchResult googleResult in m_GoogleSearchEngine.SearchResults)
             {
                 IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Link);
-                await dataSource.ParseDataAsync();
+                await dataSource.ParseDataAsync(); // TODO: got stuck in links like https://stackoverflow.com/q/16333625
 
                 // Should stop during the parse as well
                 if (m_Status == eStatus.Searching)
+                {
+                    m_ResultsAmount++;
                     OnPageAdded(dataSource.Page);
+                }
                 else
                     break;
             }
+
+            searchIsFinished();
+            //if (m_Status == eStatus.Searching || m_ResultsAmount > k_ResultsThreshold) 
+            //    searchIsFinished();
+            //else
+            //    OnTimeoutExpired(m_ResultsAmount);
         }
 
+        private void searchIsFinished()
+        {
+            m_Status = eStatus.Finished;
+            m_TimeoutTimer.Stop();
+            OnSearchIsFinished(m_ResultsAmount);
+        }
         private void timeoutExpired(object source, ElapsedEventArgs e)
         {
             m_Status = eStatus.TimeoutExpired;
             m_TimeoutTimer.Stop();
-            OnTimeoutExpired();
+            OnTimeoutExpired(m_ResultsAmount); // TODO: shoule be removed beacuse this callback should be invoke after the foreach
         }
     }
 }
