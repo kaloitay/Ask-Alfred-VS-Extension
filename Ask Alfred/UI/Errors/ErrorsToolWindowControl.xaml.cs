@@ -37,6 +37,7 @@
             StackoverflowPage stackoverflowPage = page as StackoverflowPage;
             if (stackoverflowPage != null)
             {
+                // use stackoverflowPage.Rank to get the rank
                 this.dataGridViewPages.Items.Add(stackoverflowPage);
             }
             // else...

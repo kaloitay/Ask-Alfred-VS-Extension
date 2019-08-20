@@ -41,10 +41,11 @@ namespace Ask_Alfred.Infrasructure
             WebDataList = new List<IWebDataSource>();
             Response = new AlfredResponse(); // TODO: must be here?
             m_GoogleSearchEngine = new GoogleSearchEngine();
-            r_WebSitesUrls = new Dictionary<eWebSite, string>();
-
-            r_WebSitesUrls.Add(eWebSite.Stackoverflow, "stackoverflow.com");
-            //k_WebSitesUrls.Add(eWebSite.Microsoft, "...");
+            r_WebSitesUrls = new Dictionary<eWebSite, string>
+            {
+                { eWebSite.Stackoverflow, "stackoverflow.com" }
+              //{ eWebSite.Microsoft, "..." }
+            };
 
             m_TimeoutTimer.Elapsed += new ElapsedEventHandler(timeoutExpired);
             m_TimeoutTimer.Interval = timeoutDurationInSeconds * 1000;

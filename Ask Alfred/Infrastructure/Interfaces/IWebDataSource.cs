@@ -8,6 +8,7 @@ namespace Ask_Alfred.Infrasructure.Interfaces
         Task ParseDataAsync();
         IPage Page { get;  }
 
+
         //static ESupportedProgrramingLanguages SupportedLanguages { get; }
 
         //WebDataParser Parser { get; }
