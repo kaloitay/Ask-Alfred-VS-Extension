@@ -7,5 +7,6 @@ namespace Ask_Alfred.Infrasructure.Interfaces
         string Url { get; }
         string Subject { get; }
         DateTime Date { get; }
+        double Rank { get; }
     }
 }

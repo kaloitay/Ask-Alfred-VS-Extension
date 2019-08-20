@@ -53,8 +53,7 @@ namespace Ask_Alfred.Objects
                 filter: "!)5d3yYdB0grnr6gO7E9oMFDnlZMk",
                 ids: ids);
 
-            // TODO:
-            //Console.WriteLine($"Quota: {query.QuotaRemaining}/{query.QuotaMax}");
+            // TODO: Throw exception if query.QuotaRemaining = query.QuotaMax?
 
             if (query.Items != null)
             {

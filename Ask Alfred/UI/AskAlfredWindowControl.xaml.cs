@@ -15,7 +15,7 @@
     using Ask_Alfred.Objects;
 
     /// <summary>
-    /// Interaction logic for ErrorsToolWindowControl.
+    /// Interaction logic for AskAlfredWindowControl.
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
@@ -28,17 +28,24 @@
         {
             this.InitializeComponent();
             m_Engine = new AlfredEngine();
-            m_Engine.AddPageHandler += onPageAdded;
+            m_Engine.OnPageAdded += pageAddedHandler;
+            m_Engine.OnTimeoutExpired += timeoutExpiredHandler;
         }
 
-        private void onPageAdded(IPage page)
+        private void pageAddedHandler(IPage page)
         {
             StackoverflowPage stackoverflowPage = page as StackoverflowPage;
             if (stackoverflowPage != null)
             {
+                // use stackoverflowPage.Rank to get the rank
                 this.dataGridViewPages.Items.Add(stackoverflowPage);
             }
             // else...
+        }
+        private void timeoutExpiredHandler()
+        {
+            System.Windows.MessageBox.Show("Timeout Expired", "Timeout Expired",
+                MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         /// <summary>
@@ -60,31 +67,17 @@
             else
             {
                 dataGridViewPages.Items.Clear();
-                getResultsAsText(errorDescription); // TODO: change method name
+                SearchBySelectedText(errorDescription); // TODO: change method name
             }
         }
 
-        public void SearchBySelectedText(string i_SelectedText)
-        {
-            AlfredResponse response = m_Engine.Search(i_SelectedText);
-
-            // IPage or IWebDataSource?
-            foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-                 .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
-            {
-                var props = mytype.GetFields();
-
-                //Console.WriteLine(props[0].GetValue(null));
-            }
-        }
-
-        private void getResultsAsText(string i_ErrorDescription)
+        private void SearchBySelectedText(string i_SelectedText)
         {
             // TODO: find a normal way to do it
-            ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
+            // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
+            //StringBuilder description = new StringBuilder();
 
-            StringBuilder description = new StringBuilder();
-            AlfredResponse response = m_Engine.Search(i_ErrorDescription);
+            AlfredResponse response = m_Engine.Search(i_SelectedText);
 
             // IPage or IWebDataSource?
             foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ask_Alfred.Infrasructure.Interfaces;
 using Ask_Alfred.Objects;
+using System.Timers;
 
 namespace Ask_Alfred.Infrasructure
 {
@@ -17,12 +18,22 @@ namespace Ask_Alfred.Infrasructure
         public AlfredResponse Response { get; }
         private GoogleSearchEngine m_GoogleSearchEngine;
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
-        public event Action<IPage> AddPageHandler;
+        public event Action<IPage> OnPageAdded;
+        public event Action OnTimeoutExpired;
+        private const int timeoutDurationInSeconds = 7; // shouldn't be const
+        private eStatus m_Status;
+        private Timer m_TimeoutTimer = new System.Timers.Timer();
+
 
         private enum eWebSite
         {
             Stackoverflow,
             // Microsoft
+        }
+        private enum eStatus
+        {
+            Searching,
+            TimeoutExpired
         }
 
         public AlfredEngine()
@@ -30,14 +41,21 @@ namespace Ask_Alfred.Infrasructure
             WebDataList = new List<IWebDataSource>();
             Response = new AlfredResponse(); // TODO: must be here?
             m_GoogleSearchEngine = new GoogleSearchEngine();
-            r_WebSitesUrls = new Dictionary<eWebSite, string>();
+            r_WebSitesUrls = new Dictionary<eWebSite, string>
+            {
+                { eWebSite.Stackoverflow, "stackoverflow.com" }
+              //{ eWebSite.Microsoft, "..." }
+            };
 
-            r_WebSitesUrls.Add(eWebSite.Stackoverflow, "stackoverflow.com");
-            //k_WebSitesUrls.Add(eWebSite.Microsoft, "...");
+            m_TimeoutTimer.Elapsed += new ElapsedEventHandler(timeoutExpired);
+            m_TimeoutTimer.Interval = timeoutDurationInSeconds * 1000;
         }
 
         public AlfredResponse Search(string i_SearchKey)
         {
+            m_Status = eStatus.Searching;
+            m_TimeoutTimer.Enabled = true;
+
             // TODO: not all the urls are valid (like tagged page in stackoverflow)
 
             // TODO: not always stackoverflow should be the only website to search in
@@ -52,18 +70,8 @@ namespace Ask_Alfred.Infrasructure
 
             //insertGoogleSearchResultToResponse();
             CreateWebDataListFromGoogleResultsAsync(); // TODO: await is needed here?
-            insertWebPagesToResponse();
 
             return Response;
-        }
-
-        // currently this method prints the data to the window 
-        private void insertWebPagesToResponse()
-        {
-            foreach (IWebDataSource webData in WebDataList)
-            {
-                AddPageHandler(webData.Page);
-            }
         }
 
         // currently this method is where we are checking all of the functionallity
@@ -73,8 +81,20 @@ namespace Ask_Alfred.Infrasructure
             {
                 IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Link);
                 await dataSource.ParseDataAsync();
-                AddPageHandler(dataSource.Page);
+
+                // Should stop during the parse as well
+                if (m_Status == eStatus.Searching)
+                    OnPageAdded(dataSource.Page);
+                else
+                    break;
             }
+        }
+
+        private void timeoutExpired(object source, ElapsedEventArgs e)
+        {
+            m_Status = eStatus.TimeoutExpired;
+            m_TimeoutTimer.Stop();
+            OnTimeoutExpired();
         }
     }
 }

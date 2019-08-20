@@ -35,8 +35,18 @@ namespace Ask_Alfred.Infrasructure
         private string getUrlContentAsString(string i_Url)
         {
             WebClient client = new WebClient();
+            string urlContent;
 
-            return client.DownloadString(i_Url);
+            try
+            {
+                urlContent = client.DownloadString(i_Url);
+            }
+            catch /*(WebException e)*/
+            {
+                throw new WebException("No internet connection");
+            }
+
+            return urlContent;
         }
 
         // *** this method gets a google query to search and searches with google api
@@ -84,7 +94,7 @@ namespace Ask_Alfred.Infrasructure
 
             //string value = single.InnerText;
 
-         //   return value;
+            //   return value;
         }
     }
 }
