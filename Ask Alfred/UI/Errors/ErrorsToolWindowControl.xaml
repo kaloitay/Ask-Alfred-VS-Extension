@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Ask_Alfred.UI.Errors.ErrorsToolWindowControl"
+﻿<UserControl x:Class="Ask_Alfred.UI.Errors.AskAlfredWindowControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -11,7 +11,7 @@
              Name="MyToolWindow">
     <Grid Margin="-675,0,0,-151">
         <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Width="637">
-            <Button Content="Search!" Click="button1_Click" Width="120" Height="28" x:Name="button1" Margin="258,0,259,0" RenderTransformOrigin="0.526,-0.037"/>
+            <Button Content="Search!" Click="searchButton_Click" Width="120" Height="28" x:Name="button1" Margin="258,0,259,0" RenderTransformOrigin="0.526,-0.037"/>
             <DataGrid AutoGenerateColumns="False" x:Name="dataGridViewPages" Height="162" RenderTransformOrigin="0.714,0.537" SelectionChanged="DataGridViewPages_SelectionChanged" Margin="-615,0,0,0">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Subject" Binding="{Binding Subject}"/>

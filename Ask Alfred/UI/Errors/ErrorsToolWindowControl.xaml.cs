@@ -15,16 +15,16 @@
     using Ask_Alfred.Objects;
 
     /// <summary>
-    /// Interaction logic for ErrorsToolWindowControl.
+    /// Interaction logic for AskAlfredWindowControl.
     /// </summary>
-    public partial class ErrorsToolWindowControl : UserControl
+    public partial class AskAlfredWindowControl : UserControl
     {
         AlfredEngine m_Engine;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ErrorsToolWindowControl"/> class.
+        /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
-        public ErrorsToolWindowControl()
+        public AskAlfredWindowControl()
         {
             this.InitializeComponent();
             m_Engine = new AlfredEngine();
@@ -55,7 +55,7 @@
         /// <param name="e">The event args.</param>
         [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
         [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void button1_Click(object sender, RoutedEventArgs e)
+        private void searchButton_Click(object sender, RoutedEventArgs e)
         {
             string errorDescription = getErrorDescription();
             string errorCode = getErrorCode();
@@ -67,17 +67,17 @@
             else
             {
                 dataGridViewPages.Items.Clear();
-                getResultsAsText(errorDescription); // TODO: change method name
+                SearchBySelectedText(errorDescription); // TODO: change method name
             }
         }
 
-        private void getResultsAsText(string i_ErrorDescription)
+        private void SearchBySelectedText(string i_SelectedText)
         {
             // TODO: find a normal way to do it
-            ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
+            // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
+            //StringBuilder description = new StringBuilder();
 
-            StringBuilder description = new StringBuilder();
-            AlfredResponse response = m_Engine.Search(i_ErrorDescription);
+            AlfredResponse response = m_Engine.Search(i_SelectedText);
 
             // IPage or IWebDataSource?
             foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
