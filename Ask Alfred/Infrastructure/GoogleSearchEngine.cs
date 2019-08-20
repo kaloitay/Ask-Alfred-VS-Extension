@@ -32,6 +32,11 @@ namespace Ask_Alfred.Infrasructure
             insertSearchResults(queryResult);
         }
 
+        public void Clear()
+        {
+            SearchResults.Clear();
+        }
+
         private string getUrlContentAsString(string i_Url)
         {
             WebClient client = new WebClient();

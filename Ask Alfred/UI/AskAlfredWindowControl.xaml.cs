@@ -29,6 +29,7 @@
             this.InitializeComponent();
             m_Engine = new AlfredEngine();
             m_Engine.OnPageAdded += pageAddedHandler;
+            m_Engine.OnSearchIsFinished += searchIsFinishedHandler;
             m_Engine.OnTimeoutExpired += timeoutExpiredHandler;
         }
 
@@ -42,9 +43,16 @@
             }
             // else...
         }
-        private void timeoutExpiredHandler()
+        private void searchIsFinishedHandler(int i_ResultsAmount)
         {
-            System.Windows.MessageBox.Show("Timeout Expired", "Timeout Expired",
+            System.Windows.MessageBox.Show("Search is finished",
+                "Search is finished with " + i_ResultsAmount + " results",
+                MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        }
+        private void timeoutExpiredHandler(int i_ResultsAmount)
+        {
+            System.Windows.MessageBox.Show("Timeout Expired",
+                "Timeout Expired after " + i_ResultsAmount + " results",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
@@ -67,26 +75,27 @@
             else
             {
                 dataGridViewPages.Items.Clear();
-                SearchBySelectedText(errorDescription); // TODO: change method name
+                SearchBySelectedTextAsync(errorDescription); // TODO: change method name
             }
         }
 
-        private void SearchBySelectedText(string i_SelectedText)
+        public async System.Threading.Tasks.Task SearchBySelectedTextAsync(string i_SelectedText)
         {
             // TODO: find a normal way to do it
             // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
             //StringBuilder description = new StringBuilder();
 
-            AlfredResponse response = m_Engine.Search(i_SelectedText);
+            AlfredResponse response = await m_Engine.SearchAsync(i_SelectedText);
 
+            int x = 5;
             // IPage or IWebDataSource?
-            foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-                 .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
-            {
-                var props = mytype.GetFields();
+            //foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
+            //     .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
+            //{
+            //    var props = mytype.GetFields();
 
-                //Console.WriteLine(props[0].GetValue(null));
-            }
+            //    //Console.WriteLine(props[0].GetValue(null));
+            //}
         }
 
         // getErrorDescription returns the description of the first error code
