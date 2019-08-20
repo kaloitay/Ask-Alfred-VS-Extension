@@ -16,12 +16,12 @@
     /// </para>
     /// </remarks>
     [Guid("712047d6-ae52-4fa1-87b9-9e9e5669e5bc")]
-    public class ErrorsToolWindow : ToolWindowPane
+    public class AskAlfredWindow : ToolWindowPane
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ErrorsToolWindow"/> class.
+        /// Initializes a new instance of the <see cref="AskAlfredWindow"/> class.
         /// </summary>
-        public ErrorsToolWindow() : base(null)
+        public AskAlfredWindow() : base(null)
         {
             this.Caption = "Alfred Errors";
 
@@ -29,6 +29,11 @@
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on
             // the object returned by the Content property.
             this.Content = new AskAlfredWindowControl();
+        }
+
+        public void AutoSearchSelectedText(string i_SelectedText)
+        {
+            (Content as AskAlfredWindowControl).SearchBySelectedText(i_SelectedText);
         }
     }
 }
