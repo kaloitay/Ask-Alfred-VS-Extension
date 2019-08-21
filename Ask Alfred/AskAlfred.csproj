@@ -64,9 +64,9 @@
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowDataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowPage.cs" />
+    <Compile Include="UI\AskAlfredCommand.cs" />
     <Compile Include="UI\AskAlfredCommandPackage.cs" />
     <Compile Include="UI\AskAlfredWindow.cs" />
-    <Compile Include="UI\AskAlfredWindowCommand.cs" />
     <Compile Include="UI\AskAlfredWindowControl.xaml.cs">
       <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
     </Compile>
