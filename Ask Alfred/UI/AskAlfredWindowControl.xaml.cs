@@ -8,10 +8,7 @@
 
     using EnvDTE;
     using Package = Microsoft.VisualStudio.Shell.Package;
-    using System.Text;
     using Ask_Alfred.Infrasructure.Interfaces;
-    using System;
-    using System.Linq;
     using Ask_Alfred.Objects;
 
     /// <summary>
@@ -29,7 +26,6 @@
             this.InitializeComponent();
             m_Engine = new AlfredEngine();
             m_Engine.OnPageAdded += pageAddedHandler;
-            m_Engine.OnSearchIsFinished += searchIsFinishedHandler;
             m_Engine.OnTimeoutExpired += timeoutExpiredHandler;
         }
 
@@ -43,16 +39,16 @@
             }
             // else...
         }
-        private void searchIsFinishedHandler(int i_ResultsAmount)
+        private void searchIsFinished()
         {
             System.Windows.MessageBox.Show("Search is finished",
-                "Search is finished with " + i_ResultsAmount + " results",
+                "Search is finished with " + dataGridViewPages.Items.Count + " results",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
-        private void timeoutExpiredHandler(int i_ResultsAmount)
+        private void timeoutExpiredHandler()
         {
             System.Windows.MessageBox.Show("Timeout Expired",
-                "Timeout Expired after " + i_ResultsAmount + " results",
+                "Timeout Expired after " + dataGridViewPages.Items.Count + " results",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
@@ -87,7 +83,7 @@
 
             AlfredResponse response = await m_Engine.SearchAsync(i_SelectedText);
 
-            int x = 5;
+            searchIsFinished();
             // IPage or IWebDataSource?
             //foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
             //     .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
