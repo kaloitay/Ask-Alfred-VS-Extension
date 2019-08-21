@@ -1,17 +1,13 @@
-﻿namespace Ask_Alfred.UI.Errors
+﻿namespace Ask_Alfred.UI
 {
     using Ask_Alfred.Infrasructure;
     using Microsoft.VisualStudio.Shell;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-
     using EnvDTE;
     using Package = Microsoft.VisualStudio.Shell.Package;
-    using System.Text;
     using Ask_Alfred.Infrasructure.Interfaces;
-    using System;
-    using System.Linq;
     using Ask_Alfred.Objects;
 
     /// <summary>
@@ -150,9 +146,5 @@
             return errorCode;
         }
 
-        private void DataGridViewPages_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
     }
 }
