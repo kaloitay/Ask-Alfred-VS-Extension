@@ -4,19 +4,53 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
-             Name="MyToolWindow" Height="188.55" Width="626.232">
-    <StackPanel Orientation="Vertical" Margin="0,0,-22.6,-0.2" HorizontalAlignment="Right" Width="649">
-        <Button Content="Search!" Click="searchButton_Click" Width="120" Height="28" x:Name="searchButton" Margin="258,0,259,0" RenderTransformOrigin="0.526,-0.037"/>
-        <DataGrid AutoGenerateColumns="False" x:Name="dataGridViewPages" Height="162" RenderTransformOrigin="0.714,0.537" SelectionChanged="DataGridViewPages_SelectionChanged" HorizontalAlignment="Right" Width="649" Margin="0,0,-0.2,0">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Subject" Binding="{Binding Subject}"/>
-                <DataGridTextColumn Header="Created date" Binding="{Binding Date}"/>
-                <DataGridTextColumn Header="View count" Binding="{Binding ViewCount}"/>
-                <DataGridTextColumn Header="Score" Binding="{Binding Score}"/>
-                <DataGridTextColumn Header="Is answered" Binding="{Binding IsAnswered}"/>
-                <DataGridTextColumn Header="Favorite count" Binding="{Binding FavoriteCount}"/>
-                <DataGridHyperlinkColumn Header="Url" Binding="{Binding Url}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+             Name="MyToolWindow" d:DesignWidth="343.467">
+    <StackPanel>
+        <ComboBox x:Name="comboBox" Height="19" Margin="10,3,10.2,0"/>
+        <Separator Margin="0,4,0.2,4" HorizontalAlignment="Center" Width="343"/>
+        <ScrollViewer Height="320" HorizontalAlignment="Left" Width="343">
+            <StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                    <DockPanel VerticalAlignment="Top" Height="54">
+                        <Image DockPanel.Dock="Left" Height="50" Width="40" />
+                        <TextBlock x:Name="DateTextBlock1" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Image Height="7" Width="7" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="WebsiteNameTextBlock1" Text="StackOverFlow" FontSize="7" Foreground="White" Margin="0,0,8,0"/>
+                        </StackPanel>
+                        <TextBlock TextWrapping="Wrap" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <Separator Margin="0,2,0,0" HorizontalAlignment="Center" Width="343"/>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                    <DockPanel VerticalAlignment="Top" Height="54">
+                        <Image DockPanel.Dock="Left" Height="50" Width="40" />
+                        <TextBlock x:Name="DateTextBlock2" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Image Height="7" Width="7" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="WebsiteNameTextBlock2" Text="StackOverFlow" FontSize="7" Foreground="White" Margin="0,0,8,0"/>
+                        </StackPanel>
+                        <TextBlock TextWrapping="Wrap" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <Separator Margin="0,2,0,0" HorizontalAlignment="Center" Width="343"/>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                    <DockPanel VerticalAlignment="Top" Height="54">
+                        <Image DockPanel.Dock="Left" Height="50" Width="40" />
+                        <TextBlock x:Name="DateTextBlock3" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
+                        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Image Height="7" Width="7" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="WebsiteNameTextBlock3" Text="StackOverFlow" FontSize="7" Foreground="White" Margin="0,0,8,0"/>
+                        </StackPanel>
+                        <TextBlock TextWrapping="Wrap" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <Separator Margin="0,2,0,0" HorizontalAlignment="Center" Width="343"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Orientation="Horizontal" Margin="0,3,0,0">
+                    <Image Height="7" Width="7" />
+                    <TextBlock x:Name="SearchingTextBlock" Text="Searching for: 'Cannot resolve'" FontStyle="Italic" FontSize="6" Foreground="White" Margin="5,0,0,0"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
     </StackPanel>
 </UserControl>
