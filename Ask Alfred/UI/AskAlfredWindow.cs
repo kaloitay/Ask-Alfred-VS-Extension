@@ -1,4 +1,4 @@
-﻿namespace Ask_Alfred.UI.Errors
+﻿namespace Ask_Alfred.UI
 {
     using System;
     using System.Runtime.InteropServices;
@@ -23,7 +23,7 @@
         /// </summary>
         public AskAlfredWindow() : base(null)
         {
-            this.Caption = "Alfred Errors";
+            this.Caption = "Ask Alfred";
 
             // This is the user control hosted by the tool window; Note that, even if this class implements IDisposable,
             // we are not calling Dispose on this object. This is because ToolWindowPane calls Dispose on

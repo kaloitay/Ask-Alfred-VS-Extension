@@ -1,16 +1,8 @@
 ﻿using System;
-using System.ComponentModel.Design;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Threading;
-using EnvDTE;
-using Microsoft.VisualStudio;
-using Microsoft.VisualStudio.OLE.Interop;
 using Microsoft.VisualStudio.Shell;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.Win32;
 using Task = System.Threading.Tasks.Task;
 
 namespace Ask_Alfred.UI
@@ -37,7 +29,7 @@ namespace Ask_Alfred.UI
     [ProvideMenuResource("Menus.ctmenu", 1)]
     [Guid(AskAlfredCommandPackage.PackageGuidString)]
     [SuppressMessage("StyleCop.CSharp.DocumentationRules", "SA1650:ElementDocumentationMustBeSpelledCorrectly", Justification = "pkgdef, VS and vsixmanifest are valid VS terms")]
-    [ProvideToolWindow(typeof(Ask_Alfred.UI.Errors.AskAlfredWindow))]
+    [ProvideToolWindow(typeof(Ask_Alfred.UI.AskAlfredWindow))]
     public sealed class AskAlfredCommandPackage : AsyncPackage
     {
         /// <summary>
@@ -71,7 +63,7 @@ namespace Ask_Alfred.UI
             // Do any initialization that requires the UI thread after switching to the UI thread.
             await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
           //  await AskAlfredCommand.InitializeAsync(this);
-            await Ask_Alfred.UI.Errors.AskAlfredWindowCommand.InitializeAsync(this);
+            await Ask_Alfred.UI.AskAlfredCommand.InitializeAsync(this);
 
         }
 
