@@ -5,12 +5,21 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
              Name="MyToolWindow" d:DesignWidth="343.467">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles/Fonts.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
     <StackPanel>
         <ComboBox x:Name="comboBox" Height="19" Margin="10,3,10.2,0"/>
         <Separator Margin="0,4,0.2,4" HorizontalAlignment="Center" Width="343"/>
         <ScrollViewer Height="320" HorizontalAlignment="Left" Width="343">
             <StackPanel>
-                <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
+                <StackPanel x:Name="Item1" HorizontalAlignment="Center" Orientation="Vertical">
                     <DockPanel VerticalAlignment="Top" Height="54">
                         <Image DockPanel.Dock="Left" Height="50" Width="40" />
                         <TextBlock x:Name="DateTextBlock1" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>

@@ -71,6 +71,10 @@
       <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ESupportedProgrramingLanguages.cs" />
+    <Page Include="UI\Resources\Styles\Fonts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
