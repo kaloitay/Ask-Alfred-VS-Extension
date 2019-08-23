@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ask_Alfred.Infrasructure.Interfaces;
-using Ask_Alfred.Objects;
+using Ask_Alfred.Infrastructure.Interfaces;
 using System.Timers;
 
-namespace Ask_Alfred.Infrasructure
+
+namespace Ask_Alfred.Infrastructure
 {
     // this will be the class that runs all of the backend - should aggregate the googleSearchEngine, the results
     // Singleton ? then the search engine will not be singltone
@@ -18,11 +18,10 @@ namespace Ask_Alfred.Infrasructure
         public AlfredResponse Response { get; }
         private GoogleSearchEngine m_GoogleSearchEngine;
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
-        private const int k_ResultsThreshold = 5;
 
         public event Action<IPage> OnPageAdded;
         public event Action OnTimeoutExpired;
-        private const int timeoutDurationInSeconds = 12; // shouldn't be const
+        private const int timeoutDurationInSeconds = 20; // shouldn't be const
         private eStatus m_Status;
         private Timer m_TimeoutTimer = new System.Timers.Timer();
 
@@ -50,6 +49,8 @@ namespace Ask_Alfred.Infrasructure
                 //{ eWebSite.Microsoft, "..." }
             };
 
+         
+
             m_TimeoutTimer.Elapsed += new ElapsedEventHandler(timeoutExpired);
             m_TimeoutTimer.Interval = timeoutDurationInSeconds * 1000;
         }
@@ -65,14 +66,23 @@ namespace Ask_Alfred.Infrasructure
 
             // TODO: not always stackoverflow should be the only website to search in
             // TODO: maximum of X urls for each search?
+            // TODO: repetition of links is unwanted - FIX that
 
             m_GoogleSearchEngine.Clear();
             m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
                 r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey);
+
+            // should be checked on projects of various kinds
+            // should be checked on project that contain several types (like Alfred [1: c# 2: extension])
+            string activeProjectType = Utils.GetProjectTypeAsString();
+            if (activeProjectType != null)
+            {
+                m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
+                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey + " " + activeProjectType);
+            }
+
             //m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
             //    r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey + " Visual studio");
-            //m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
-            //    r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey + " C#");
 
             // TODO: this call can never end!
             // https://stackoverflow.com/questions/10134310/how-to-cancel-a-task-in-await
@@ -82,18 +92,26 @@ namespace Ask_Alfred.Infrasructure
         }
 
         // currently this method is where we are checking all of the functionallity
-        public async Task CreateWebDataListFromGoogleResultsAsync()
+        public async System.Threading.Tasks.Task CreateWebDataListFromGoogleResultsAsync()
         {
             foreach (GoogleSearchResult googleResult in m_GoogleSearchEngine.SearchResults)
             {
                 IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Link);
-                await dataSource.ParseDataAsync();
-
-                // Should stop during the parse as well
-                if (m_Status == eStatus.Searching)
-                    OnPageAdded(dataSource.Page);
-                else
+                if (dataSource != null)
+                {
+                    await dataSource.ParseDataAsync();
+                    // Should stop during the parse as well
+                    if (m_Status == eStatus.Searching)
+                        OnPageAdded(dataSource.Page);
+                }
+                if (m_Status != eStatus.Searching)
                     break;
+            }
+
+            if (m_Status == eStatus.Searching)
+            {
+                m_Status = eStatus.Finished;
+                m_TimeoutTimer.Stop();
             }
         }
         private void timeoutExpired(object source, ElapsedEventArgs e)

@@ -1,4 +1,4 @@
-﻿using Ask_Alfred.Infrasructure.Interfaces;
+﻿using Ask_Alfred.Infrastructure.Interfaces;
 using System;
 
 namespace Ask_Alfred.Objects

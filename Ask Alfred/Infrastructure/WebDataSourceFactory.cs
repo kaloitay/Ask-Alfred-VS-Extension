@@ -1,8 +1,8 @@
 ﻿using Ask_Alfred.Objects;
-using Ask_Alfred.Infrasructure.Interfaces;
+using Ask_Alfred.Infrastructure.Interfaces;
 using System;
 
-namespace Ask_Alfred.Infrasructure
+namespace Ask_Alfred.Infrastructure
 {
     public static class WebDataSourceFactory
     {
@@ -17,20 +17,24 @@ namespace Ask_Alfred.Infrasructure
                 // TODO: two cases is needed here?
                 case "www.stackoverflow.com":
                 case "stackoverflow.com":
-                    webDataSource = CreateStackoverflowWebDataSource(i_Link);
+                    webDataSource = TryCreateStackoverflowWebDataSource(i_Link);
                     break;
                 case "docs.microsoft.com":
-                    //webDataSource = CreateMicrosoftWebDataSource(i_Link);
+                    //webDataSource = TryCreateMicrosoftWebDataSource(i_Link);
                     break;
-                //default:
             }
 
             return webDataSource;
         }
 
-        public static StackoverflowDataSource CreateStackoverflowWebDataSource(string i_Link)
+        public static StackoverflowDataSource TryCreateStackoverflowWebDataSource(string i_Link)
         {
-            return new StackoverflowDataSource(i_Link);
+            StackoverflowDataSource dataSource = null;
+
+            if (StackoverflowDataSource.IsValidUrl(i_Link) == true)
+                dataSource = new StackoverflowDataSource(i_Link);
+
+            return dataSource;
         }
     }
 }

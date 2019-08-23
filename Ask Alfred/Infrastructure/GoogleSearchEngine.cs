@@ -13,7 +13,7 @@ using System.Net;
 // Dynamic is useful when we need to code using reflection or dynamic languages or with the COM objects 
 // and when getting result out of the LinQ queries.
 
-namespace Ask_Alfred.Infrasructure
+namespace Ask_Alfred.Infrastructure
 {
     // TODO: should be singleton ?
     public class GoogleSearchEngine
@@ -77,6 +77,8 @@ namespace Ask_Alfred.Infrasructure
         {
             foreach (var item in i_JsonData.items)
             {
+                // GoogleSearchResult result = SearchResults.Find(x => x.Link == item.link);
+
                 SearchResults.Add(new GoogleSearchResult
                 {
                     Title = item.title,
@@ -90,7 +92,6 @@ namespace Ask_Alfred.Infrasructure
         // *** this is a temporary method to start working on the responses from our sites
         public void TestActivateSearchResultLink()
         {
-
             //HtmlWeb web = new HtmlWeb();
             //HtmlDocument doc = web.Load(SearchResults[0].Link);
 
