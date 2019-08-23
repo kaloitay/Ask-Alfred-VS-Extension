@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ask_Alfred.Infrasructure
+namespace Ask_Alfred.Infrastructure
 {
     public class GoogleSearchResult
     {

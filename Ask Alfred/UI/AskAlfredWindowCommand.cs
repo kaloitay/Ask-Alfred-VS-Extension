@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Ask_Alfred.Infrasructure;
+using Ask_Alfred.Infrastructure;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;

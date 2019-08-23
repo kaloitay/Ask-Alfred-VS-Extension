@@ -1,6 +1,6 @@
 ﻿namespace Ask_Alfred.UI.Errors
 {
-    using Ask_Alfred.Infrasructure;
+    using Ask_Alfred.Infrastructure;
     using Microsoft.VisualStudio.Shell;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
@@ -8,7 +8,7 @@
 
     using EnvDTE;
     using Package = Microsoft.VisualStudio.Shell.Package;
-    using Ask_Alfred.Infrasructure.Interfaces;
+    using Ask_Alfred.Infrastructure.Interfaces;
     using Ask_Alfred.Objects;
 
     /// <summary>
@@ -79,7 +79,6 @@
         {
             // TODO: find a normal way to do it
             // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
-            //StringBuilder description = new StringBuilder();
 
             AlfredResponse response = await m_Engine.SearchAsync(i_SelectedText);
 
