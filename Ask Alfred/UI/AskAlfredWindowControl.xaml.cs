@@ -21,7 +21,6 @@
     {
         AlfredEngine m_Engine;
         private readonly double RESULT_HEIGHT = 55;
-        private readonly double RESULT_IMAGE_WIDTH;
         private readonly double REUSLT_DATE_FONT_SIZE = 5;
 
         /// <summary>
@@ -54,7 +53,6 @@
 
         private void createWindowResult(IPage page)
         {
-            StackoverflowPage stackoverflowPage = page as StackoverflowPage;
 
             StackPanel resultStackPanel = new StackPanel();
             resultStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
@@ -68,39 +66,73 @@
             DockPanel.SetDock(resultImage, Dock.Left);
             resultImage.Height = resultDockPanel.Height;
             resultImage.Width = resultDockPanel.Height;
-            resultImage.Source = new BitmapImage(new Uri(@"\Resources\result-icon.png", UriKind.Relative));
+            resultImage.Source = new BitmapImage(new Uri(@"\Resources\Icons\go_to_web_icon.png", UriKind.Relative));
 
             TextBlock resultDateTextBlock = new TextBlock();
             DockPanel.SetDock(resultDateTextBlock, Dock.Top);
             resultDateTextBlock.HorizontalAlignment = HorizontalAlignment.Right;
             resultDateTextBlock.FontSize = REUSLT_DATE_FONT_SIZE;
             resultDateTextBlock.Foreground = new SolidColorBrush(Colors.White);
+            resultDateTextBlock.Text = page.Date.ToString();
 
-            resultDateTextBlock.Text = stackoverflowPage.Date.ToString();
+            StackPanel websiteStackPanel = new StackPanel();
+            DockPanel.SetDock(websiteStackPanel, Dock.Bottom);
+            websiteStackPanel.Orientation = Orientation.Horizontal;
+            websiteStackPanel.HorizontalAlignment = HorizontalAlignment.Right;
 
+            if (page is StackoverflowPage)
+            {
+                StackoverflowPage stackoverflowPage = page as StackoverflowPage;
 
-            mainResultsStackPanel.Children.Add(new StackPanel());
+                if (stackoverflowPage.IsAnswered) // TODO: need to fix this condition to green v condition
+                {
+                    Image greenVImage = new Image();
+                    greenVImage.Source = new BitmapImage(new Uri(@"\Resources\Icons\green_checkmark_stackoverflow_icon.png", UriKind.Relative));
+                    greenVImage.Height = 7;
+                    greenVImage.Width = 7;
+                    websiteStackPanel.Children.Add(greenVImage);
+                }
+            }
+
+            TextBlock websiteNameTextBlock = new TextBlock();
+            websiteNameTextBlock.Text = page.WebsiteName;
+            websiteNameTextBlock.FontSize = 7;
+            websiteNameTextBlock.Foreground = new SolidColorBrush(Colors.White);
+            websiteStackPanel.Children.Add(websiteNameTextBlock);
+
+            TextBlock resultSubjectTextBlock = new TextBlock();
+            resultDateTextBlock.Text = page.Subject;
+            resultDateTextBlock.TextWrapping = TextWrapping.Wrap;
+            resultDateTextBlock.FontSize = 9;
+            resultDateTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+            Separator separator = new Separator();
+            separator.HorizontalAlignment = HorizontalAlignment.Center;
+            separator.Width = 343;
+
+            resultDockPanel.Children.Add(resultImage);
+            resultDockPanel.Children.Add(resultDateTextBlock);
+            resultDockPanel.Children.Add(websiteStackPanel);
+            resultDockPanel.Children.Add(resultSubjectTextBlock);
+
+            resultStackPanel.Children.Add(resultDockPanel);
+            resultStackPanel.Children.Add(separator);
+            mainResultsStackPanel.Children.Add(resultStackPanel);
         }
-/*
-                        < TextBlock x:Name= "DateTextBlock1" DockPanel.Dock= "Top" HorizontalAlignment= "Right" Text= "23/09/2017" FontSize= "5" Foreground= "White" Margin= "0,3,3,0" />
-                        < StackPanel DockPanel.Dock= "Bottom" Orientation= "Horizontal" HorizontalAlignment= "Right" >
-                            < Image Height= "7" Width= "7" Margin= "0,0,8,0" />
-                            < TextBlock x:Name= "WebsiteNameTextBlock1" Text= "StackOverFlow" FontSize= "7" Foreground= "White" Margin= "0,0,8,0" />
-                        </ StackPanel >
-                        < TextBlock TextWrapping= "Wrap" Text= "Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin= "1,5,30,5" FontSize= "9" Foreground= "White" TextAlignment= "Justify" VerticalAlignment= "Center" />
-                    </ DockPanel >*/
 
         private void searchIsFinished()
         {
+            //searchComboBox.IsEnabled = true;
     /*        System.Windows.MessageBox.Show("Search is finished",
                 "Search is finished with " + dataGridViewPages.Items.Count + " results",
                 MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
         private void timeoutExpiredHandler()
         {
-          /*  System.Windows.MessageBox.Show("Timeout Expired",
-                "Timeout Expired after " + dataGridViewPages.Items.Count + " results",
-                MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
+            //searchComboBox.IsEnabled = true;
+            /*  System.Windows.MessageBox.Show("Timeout Expired",
+                  "Timeout Expired after " + dataGridViewPages.Items.Count + " results",
+                  MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
 
         /// <summary>
@@ -198,8 +230,10 @@
         }
         private void SearchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Enter)
+
+            if (e.Key == System.Windows.Input.Key.Enter && searchComboBox.IsEnabled == true)
             {
+                searchComboBox.IsEnabled = false;
                 SearchBySelectedTextAsync(searchComboBox.Text);
             }
         }
