@@ -9,6 +9,10 @@
     using Package = Microsoft.VisualStudio.Shell.Package;
     using Ask_Alfred.Infrasructure.Interfaces;
     using Ask_Alfred.Objects;
+    using System.Windows.Input;
+    using System;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Media;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -16,6 +20,9 @@
     public partial class AskAlfredWindowControl : UserControl
     {
         AlfredEngine m_Engine;
+        private readonly double RESULT_HEIGHT = 55;
+        private readonly double RESULT_IMAGE_WIDTH;
+        private readonly double REUSLT_DATE_FONT_SIZE = 5;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
@@ -23,32 +30,77 @@
         public AskAlfredWindowControl()
         {
             this.InitializeComponent();
+            IntializeAskAlfredWindow();
+        }
+
+        private void IntializeAskAlfredWindow()
+        {
             m_Engine = new AlfredEngine();
             m_Engine.OnPageAdded += pageAddedHandler;
             m_Engine.OnTimeoutExpired += timeoutExpiredHandler;
+
+            mainResultsStackPanel.Children.Clear();
         }
 
         private void pageAddedHandler(IPage page)
         {
-            StackoverflowPage stackoverflowPage = page as StackoverflowPage;
-            if (stackoverflowPage != null)
+            if (page != null)
             {
                 // use stackoverflowPage.Rank to get the rank
-                this.dataGridViewPages.Items.Add(stackoverflowPage);
+                createWindowResult(page);
             }
             // else...
         }
+
+        private void createWindowResult(IPage page)
+        {
+            StackoverflowPage stackoverflowPage = page as StackoverflowPage;
+
+            StackPanel resultStackPanel = new StackPanel();
+            resultStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
+            resultStackPanel.Orientation = Orientation.Vertical;
+
+            DockPanel resultDockPanel = new DockPanel();
+            resultDockPanel.VerticalAlignment = VerticalAlignment.Top;
+            resultDockPanel.Height = RESULT_HEIGHT;
+
+            Image resultImage = new Image();
+            DockPanel.SetDock(resultImage, Dock.Left);
+            resultImage.Height = resultDockPanel.Height;
+            resultImage.Width = resultDockPanel.Height;
+            resultImage.Source = new BitmapImage(new Uri(@"\Resources\result-icon.png", UriKind.Relative));
+
+            TextBlock resultDateTextBlock = new TextBlock();
+            DockPanel.SetDock(resultDateTextBlock, Dock.Top);
+            resultDateTextBlock.HorizontalAlignment = HorizontalAlignment.Right;
+            resultDateTextBlock.FontSize = REUSLT_DATE_FONT_SIZE;
+            resultDateTextBlock.Foreground = new SolidColorBrush(Colors.White);
+
+            resultDateTextBlock.Text = stackoverflowPage.Date.ToString();
+
+
+            mainResultsStackPanel.Children.Add(new StackPanel());
+        }
+/*
+                        < TextBlock x:Name= "DateTextBlock1" DockPanel.Dock= "Top" HorizontalAlignment= "Right" Text= "23/09/2017" FontSize= "5" Foreground= "White" Margin= "0,3,3,0" />
+                        < StackPanel DockPanel.Dock= "Bottom" Orientation= "Horizontal" HorizontalAlignment= "Right" >
+                            < Image Height= "7" Width= "7" Margin= "0,0,8,0" />
+                            < TextBlock x:Name= "WebsiteNameTextBlock1" Text= "StackOverFlow" FontSize= "7" Foreground= "White" Margin= "0,0,8,0" />
+                        </ StackPanel >
+                        < TextBlock TextWrapping= "Wrap" Text= "Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin= "1,5,30,5" FontSize= "9" Foreground= "White" TextAlignment= "Justify" VerticalAlignment= "Center" />
+                    </ DockPanel >*/
+
         private void searchIsFinished()
         {
-            System.Windows.MessageBox.Show("Search is finished",
+    /*        System.Windows.MessageBox.Show("Search is finished",
                 "Search is finished with " + dataGridViewPages.Items.Count + " results",
-                MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
         private void timeoutExpiredHandler()
         {
-            System.Windows.MessageBox.Show("Timeout Expired",
+          /*  System.Windows.MessageBox.Show("Timeout Expired",
                 "Timeout Expired after " + dataGridViewPages.Items.Count + " results",
-                MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
 
         /// <summary>
@@ -65,11 +117,11 @@
 
             if (errorDescription == null)
             {
-                dataGridViewPages.Items.Add("No errors detected.");
+                //dataGridViewPages.Items.Add("No errors detected.");
             }
             else
             {
-                dataGridViewPages.Items.Clear();
+                //dataGridViewPages.Items.Clear();
                 SearchBySelectedTextAsync(errorDescription); // TODO: change method name
             }
         }
@@ -144,6 +196,12 @@
 
             return errorCode;
         }
-
+        private void SearchComboBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                SearchBySelectedTextAsync(searchComboBox.Text);
+            }
+        }
     }
 }

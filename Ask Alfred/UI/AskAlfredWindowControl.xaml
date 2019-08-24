@@ -15,10 +15,10 @@
     </UserControl.Resources>
 
     <StackPanel>
-        <ComboBox x:Name="comboBox" Height="19" Margin="10,3,10.2,0"/>
+        <ComboBox x:Name="searchComboBox" KeyDown="SearchComboBox_KeyDown" Height="19" Margin="10,3,10.2,0"/>
         <Separator Margin="0,4,0.2,4" HorizontalAlignment="Center" Width="343"/>
         <ScrollViewer Height="320" HorizontalAlignment="Left" Width="343">
-            <StackPanel>
+            <StackPanel x:Name="mainResultsStackPanel">
                 <StackPanel x:Name="Item1" HorizontalAlignment="Center" Orientation="Vertical">
                     <DockPanel VerticalAlignment="Top" Height="54">
                         <Image DockPanel.Dock="Left" Height="50" Width="40" />
