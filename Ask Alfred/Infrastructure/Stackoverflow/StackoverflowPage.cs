@@ -18,6 +18,7 @@ namespace Ask_Alfred.Objects
 
         private const int m_IsAnsweredWeight = 10000;
 
+        public string WebsiteName { get; set; }
         public string Url { get; set; }
         public string Subject { get; set; }
         public DateTime Date { get; set; }

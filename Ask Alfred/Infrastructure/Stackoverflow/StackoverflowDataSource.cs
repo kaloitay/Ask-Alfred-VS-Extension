@@ -58,6 +58,7 @@ namespace Ask_Alfred.Objects
                 Question question = query.Items.First();
                 this.Page = new StackoverflowPage
                 {
+                    WebsiteName = "Stackoverflow",
                     Url = "https://stackoverflow.com/questions/" + m_ID,
                     Subject = HttpUtility.HtmlDecode(question.Title),
                     Date = Utils.UnixTimeStampToDateTime(question.CreationDate),
