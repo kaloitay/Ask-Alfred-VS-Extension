@@ -19,7 +19,7 @@
         <Separator Margin="0,4,0.2,4" HorizontalAlignment="Center" Width="343"/>
         <ScrollViewer Height="320" HorizontalAlignment="Left" Width="343">
             <StackPanel x:Name="mainResultsStackPanel">
-                <StackPanel x:Name="Item1" HorizontalAlignment="Center" Orientation="Vertical">
+                <StackPanel x:Name="Item1" HorizontalAlignment="Center" Orientation="Vertical" Background="AliceBlue">
                     <DockPanel VerticalAlignment="Top" Height="54">
                         <Image DockPanel.Dock="Left" Height="50" Width="40" />
                         <TextBlock x:Name="DateTextBlock1" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>

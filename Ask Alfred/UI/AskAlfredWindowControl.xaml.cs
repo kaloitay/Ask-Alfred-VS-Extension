@@ -53,10 +53,13 @@
 
         private void createWindowResult(IPage page)
         {
-
             StackPanel resultStackPanel = new StackPanel();
+            resultStackPanel.MouseEnter += ResultStackPanel_MouseEnter;
+            resultStackPanel.MouseLeave += ResultStackPanel_MouseLeave;
+            //resultStackPanel.MouseDown += ResultStackPanel_MouseDown(page);
             resultStackPanel.HorizontalAlignment = HorizontalAlignment.Center;
             resultStackPanel.Orientation = Orientation.Vertical;
+
 
             DockPanel resultDockPanel = new DockPanel();
             resultDockPanel.VerticalAlignment = VerticalAlignment.Top;
@@ -64,9 +67,9 @@
 
             Image resultImage = new Image();
             DockPanel.SetDock(resultImage, Dock.Left);
-            resultImage.Height = resultDockPanel.Height;
-            resultImage.Width = resultDockPanel.Height;
-            resultImage.Source = new BitmapImage(new Uri(@"\Resources\Icons\go_to_web_icon.png", UriKind.Relative));
+            resultImage.Height = 10;
+            resultImage.Width = 10;
+            //resultImage.Source = new BitmapImage(new Uri(@"\Resources\Icons\go_to_web_icon.png", UriKind.Relative));
 
             TextBlock resultDateTextBlock = new TextBlock();
             DockPanel.SetDock(resultDateTextBlock, Dock.Top);
@@ -87,7 +90,7 @@
                 if (stackoverflowPage.IsAnswered) // TODO: need to fix this condition to green v condition
                 {
                     Image greenVImage = new Image();
-                    greenVImage.Source = new BitmapImage(new Uri(@"\Resources\Icons\green_checkmark_stackoverflow_icon.png", UriKind.Relative));
+                    //greenVImage.Source = new BitmapImage(new Uri(@"\Resources\Icons\green_checkmark_stackoverflow_icon.png", UriKind.Relative));
                     greenVImage.Height = 7;
                     greenVImage.Width = 7;
                     websiteStackPanel.Children.Add(greenVImage);
@@ -105,6 +108,8 @@
             resultDateTextBlock.TextWrapping = TextWrapping.Wrap;
             resultDateTextBlock.FontSize = 9;
             resultDateTextBlock.Foreground = new SolidColorBrush(Colors.White);
+            resultDateTextBlock.TextAlignment = TextAlignment.Justify;
+            resultDateTextBlock.VerticalAlignment = VerticalAlignment.Center;
 
             Separator separator = new Separator();
             separator.HorizontalAlignment = HorizontalAlignment.Center;
@@ -118,6 +123,31 @@
             resultStackPanel.Children.Add(resultDockPanel);
             resultStackPanel.Children.Add(separator);
             mainResultsStackPanel.Children.Add(resultStackPanel);
+        }
+
+        private void ResultStackPanel_MouseDown(object sender, MouseButtonEventArgs e, IPage page)
+        {
+            System.Diagnostics.Process.Start(page.Url);
+        }
+        // TODO: fix to happen only once
+        private void ResultStackPanel_MouseLeave(object sender, MouseEventArgs e)
+        {
+            StackPanel currentStackPanel = sender as StackPanel;
+
+            if (currentStackPanel.IsMouseOver)
+            {
+                currentStackPanel.Background = null;
+            }
+        }
+        // TODO: fix to happen only once
+        private void ResultStackPanel_MouseEnter(object sender, MouseEventArgs e)
+        {
+            StackPanel currentStackPanel = sender as StackPanel;
+
+            if (!currentStackPanel.IsMouseOver)
+            {
+                currentStackPanel.Background = new SolidColorBrush(Colors.White) { Opacity = 0.5 };
+            }
         }
 
         private void searchIsFinished()
