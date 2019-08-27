@@ -2,11 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Ask_Alfred.Infrasructure.Interfaces;
+using Ask_Alfred.Infrastructure.Interfaces;
 using RavinduL.SEStandard;
 using RavinduL.SEStandard.Models;
 using Scopes = RavinduL.SEStandard.Models.Scopes;
 using System.Web;
+using System.Text.RegularExpressions;
+using Ask_Alfred.Infrastructure;
 
 namespace Ask_Alfred.Objects
 {
@@ -31,16 +33,10 @@ namespace Ask_Alfred.Objects
                 int.TryParse(splitedUrl[4], out m_ID);
         }
 
-
-        // TODO: mabye should be in utils class
-        private static DateTime unixTimeStampToDateTime(double unixTimeStamp)
+        public static bool IsValidUrl(string i_Url)
         {
-            // Unix timestamp is seconds past epoch
-            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0,
-                DateTimeKind.Utc);
-            dtDateTime = dtDateTime.AddSeconds(unixTimeStamp).ToLocalTime();
-
-            return dtDateTime;
+            Regex regex = new Regex(@"stackoverflow.com\/questions\/\d+");
+            return regex.Match(i_Url).Success;
         }
 
         public async Task ParseDataAsync()
@@ -48,22 +44,24 @@ namespace Ask_Alfred.Objects
             var client = new StackExchangeClient(k_ClientID, k_Key, Scopes.NoExpiry);
             IList<int> ids = new List<int> { m_ID };
 
+            // TODO: this call can never end!
+            // https://stackoverflow.com/questions/10134310/how-to-cancel-a-task-in-await
             var query = await client.Questions.GetAsync(
                 site: "stackoverflow",
                 filter: "!)5d3yYdB0grnr6gO7E9oMFDnlZMk",
                 ids: ids);
 
-            // TODO:
-            //Console.WriteLine($"Quota: {query.QuotaRemaining}/{query.QuotaMax}");
+            // TODO: Throw exception if query.QuotaRemaining = query.QuotaMax?
 
             if (query.Items != null)
             {
                 Question question = query.Items.First();
                 this.Page = new StackoverflowPage
                 {
+                    WebsiteName = "Stackoverflow",
                     Url = "https://stackoverflow.com/questions/" + m_ID,
                     Subject = HttpUtility.HtmlDecode(question.Title),
-                    Date = unixTimeStampToDateTime(question.CreationDate),
+                    Date = Utils.UnixTimeStampToDateTime(question.CreationDate),
                     Score = question.Score,
                     FavoriteCount = question.FavoriteCount,
                     ViewCount = question.ViewCount,

@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.Design;
-using System.Diagnostics;
-using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
-using Ask_Alfred.Infrasructure;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.TextManager;
 using Task = System.Threading.Tasks.Task;
 
-namespace Ask_Alfred.UI.Errors
+namespace Ask_Alfred.UI
 {
     /// <summary>
     /// Command handler
     /// </summary>
-    internal sealed class AskAlfredWindowCommand
+    internal sealed class AskAlfredCommand
     {
         /// <summary>
         /// Command ID.
@@ -36,12 +29,12 @@ namespace Ask_Alfred.UI.Errors
         private readonly AsyncPackage package;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AskAlfredWindowCommand"/> class.
+        /// Initializes a new instance of the <see cref="AskAlfredCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
         /// </summary>
         /// <param name="package">Owner package, not null.</param>
         /// <param name="commandService">Command service to add command to, not null.</param>
-        private AskAlfredWindowCommand(AsyncPackage package, OleMenuCommandService commandService)
+        private AskAlfredCommand(AsyncPackage package, OleMenuCommandService commandService)
         {
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
@@ -54,7 +47,7 @@ namespace Ask_Alfred.UI.Errors
         /// <summary>
         /// Gets the instance of the command.
         /// </summary>
-        public static AskAlfredWindowCommand Instance
+        public static AskAlfredCommand Instance
         {
             get;
             private set;
@@ -82,7 +75,7 @@ namespace Ask_Alfred.UI.Errors
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync(package.DisposalToken);
 
             OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService;
-            Instance = new AskAlfredWindowCommand(package, commandService);
+            Instance = new AskAlfredCommand(package, commandService);
         }
 
 

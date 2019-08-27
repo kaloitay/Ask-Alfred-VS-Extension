@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Ask_Alfred.Infrasructure.Interfaces;
+using Ask_Alfred.Infrastructure.Interfaces;
 
-namespace Ask_Alfred.Infrasructure
+namespace Ask_Alfred.Infrastructure
 {
     public class AlfredResponse
     {

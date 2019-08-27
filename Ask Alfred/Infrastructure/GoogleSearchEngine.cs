@@ -13,7 +13,7 @@ using System.Net;
 // Dynamic is useful when we need to code using reflection or dynamic languages or with the COM objects 
 // and when getting result out of the LinQ queries.
 
-namespace Ask_Alfred.Infrasructure
+namespace Ask_Alfred.Infrastructure
 {
     // TODO: should be singleton ?
     public class GoogleSearchEngine
@@ -32,11 +32,26 @@ namespace Ask_Alfred.Infrasructure
             insertSearchResults(queryResult);
         }
 
+        public void Clear()
+        {
+            SearchResults.Clear();
+        }
+
         private string getUrlContentAsString(string i_Url)
         {
             WebClient client = new WebClient();
+            string urlContent;
 
-            return client.DownloadString(i_Url);
+            try
+            {
+                urlContent = client.DownloadString(i_Url);
+            }
+            catch /*(WebException e)*/
+            {
+                throw new WebException("No internet connection");
+            }
+
+            return urlContent;
         }
 
         // *** this method gets a google query to search and searches with google api
@@ -62,6 +77,8 @@ namespace Ask_Alfred.Infrasructure
         {
             foreach (var item in i_JsonData.items)
             {
+                // GoogleSearchResult result = SearchResults.Find(x => x.Link == item.link);
+
                 SearchResults.Add(new GoogleSearchResult
                 {
                     Title = item.title,
@@ -75,7 +92,6 @@ namespace Ask_Alfred.Infrasructure
         // *** this is a temporary method to start working on the responses from our sites
         public void TestActivateSearchResultLink()
         {
-
             //HtmlWeb web = new HtmlWeb();
             //HtmlDocument doc = web.Load(SearchResults[0].Link);
 
@@ -84,7 +100,7 @@ namespace Ask_Alfred.Infrasructure
 
             //string value = single.InnerText;
 
-         //   return value;
+            //   return value;
         }
     }
 }
