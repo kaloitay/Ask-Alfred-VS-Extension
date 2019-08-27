@@ -20,11 +20,11 @@ namespace Ask_Alfred.Objects
         public IPage Page { get; private set; }
 
         // TODO: using for reflection supported languages from UI
-        public static List<ESupportedProgrramingLanguages> SupportedProgrramingLanguages = new List<ESupportedProgrramingLanguages>(
-            new ESupportedProgrramingLanguages[] {
-            ESupportedProgrramingLanguages.CSharp,
-            ESupportedProgrramingLanguages.CPlusPlus,
-            ESupportedProgrramingLanguages.C});
+        public static List<ESupportedProgramingLanguages> SupportedProgrramingLanguages = new List<ESupportedProgramingLanguages>(
+            new ESupportedProgramingLanguages[] {
+            ESupportedProgramingLanguages.CSharp,
+            ESupportedProgramingLanguages.CPlusPlus,
+            ESupportedProgramingLanguages.C});
 
         public StackoverflowDataSource(string i_Url)
         {
