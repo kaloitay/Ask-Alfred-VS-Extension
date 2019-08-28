@@ -7,6 +7,7 @@ namespace Ask_Alfred.Objects
     {
         // TODO: change to significant names is needed here!
 
+        // Stackoverflow was founded on July 2008
         private readonly DateTime m_LaunchedDate = new DateTime(2008, 07, 01);
         private const int m_DateMaximumWeight = 10;
 
@@ -28,7 +29,6 @@ namespace Ask_Alfred.Objects
         public bool IsAnswered { get; set; }
         public int AnswerCount { get; set; }
 
-        // TODO: should be private? should be here or in StackoverflowDataSource?
         public double Rank
         {
             get
@@ -46,7 +46,6 @@ namespace Ask_Alfred.Objects
 
         private double getDateRank()
         {
-            // Stackoverflow was founded on July 2008
             DateTime currentTime = DateTime.Now;
 
             TimeSpan elapsedTimeFromSendingTheQuestion = currentTime - Date;

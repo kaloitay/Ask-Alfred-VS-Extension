@@ -10,8 +10,6 @@
     using Ask_Alfred.Infrastructure.Interfaces;
     using Ask_Alfred.Objects;
     using System.Windows.Input;
-    using System;
-    using System.Windows.Media.Imaging;
     using System.Windows.Media;
 
     /// <summary>
@@ -19,7 +17,6 @@
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
-        AlfredEngine m_Engine;
         private readonly double RESULT_HEIGHT = 55;
         private readonly double REUSLT_DATE_FONT_SIZE = 5;
 
@@ -34,9 +31,8 @@
 
         private void IntializeAskAlfredWindow()
         {
-            m_Engine = new AlfredEngine();
-            m_Engine.OnPageAdded += pageAddedHandler;
-            m_Engine.OnTimeoutExpired += timeoutExpiredHandler;
+            AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
+            AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
 
             mainResultsStackPanel.Children.Clear();
         }
@@ -193,7 +189,7 @@
             // TODO: find a normal way to do it
             // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
 
-            AlfredResponse response = await m_Engine.SearchAsync(i_SelectedText);
+            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_SelectedText);
 
             searchIsFinished();
             // IPage or IWebDataSource?

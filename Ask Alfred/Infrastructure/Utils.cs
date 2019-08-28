@@ -10,6 +10,7 @@ namespace Ask_Alfred.Infrastructure
     {
         private static readonly Dictionary<string, string> r_ProjectGuids;
 
+        // TODO: fix all the warnings
         static Utils()
         {
             r_ProjectGuids = new Dictionary<string, string>
@@ -100,6 +101,5 @@ namespace Ask_Alfred.Infrastructure
 
             return dtDateTime;
         }
-
     }
 }

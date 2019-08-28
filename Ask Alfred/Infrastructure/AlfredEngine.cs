@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ask_Alfred.Infrastructure.Interfaces;
 using System.Timers;
-
+using System.Linq;
 
 namespace Ask_Alfred.Infrastructure
 {
-    // this will be the class that runs all of the backend - should aggregate the googleSearchEngine, the results
-    // Singleton ? then the search engine will not be singltone
-
-    // TODO: this class should be internal?
-    // TODO: this class should be singleton (mabye by static class?)
-    public class AlfredEngine
+    public sealed class AlfredEngine
     {
-        public List<IWebDataSource> WebDataList { get; private set; }
-        public AlfredResponse Response { get; }
-        private GoogleSearchEngine m_GoogleSearchEngine;
+        private static readonly Lazy<AlfredEngine> lazy = new Lazy<AlfredEngine>(() => new AlfredEngine());
+        public static AlfredEngine Instance { get { return lazy.Value; } }
+
+
+        public List<IPage> PagesList { get; private set; } = new List<IPage>();
+        public AlfredResponse Response { get; } = new AlfredResponse();
+        private GoogleSearchEngine m_GoogleSearchEngine = new GoogleSearchEngine();
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
 
         public event Action<IPage> OnPageAdded;
@@ -37,11 +36,8 @@ namespace Ask_Alfred.Infrastructure
             TimeoutExpired
         }
 
-        public AlfredEngine()
+        private AlfredEngine()
         {
-            WebDataList = new List<IWebDataSource>();
-            Response = new AlfredResponse(); // TODO: must be here?
-            m_GoogleSearchEngine = new GoogleSearchEngine();
             r_WebSitesUrls = new Dictionary<eWebSite, string>
             {
                 // when removing /questions ParseDataAsync can never end! - must check it
@@ -49,28 +45,20 @@ namespace Ask_Alfred.Infrastructure
                 //{ eWebSite.Microsoft, "..." }
             };
 
-         
-
             m_TimeoutTimer.Elapsed += new ElapsedEventHandler(timeoutExpired);
             m_TimeoutTimer.Interval = timeoutDurationInSeconds * 1000;
         }
 
-        public void Clear()
-        {
-            WebDataList.Clear();
-        }
         public async Task<AlfredResponse> SearchAsync(string i_SearchKey)
         {
             m_Status = eStatus.Searching;
             m_TimeoutTimer.Enabled = true;
+            PagesList.Clear();
 
             // TODO: not always stackoverflow should be the only website to search in
             // TODO: maximum of X urls for each search?
-            // TODO: repetition of links is unwanted - FIX that
 
-            m_GoogleSearchEngine.Clear();
-            m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
-                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey);
+            m_GoogleSearchEngine.ClearResults();
 
             // should be checked on projects of various kinds
             // should be checked on project that contain several types (like Alfred [1: c# 2: extension])
@@ -80,9 +68,8 @@ namespace Ask_Alfred.Infrastructure
                 m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
                 r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey + " " + activeProjectType);
             }
-
-            //m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
-            //    r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey + " Visual studio");
+            m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
+                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_SearchKey);
 
             // TODO: this call can never end!
             // https://stackoverflow.com/questions/10134310/how-to-cancel-a-task-in-await
@@ -91,18 +78,26 @@ namespace Ask_Alfred.Infrastructure
             return Response;
         }
 
-        // currently this method is where we are checking all of the functionallity
-        public async System.Threading.Tasks.Task CreateWebDataListFromGoogleResultsAsync()
+        public async Task CreateWebDataListFromGoogleResultsAsync()
         {
             foreach (GoogleSearchResult googleResult in m_GoogleSearchEngine.SearchResults)
             {
-                IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Link);
-                if (dataSource != null)
+                bool isPageInList = PagesList.Any(page => googleResult.Url.Contains(page.Url));
+
+                if (!isPageInList)
                 {
-                    await dataSource.ParseDataAsync();
-                    // Should stop during the parse as well
-                    if (m_Status == eStatus.Searching)
-                        OnPageAdded(dataSource.Page);
+                    IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Url);
+                    if (dataSource != null)
+                    {
+                        await dataSource.ParseDataAsync();
+
+                        // Should stop during the parse as well
+                        if (m_Status == eStatus.Searching)
+                        {
+                            PagesList.Add(dataSource.Page);
+                            OnPageAdded(dataSource.Page);
+                        }
+                    }
                 }
                 if (m_Status != eStatus.Searching)
                     break;
