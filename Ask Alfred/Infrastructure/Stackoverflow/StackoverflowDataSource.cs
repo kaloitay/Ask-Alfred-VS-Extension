@@ -28,6 +28,7 @@ namespace Ask_Alfred.Objects
 
         public StackoverflowDataSource(string i_Url)
         {
+            // TODO: move this logic to function
             string[] splitedUrl = i_Url.Split('/');
             if (splitedUrl.Length > 4)
                 int.TryParse(splitedUrl[4], out m_ID);
