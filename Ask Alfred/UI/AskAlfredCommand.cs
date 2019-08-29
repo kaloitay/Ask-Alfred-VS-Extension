@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Design;
+using Ask_Alfred.UI.VisualStudioApi;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
@@ -28,6 +29,8 @@ namespace Ask_Alfred.UI
         /// </summary>
         private readonly AsyncPackage package;
 
+        //private VisualStudioHandler m_VisualStudioHandler;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -42,6 +45,8 @@ namespace Ask_Alfred.UI
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
+
+            //VisualStudioHandler.SetCommandPackage;
         }
 
         /// <summary>
@@ -78,6 +83,25 @@ namespace Ask_Alfred.UI
             Instance = new AskAlfredCommand(package, commandService);
         }
 
+        //private AskAlfredWindow getAlfredWindow()
+        //{
+        //    ThreadHelper.ThrowIfNotOnUIThread();
+
+        //    // Get the instance number 0 of this tool window. This window is single instance so this instance
+        //    // is actually the only one.
+        //    // The last flag is set to true so that if the tool window does not exists it will be created.
+        //    ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
+
+        //    if ((null == window) || (null == window.Frame))
+        //    {
+        //        throw new NotSupportedException("Cannot create tool window");
+        //    }
+
+        //    IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+        //    Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+        //    return window as AskAlfredWindow;
+        //}
 
         /// <summary>
         /// Shows the tool window when the menu item is clicked.
@@ -86,6 +110,7 @@ namespace Ask_Alfred.UI
         /// <param name="e">The event args.</param>
         private void Execute(object sender, EventArgs e)
         {
+            // *** CODE DUPLICATION extracted to method but havent used here
             ThreadHelper.ThrowIfNotOnUIThread();
 
             // Get the instance number 0 of this tool window. This window is single instance so this instance
@@ -101,8 +126,8 @@ namespace Ask_Alfred.UI
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-            string selectedText = GetSelectedText();
-            string selectedOrFirstErrorDescription = GetSelectedOrFirstErrorValue("text");
+            string selectedText = VisualStudioHandler.GetSelectedText();
+            string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");
             //  string selectedErrorCode = GetSelectedOrFirstErrorCode();
 
             if (!String.IsNullOrEmpty(selectedText))
@@ -113,47 +138,21 @@ namespace Ask_Alfred.UI
             {
                 (window as AskAlfredWindow).AutoSearchSelectedText(selectedOrFirstErrorDescription);
             }
-
         }
 
-        public string GetSelectedText()
+        public void TemporaryExecuteAlfredWith(string i_Input)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
+            ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
 
-            var dte = (DTE)Package.GetGlobalService(typeof(DTE));
-            string selectedText = null;
-
-            if (dte.ActiveDocument != null)
+            if ((null == window) || (null == window.Frame))
             {
-                var selection = (TextSelection)dte.ActiveDocument.Selection;
-                selectedText = selection.Text;
+                throw new NotSupportedException("Cannot create tool window");
             }
 
-            return selectedText;
-        }
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-        // Values -> description == "text", errorCode == "errorcode"
-        public string GetSelectedOrFirstErrorValue(string i_Value)
-        {
-            string errorValue = null;
-
-            ThreadHelper.ThrowIfNotOnUIThread();
-            var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
-            var errorList = dte.ToolWindows.ErrorList as IErrorList;
-            var selected = errorList.TableControl.SelectedOrFirstEntry;
-
-            if (selected != null)
-            {
-                object content;
-
-                if (selected.TryGetValue(i_Value, out content))
-                {
-                    errorValue = (string)content;
-                }
-
-            }
-
-            return errorValue;
+            (window as AskAlfredWindow).AutoSearchSelectedText(i_Input);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Ask_Alfred.Infrasructure.Interfaces
+namespace Ask_Alfred.Infrastructure.Interfaces
 {
     public interface IPage
     {
