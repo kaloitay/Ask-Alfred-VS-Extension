@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Ask_Alfred.Infrastructure.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Ask_Alfred.Infrastructure.Interfaces;
-using System.Timers;
 using System.Linq;
+using System.Threading.Tasks;
+using System.Timers;
 
 namespace Ask_Alfred.Infrastructure
 {

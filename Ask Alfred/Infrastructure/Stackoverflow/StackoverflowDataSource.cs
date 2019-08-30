@@ -1,14 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+﻿using Ask_Alfred.Infrastructure;
 using Ask_Alfred.Infrastructure.Interfaces;
 using RavinduL.SEStandard;
 using RavinduL.SEStandard.Models;
-using Scopes = RavinduL.SEStandard.Models.Scopes;
-using System.Web;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
-using Ask_Alfred.Infrastructure;
+using System.Threading.Tasks;
+using System.Web;
+using Scopes = RavinduL.SEStandard.Models.Scopes;
 
 namespace Ask_Alfred.Objects
 {

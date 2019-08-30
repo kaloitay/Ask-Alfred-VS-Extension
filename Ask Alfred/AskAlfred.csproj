@@ -59,6 +59,7 @@
     <Compile Include="Infrastructure\AlfredResponse.cs" />
     <Compile Include="Infrastructure\GoogleSearchEngine.cs" />
     <Compile Include="Infrastructure\GoogleSearchResult.cs" />
+    <Compile Include="Infrastructure\Interfaces\IAlfredInput.cs" />
     <Compile Include="Infrastructure\Interfaces\IWebDataSource.cs" />
     <Compile Include="Infrastructure\Utils.cs" />
     <Compile Include="Infrastructure\WebDataSourceFactory.cs" />
@@ -72,10 +73,13 @@
       <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="UI\ESupportedProgramingLanguages.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulbTest\AlfredSuggestedAction.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulbTest\TestSuggestedActionsSourceProvider.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulbTest\TestSuggestedActionsSource.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulbTest\UpperCaseSuggestedAction.cs" />
+    <Compile Include="UI\VisualStudioApi\AlfredInput.cs" />
+    <Compile Include="UI\VisualStudioApi\AlfredInputManager.cs" />
+    <Compile Include="UI\VisualStudioApi\LightBulb\AlfredSuggestedAction.cs" />
+    <Compile Include="UI\VisualStudioApi\LightBulb\SuggestedActionsSourceProvider.cs" />
+    <Compile Include="UI\VisualStudioApi\LightBulb\SuggestedActionsSource.cs" />
+    <Compile Include="UI\VisualStudioApi\LightBulb\UpperCaseSuggestedAction.cs" />
+    <Compile Include="UI\VisualStudioApi\StringValueAttribute.cs" />
     <Compile Include="UI\VisualStudioApi\VisualStudioHandler.cs" />
     <Page Include="UI\Resources\Styles\Fonts.xaml">
       <SubType>Designer</SubType>

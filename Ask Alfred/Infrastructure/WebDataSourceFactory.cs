@@ -1,5 +1,5 @@
-﻿using Ask_Alfred.Objects;
-using Ask_Alfred.Infrastructure.Interfaces;
+﻿using Ask_Alfred.Infrastructure.Interfaces;
+using Ask_Alfred.Objects;
 using System;
 
 namespace Ask_Alfred.Infrastructure
