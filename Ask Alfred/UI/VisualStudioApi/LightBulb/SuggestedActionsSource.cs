@@ -6,7 +6,6 @@ using Microsoft.VisualStudio.Text.Operations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -41,7 +40,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
             }
 
             ITextStructureNavigator navigator = m_factory.NavigatorService.GetTextStructureNavigator(m_textBuffer);
-            
+
             wordExtent = navigator.GetExtentOfWord(point);
 
             return true;
@@ -68,10 +67,13 @@ namespace Ask_Alfred.UI.VisualStudioApi
             if (TryGetWordUnderCaret(out extent) && extent.IsSignificant)
             {
                 ITrackingSpan trackingSpan = range.Snapshot.CreateTrackingSpan(extent.Span, SpanTrackingMode.EdgeInclusive);
-             //   var upperAction = new UpperCaseSuggestedAction(trackingSpan);
+                //   var upperAction = new UpperCaseSuggestedAction(trackingSpan);
 
-                var alfredAction = new AlfredSuggestedAction(VisualStudioHandler.GetCurrentLineErrorDescription()); // *** not sure that tracking span required for me
-                
+                AlfredInputManager alfredInputManager = new AlfredInputManager(); // *** TODO: do not create an instance!!!!!
+                AlfredInput input = alfredInputManager.GetInputForAlfred();
+
+                var alfredAction = new AlfredSuggestedAction(input); // *** not sure that tracking span required for me
+
                 return new SuggestedActionSet[] { new SuggestedActionSet(new ISuggestedAction[] { alfredAction }) };
             }
             return Enumerable.Empty<SuggestedActionSet>();

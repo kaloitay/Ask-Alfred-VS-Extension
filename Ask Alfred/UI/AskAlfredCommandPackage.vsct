@@ -28,7 +28,7 @@
   </Commands>
 
   <CommandPlacements>
-    <CommandPlacement guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" priority="0x105">
+    <CommandPlacement guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" priority="0x000">
       <Parent guid="guidSHLMainMenu" id="IDG_VS_ERRORLIST_ERRORGROUP" />
     </CommandPlacement>
   </CommandPlacements>

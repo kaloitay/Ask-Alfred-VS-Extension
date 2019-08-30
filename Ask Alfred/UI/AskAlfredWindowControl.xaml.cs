@@ -1,16 +1,16 @@
 ﻿namespace Ask_Alfred.UI
 {
     using Ask_Alfred.Infrastructure;
+    using Ask_Alfred.Infrastructure.Interfaces;
+    using Ask_Alfred.Objects;
+    using EnvDTE;
     using Microsoft.VisualStudio.Shell;
     using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-    using EnvDTE;
-    using Package = Microsoft.VisualStudio.Shell.Package;
-    using Ask_Alfred.Infrastructure.Interfaces;
-    using Ask_Alfred.Objects;
     using System.Windows.Input;
     using System.Windows.Media;
+    using Package = Microsoft.VisualStudio.Shell.Package;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -149,9 +149,9 @@
         private void searchIsFinished()
         {
             //searchComboBox.IsEnabled = true;
-    /*        System.Windows.MessageBox.Show("Search is finished",
-                "Search is finished with " + dataGridViewPages.Items.Count + " results",
-                MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
+            /*        System.Windows.MessageBox.Show("Search is finished",
+                        "Search is finished with " + dataGridViewPages.Items.Count + " results",
+                        MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
         private void timeoutExpiredHandler()
         {
@@ -182,6 +182,13 @@
                 //dataGridViewPages.Items.Clear();
                 SearchBySelectedTextAsync(errorDescription); // TODO: change method name
             }
+        }
+
+        public async System.Threading.Tasks.Task SearchByInputAsync(IAlfredInput i_Input)
+        {
+            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_Input.Description);
+
+            searchIsFinished();
         }
 
         public async System.Threading.Tasks.Task SearchBySelectedTextAsync(string i_SelectedText)

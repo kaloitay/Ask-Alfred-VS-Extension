@@ -1,18 +1,16 @@
-﻿using Microsoft.VisualStudio.Imaging.Interop;
+﻿using Ask_Alfred.Infrastructure.Interfaces;
+using Microsoft.VisualStudio;
+using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.VisualStudio.Text;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
-using Ask_Alfred.UI;
-using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio;
 
 namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 {
@@ -59,13 +57,13 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         }
 
         //public AlfredSuggestedAction(ITrackingSpan span)
-        public AlfredSuggestedAction(string i_ErrorDescription)
+        public AlfredSuggestedAction(IAlfredInput i_Input)
         {
             // m_span = span;
             // m_snapshot = span.TextBuffer.CurrentSnapshot;
             // m_upper = span.GetText(m_snapshot).ToUpper();
 
-            m_error = i_ErrorDescription;//VisualStudioHandler.GetCurrentLineErrorDescription();
+            m_error = i_Input.Description;//i_ErrorDescription;//VisualStudioHandler.GetCurrentLineErrorDescription();
 
             m_display = string.Format("Ask Alfred: '{0}'", m_error);
         }
@@ -89,7 +87,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 
             AskAlfredWindow alfred = getAlfredToolWindow(windowFrame);
 
-            alfred.AutoSearchSelectedText(m_error);
+            alfred.AutoSearchByText(m_error);
         }
 
         private IVsWindowFrame openAlfredWithIVsUIShell()
