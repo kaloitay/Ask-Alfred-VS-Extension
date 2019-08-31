@@ -161,52 +161,18 @@
                   MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
 
-        /// <summary>
-        /// Handles click on the button by displaying a message box.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event args.</param>
-        [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void searchButton_Click(object sender, RoutedEventArgs e)
-        {
-            string errorDescription = getErrorDescription();
-            string errorCode = getErrorCode();
-
-            if (errorDescription == null)
-            {
-                //dataGridViewPages.Items.Add("No errors detected.");
-            }
-            else
-            {
-                //dataGridViewPages.Items.Clear();
-                SearchBySelectedTextAsync(errorDescription); // TODO: change method name
-            }
-        }
-
         public async System.Threading.Tasks.Task SearchByInputAsync(IAlfredInput i_Input)
         {
-            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_Input.Description);
-
+            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_Input);
             searchIsFinished();
         }
 
         public async System.Threading.Tasks.Task SearchBySelectedTextAsync(string i_SelectedText)
         {
-            // TODO: find a normal way to do it
-            // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
+            // TODO: fix this method!
 
-            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_SelectedText);
-
-            searchIsFinished();
-            // IPage or IWebDataSource?
-            //foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-            //     .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
-            //{
-            //    var props = mytype.GetFields();
-
-            //    //Console.WriteLine(props[0].GetValue(null));
-            //}
+            //AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_SelectedText);
+            //searchIsFinished();
         }
 
         // getErrorDescription returns the description of the first error code
@@ -263,7 +229,7 @@
         private void SearchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
 
-            if (e.Key == System.Windows.Input.Key.Enter && searchComboBox.IsEnabled == true)
+            if (e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
                 searchComboBox.IsEnabled = false;
                 SearchBySelectedTextAsync(searchComboBox.Text);
