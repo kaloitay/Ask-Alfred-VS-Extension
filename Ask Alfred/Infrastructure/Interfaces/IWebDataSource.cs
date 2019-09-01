@@ -6,7 +6,7 @@ namespace Ask_Alfred.Infrastructure.Interfaces
     public interface IWebDataSource
     {
         Task ParseDataAsync();
-        IPage Page { get;  }
+        IPage Page { get; }
 
         //static ESupportedProgrramingLanguages SupportedLanguages { get; }
 

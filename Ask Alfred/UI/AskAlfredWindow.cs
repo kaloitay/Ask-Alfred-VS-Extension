@@ -1,8 +1,9 @@
 ﻿namespace Ask_Alfred.UI
 {
+    using Ask_Alfred.Infrastructure.Interfaces;
+    using Microsoft.VisualStudio.Shell;
     using System;
     using System.Runtime.InteropServices;
-    using Microsoft.VisualStudio.Shell;
 
     /// <summary>
     /// This class implements the tool window exposed by this package and hosts a user control.
@@ -31,9 +32,16 @@
             this.Content = new AskAlfredWindowControl();
         }
 
-        public void AutoSearchSelectedText(string i_SelectedText)
+        // *** TODO: i think we dont need this method anymore
+        public void AutoSearchByText(string i_SelectedText)
         {
             (Content as AskAlfredWindowControl).AskAlfredSearchAsync(i_SelectedText);
         }
+
+        public void AutoSearch(IAlfredInput i_Input)
+        {
+            (Content as AskAlfredWindowControl).SearchByInputAsync(i_Input);
+        }
+
     }
 }

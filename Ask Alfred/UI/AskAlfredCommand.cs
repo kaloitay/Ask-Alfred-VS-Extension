@@ -1,10 +1,8 @@
-﻿using System;
-using System.ComponentModel.Design;
-using Ask_Alfred.UI.VisualStudioApi;
-using EnvDTE;
-using EnvDTE80;
+﻿using Ask_Alfred.UI.VisualStudioApi;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using System;
+using System.ComponentModel.Design;
 using Task = System.Threading.Tasks.Task;
 
 namespace Ask_Alfred.UI
@@ -29,7 +27,7 @@ namespace Ask_Alfred.UI
         /// </summary>
         private readonly AsyncPackage package;
 
-        //private VisualStudioHandler m_VisualStudioHandler;
+        private AlfredInputManager m_AlfredInputManager;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredCommand"/> class.
@@ -46,7 +44,7 @@ namespace Ask_Alfred.UI
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
 
-            //VisualStudioHandler.SetCommandPackage;
+            m_AlfredInputManager = new AlfredInputManager();
         }
 
         /// <summary>
@@ -83,26 +81,6 @@ namespace Ask_Alfred.UI
             Instance = new AskAlfredCommand(package, commandService);
         }
 
-        //private AskAlfredWindow getAlfredWindow()
-        //{
-        //    ThreadHelper.ThrowIfNotOnUIThread();
-
-        //    // Get the instance number 0 of this tool window. This window is single instance so this instance
-        //    // is actually the only one.
-        //    // The last flag is set to true so that if the tool window does not exists it will be created.
-        //    ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
-
-        //    if ((null == window) || (null == window.Frame))
-        //    {
-        //        throw new NotSupportedException("Cannot create tool window");
-        //    }
-
-        //    IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
-        //    Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
-
-        //    return window as AskAlfredWindow;
-        //}
-
         /// <summary>
         /// Shows the tool window when the menu item is clicked.
         /// </summary>
@@ -126,33 +104,22 @@ namespace Ask_Alfred.UI
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-            string selectedText = VisualStudioHandler.GetSelectedText();
-            string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");
-            //  string selectedErrorCode = GetSelectedOrFirstErrorCode();
+            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
 
-            if (!String.IsNullOrEmpty(selectedText))
-            {
-                (window as AskAlfredWindow).AutoSearchSelectedText(selectedText);
-            }
-            if (!String.IsNullOrEmpty(selectedOrFirstErrorDescription))
-            {
-                (window as AskAlfredWindow).AutoSearchSelectedText(selectedOrFirstErrorDescription);
-            }
-        }
+            (window as AskAlfredWindow).AutoSearch(alfredInput);
 
-        public void TemporaryExecuteAlfredWith(string i_Input)
-        {
-            ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
+            //string selectedText = VisualStudioHandler.GetSelectedText();
+            //string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");
+            ////  string selectedErrorCode = GetSelectedOrFirstErrorCode();
 
-            if ((null == window) || (null == window.Frame))
-            {
-                throw new NotSupportedException("Cannot create tool window");
-            }
-
-            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
-            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
-
-            (window as AskAlfredWindow).AutoSearchSelectedText(i_Input);
+            //if (!String.IsNullOrEmpty(selectedText))
+            //{
+            //    (window as AskAlfredWindow).AutoSearchByText(selectedText);
+            //}
+            //if (!String.IsNullOrEmpty(selectedOrFirstErrorDescription))
+            //{
+            //    (window as AskAlfredWindow).AutoSearchByText(selectedOrFirstErrorDescription);
+            //}
         }
     }
 }
