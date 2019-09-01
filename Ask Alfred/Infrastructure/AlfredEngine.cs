@@ -61,13 +61,13 @@ namespace Ask_Alfred.Infrastructure
             string activeProjectType = Utils.GetProjectTypeAsString();
             if (activeProjectType != null)
             {
-                m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
+                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
                 r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description + " " + activeProjectType);
             }
-            m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
                 r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description);
 
-            m_GoogleSearchEngine.AddSearchResultsFromQuery("site:" +
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
                 r_WebSitesUrls[eWebSite.Microsoft] + " " + i_Input.ErrorCode);
 
             // TODO: this call can never end! https://stackoverflow.com/questions/10134310/how-to-cancel-a-task-in-await
