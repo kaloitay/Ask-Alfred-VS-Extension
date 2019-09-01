@@ -12,9 +12,9 @@ namespace Ask_Alfred.Infrastructure
         private const string k_CustomSearchKey = "000838436833929131088:wnddlp0oh68"; // cx
         public List<GoogleSearchResult> SearchResults = new List<GoogleSearchResult>();
 
-        public void AddSearchResultsFromQuery(string i_Query)
+        public async System.Threading.Tasks.Task AddSearchResultsFromQueryAsync(string i_Query)
         {
-            dynamic queryResult = getResults(i_Query);
+            dynamic queryResult = await getResultsAsync(i_Query);
             insertSearchResults(queryResult);
         }
 
@@ -23,14 +23,15 @@ namespace Ask_Alfred.Infrastructure
             SearchResults.Clear();
         }
 
-        private string getUrlContentAsString(string i_Url)
+        private async System.Threading.Tasks.Task<string> getUrlContentAsStringAsync(string i_Url)
         {
             WebClient client = new WebClient();
             string urlContent;
 
+            // using () pattern
             try
             {
-                urlContent = client.DownloadString(i_Url);
+                urlContent = await client.DownloadStringTaskAsync(i_Url);
             }
             catch /*(WebException e)*/
             {
@@ -40,7 +41,7 @@ namespace Ask_Alfred.Infrastructure
             return urlContent;
         }
 
-        private dynamic getResults(string i_Query)
+        private async System.Threading.Tasks.Task<dynamic> getResultsAsync(string i_Query)
         {
             // TODO:
             // Add try catch here or in getUrlContentAsString
@@ -51,7 +52,7 @@ namespace Ask_Alfred.Infrastructure
                 "https://www.googleapis.com/customsearch/v1?key={0}&cx={1}&q={2}&alt=json",
                 k_ApiKey, k_CustomSearchKey, i_Query);
 
-            string searchResults = getUrlContentAsString(searchQuery);
+            string searchResults = await getUrlContentAsStringAsync(searchQuery);
             dynamic jsonData = JsonConvert.DeserializeObject(searchResults);
 
             return jsonData;
