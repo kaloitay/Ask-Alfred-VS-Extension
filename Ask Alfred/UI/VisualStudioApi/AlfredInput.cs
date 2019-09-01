@@ -6,15 +6,17 @@ namespace Ask_Alfred.UI.VisualStudioApi
     {
         public string Description { get; set; }
         public string ErrorCode { get; set; }
+        public string ProjectType { get; set; }
 
         public AlfredInput()
         {
 
         }
-        public AlfredInput(string i_Description, string i_ErrorCode)
+        public AlfredInput(string i_Description, string i_ErrorCode, string i_ProjectType)
         {
             Description = i_Description;
             ErrorCode = i_ErrorCode;
+            ProjectType = i_ProjectType;
         }
     }
 }
