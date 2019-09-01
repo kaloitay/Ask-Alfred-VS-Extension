@@ -4,6 +4,6 @@
     {
         string Description { get; set; }
         string ErrorCode { get; set; }
-
+        string ProjectType { get; set; }
     }
 }

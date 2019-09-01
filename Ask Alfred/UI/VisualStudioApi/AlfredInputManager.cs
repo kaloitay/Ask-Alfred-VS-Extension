@@ -23,6 +23,8 @@
                 errorDescription = VisualStudioHandler.GetSelectedErrorValue(VisualStudioHandler.eErrorListValue.Description);
                 errorCode = VisualStudioHandler.GetSelectedErrorValue(VisualStudioHandler.eErrorListValue.ErrorCode);
             }
+
+            string projetType = VisualStudioHandler.GetProjectTypeAsString();
             //else if (VisualStudioHandler.S)
             //string selectedText = VisualStudioHandler.GetSelectedText();
             //string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");
@@ -37,7 +39,7 @@
             //   // (window as AskAlfredWindow).AutoSearchByText(selectedOrFirstErrorDescription);
             //}
 
-            return new AlfredInput(errorDescription, errorCode);
+            return new AlfredInput(errorDescription, errorCode, projetType);
         }
     }
 }

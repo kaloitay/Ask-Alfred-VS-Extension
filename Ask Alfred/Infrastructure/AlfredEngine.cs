@@ -58,11 +58,10 @@ namespace Ask_Alfred.Infrastructure
             m_GoogleSearchEngine.ClearResults();
 
             // should be checked on projects of various kinds and on projects like Alfred (1: c# 2: extension)
-            string activeProjectType = Utils.GetProjectTypeAsString();
-            if (activeProjectType != null)
+            if (i_Input.ProjectType != null)
             {
                 await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
-                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description + " " + activeProjectType);
+                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description + " " + i_Input.ProjectType);
             }
             await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
                 r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description);
