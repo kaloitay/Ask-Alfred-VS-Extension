@@ -17,14 +17,14 @@ namespace Ask_Alfred.Objects
             m_Url = i_Url;
         }
 
-        private string getDocumentFromUrl(string url)
+        private async Task<string> getDocumentFromUrlAsync(string url)
         {
             string xmlStr;
 
             // catch errors
             using (var wc = new WebClient())
             {
-                xmlStr = wc.DownloadString(m_Url);
+                xmlStr = await wc.DownloadStringTaskAsync(m_Url);
             }
 
             return xmlStr;
@@ -33,7 +33,7 @@ namespace Ask_Alfred.Objects
         // async?
         public async Task ParseDataAsync()
         {
-            string xmlStr = getDocumentFromUrl(m_Url);
+            string xmlStr = await getDocumentFromUrlAsync(m_Url);
             HtmlDocument html = new HtmlDocument();
             html.LoadHtml(xmlStr);
             HtmlNode subjectNode = html.DocumentNode.SelectSingleNode("//*[@id='main']/h1");
