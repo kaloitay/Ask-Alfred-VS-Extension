@@ -67,6 +67,7 @@
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowPage.cs" />
     <Compile Include="UI\AskAlfredCommand.cs" />
     <Compile Include="UI\AskAlfredCommandPackage.cs" />
+    <Compile Include="UI\AskAlfredResultUIElement.cs" />
     <Compile Include="UI\AskAlfredWindow.cs" />
     <Compile Include="UI\AskAlfredWindowControl.xaml.cs">
       <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
@@ -77,7 +78,7 @@
     <Compile Include="UI\VisualStudioApi\LightBulbTest\TestSuggestedActionsSource.cs" />
     <Compile Include="UI\VisualStudioApi\LightBulbTest\UpperCaseSuggestedAction.cs" />
     <Compile Include="UI\VisualStudioApi\VisualStudioHandler.cs" />
-    <Page Include="UI\Resources\Styles\Fonts.xaml">
+    <Page Include="UI\Resources\Styles\AskAlfredResultStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
