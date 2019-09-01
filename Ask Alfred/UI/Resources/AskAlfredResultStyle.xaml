@@ -1,0 +1,56 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Style TargetType="ListViewItem">
+        <Setter Property="Height" Value="50" />
+    </Style>
+    
+    <Style TargetType="DockPanel" x:Key="ResultDockPanel">
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Grid.Row" Value="{Binding Path=NumOfResults}"/>
+    </Style>
+
+    <Style TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="Calibri Light"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+
+    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="DateTextBlock">
+        <Setter Property="FontSize" Value="8"/>
+        <Setter Property="DockPanel.Dock" Value="Top"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+    </Style>
+
+    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="WebsiteNameTextBlock">
+        <Setter Property="FontSize" Value="9"/>
+    </Style>
+
+    <Style TargetType="StackPanel" x:Key="WebsiteNameStackPanel">
+        <Setter Property="Orientation" Value="Horizontal"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="DockPanel.Dock" Value="Bottom"/>
+    </Style>
+
+    <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="SubjectTextBlock">
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="TextAlignment" Value="Justify"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="HorizontalAlignment" Value="Left"/>
+    </Style>
+
+    <Style TargetType="Image" x:Key="ResultImage">
+        <Setter Property="DockPanel.Dock" Value="Left"/>
+        <Setter Property="Height" Value="Auto"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Stretch" Value="None"/>
+        <Setter Property="Source" Value="Icons/go_to_web_icon.png"/>
+    </Style>
+
+    <Style TargetType="Image" x:Key="AddtionalInfoImage">
+        <Setter Property="Height" Value="7"/>
+        <Setter Property="Width" Value="7"/>
+        <Setter Property="Margin" Value="0,0,8,0"/>
+        <Setter Property="Source" Value="Icons/green_checkmark_stackoverflow_icon.png"/>
+    </Style>
+    
+</ResourceDictionary>

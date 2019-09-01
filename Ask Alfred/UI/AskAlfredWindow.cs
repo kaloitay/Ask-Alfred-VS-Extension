@@ -35,7 +35,7 @@
         // *** TODO: i think we dont need this method anymore
         public void AutoSearchByText(string i_SelectedText)
         {
-            (Content as AskAlfredWindowControl).SearchBySelectedTextAsync(i_SelectedText);
+            (Content as AskAlfredWindowControl).AskAlfredSearchAsync(i_SelectedText);
         }
 
         public void AutoSearch(IAlfredInput i_Input)

@@ -70,6 +70,7 @@
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowPage.cs" />
     <Compile Include="UI\AskAlfredCommand.cs" />
     <Compile Include="UI\AskAlfredCommandPackage.cs" />
+    <Compile Include="UI\AskAlfredResultUIElement.cs" />
     <Compile Include="UI\AskAlfredWindow.cs" />
     <Compile Include="UI\AskAlfredWindowControl.xaml.cs">
       <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
@@ -83,7 +84,7 @@
     <Compile Include="UI\VisualStudioApi\LightBulb\UpperCaseSuggestedAction.cs" />
     <Compile Include="UI\VisualStudioApi\StringValueAttribute.cs" />
     <Compile Include="UI\VisualStudioApi\VisualStudioHandler.cs" />
-    <Page Include="UI\Resources\Styles\Fonts.xaml">
+    <Page Include="UI\Resources\AskAlfredResultStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -99,9 +100,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="stylesheet.css" />
-    <Content Include="UI\Resources\Icons\ask_alfred_icon.png" />
-    <Content Include="UI\Resources\Icons\go_to_web_icon.png" />
-    <Content Include="UI\Resources\Icons\green_checkmark_stackoverflow_icon.png" />
+    <Resource Include="UI\Resources\Icons\ask_alfred_icon.png" />
+    <Resource Include="UI\Resources\Icons\go_to_web_icon.png" />
+    <Resource Include="UI\Resources\Icons\green_checkmark_stackoverflow_icon.png" />
     <Content Include="UI\Resources\Icons\loading_icon.png" />
     <VSCTCompile Include="UI\AskAlfredCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
