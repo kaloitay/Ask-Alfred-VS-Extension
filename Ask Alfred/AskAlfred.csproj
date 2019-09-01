@@ -78,7 +78,7 @@
     <Compile Include="UI\VisualStudioApi\LightBulbTest\TestSuggestedActionsSource.cs" />
     <Compile Include="UI\VisualStudioApi\LightBulbTest\UpperCaseSuggestedAction.cs" />
     <Compile Include="UI\VisualStudioApi\VisualStudioHandler.cs" />
-    <Page Include="UI\Resources\Styles\AskAlfredResultStyle.xaml">
+    <Page Include="UI\Resources\AskAlfredResultStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -94,9 +94,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="stylesheet.css" />
-    <Content Include="UI\Resources\Icons\ask_alfred_icon.png" />
-    <Content Include="UI\Resources\Icons\go_to_web_icon.png" />
-    <Content Include="UI\Resources\Icons\green_checkmark_stackoverflow_icon.png" />
+    <Resource Include="UI\Resources\Icons\ask_alfred_icon.png" />
+    <Resource Include="UI\Resources\Icons\go_to_web_icon.png" />
+    <Resource Include="UI\Resources\Icons\green_checkmark_stackoverflow_icon.png" />
     <Content Include="UI\Resources\Icons\loading_icon.png" />
     <VSCTCompile Include="UI\AskAlfredCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>

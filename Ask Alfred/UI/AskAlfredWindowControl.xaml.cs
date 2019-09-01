@@ -8,30 +8,25 @@
     using EnvDTE;
     using Package = Microsoft.VisualStudio.Shell.Package;
     using Ask_Alfred.Infrastructure.Interfaces;
-    using Ask_Alfred.Objects;
     using System.Windows.Input;
-    using System.Windows.Media;
-    using System;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
-        public static int NumOfResults { get; set; } = 1;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
         public AskAlfredWindowControl()
         {
             InitializeComponent();
-            IntializeAskAlfredWindow();
+            InitializeAskAlfredWindow();
         }
 
-        private void IntializeAskAlfredWindow()
+        private void InitializeAskAlfredWindow()
         {
-            //mainResultsGrid.Children.Clear();
+            resultsListView.Items.Clear();
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
             AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
         }
@@ -49,24 +44,16 @@
         private void createWindowResult(IPage i_Page)
         {
             AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
-            mainResultsGrid.Children.Add(askAlfredResultUIElement.resultRootDockPanel);
-            mainResultsGrid.Children.Add(askAlfredResultUIElement.gridSplitter);
-            NumOfResults++;
+            resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
         }
 
         private void searchIsFinished()
         {
-            //searchComboBox.IsEnabled = true;
-    /*        System.Windows.MessageBox.Show("Search is finished",
-                "Search is finished with " + dataGridViewPages.Items.Count + " results",
-                MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
+            searchComboBox.IsEnabled = true;
         }
         private void timeoutExpiredHandler()
         {
             //searchComboBox.IsEnabled = true;
-            /*  System.Windows.MessageBox.Show("Timeout Expired",
-                  "Timeout Expired after " + dataGridViewPages.Items.Count + " results",
-                  MessageBoxButton.OK, MessageBoxImage.Exclamation);*/
         }
 
         /// <summary>
@@ -93,7 +80,10 @@
 
         private void ClearAndSearch(string i_ErrorDescription)
         {
-            mainResultsGrid.Children.Clear();
+            searchComboBox.IsEnabled = false;
+            resultsListView.Items.Clear();
+            searchComboBox.Text = i_ErrorDescription;
+            searchingForTextBlock.Text = "Searching For '"+ i_ErrorDescription +"'";
             AskAlfredSearchAsync(i_ErrorDescription);
         }
 
@@ -168,12 +158,16 @@
         }
         private void SearchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
-
             if (e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
-                searchComboBox.IsEnabled = false;
                 ClearAndSearch(searchComboBox.Text);
             }
         }
+
+        //private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
+        //{
+        //    Debug.Write("@@@@@@@@@@@@@@" + (sender as Control).Name + "@@@@@@@@@@@@@@@");
+        //    System.Diagnostics.Process.Start((sender as Control).Name);
+        //}
     }
 }
