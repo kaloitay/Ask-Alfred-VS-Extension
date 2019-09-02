@@ -2,12 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style TargetType="ListViewItem">
-        <Setter Property="Height" Value="50" />
-    </Style>
-
-    <Style TargetType="DockPanel" x:Key="ResultDockPanel">
-        <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="Grid.Row" Value="{Binding Path=NumOfResults}"/>
+        <Setter Property="Height" Value="70" />
     </Style>
 
     <Style TargetType="TextBlock">
@@ -16,13 +11,13 @@
     </Style>
 
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="DateTextBlock">
-        <Setter Property="FontSize" Value="8"/>
+        <Setter Property="FontSize" Value="9"/>
         <Setter Property="DockPanel.Dock" Value="Top"/>
         <Setter Property="HorizontalAlignment" Value="Right"/>
     </Style>
 
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="WebsiteNameTextBlock">
-        <Setter Property="FontSize" Value="9"/>
+        <Setter Property="FontSize" Value="10"/>
     </Style>
 
     <Style TargetType="StackPanel" x:Key="WebsiteNameStackPanel">
@@ -32,6 +27,7 @@
     </Style>
 
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="SubjectTextBlock">
+        <Setter Property="FontSize" Value="12"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
         <Setter Property="TextAlignment" Value="Justify"/>
         <Setter Property="VerticalAlignment" Value="Center"/>

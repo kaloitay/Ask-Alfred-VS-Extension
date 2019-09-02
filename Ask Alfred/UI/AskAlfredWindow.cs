@@ -36,12 +36,5 @@
         {
             (Content as AskAlfredWindowControl).AutoSearch();
         }
-
-        // TODO: I think we dont need this method anymore. Even when selecting text we have more info (like project type: C#/C/C++ etc)
-        //public void AutoSearchByText(string i_SelectedText)
-        //{
-        //    (Content as AskAlfredWindowControl).AskAlfredSearchAsync(i_SelectedText);
-        //}
-
     }
 }
