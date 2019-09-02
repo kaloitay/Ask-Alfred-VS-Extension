@@ -62,7 +62,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             // m_span = span;
             // m_snapshot = span.TextBuffer.CurrentSnapshot;
             // m_upper = span.GetText(m_snapshot).ToUpper();
-
+            
             m_error = i_Input.Description;//i_ErrorDescription;//VisualStudioHandler.GetCurrentLineErrorDescription();
 
             m_display = string.Format("Ask Alfred: '{0}'", m_error);
@@ -87,7 +87,8 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 
             AskAlfredWindow alfred = getAlfredToolWindow(windowFrame);
 
-            alfred.AutoSearchByText(m_error);
+            // TODO: GAL help fix that error in the line below!!!!!!!!!!!!!!!!!
+            // alfred.AutoSearchByText(m_error);
         }
 
         private IVsWindowFrame openAlfredWithIVsUIShell()

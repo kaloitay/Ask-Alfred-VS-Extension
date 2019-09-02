@@ -27,8 +27,6 @@ namespace Ask_Alfred.UI
         /// </summary>
         private readonly AsyncPackage package;
 
-        private AlfredInputManager m_AlfredInputManager;
-
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredCommand"/> class.
         /// Adds our command handlers for menu (commands must exist in the command table file)
@@ -43,8 +41,6 @@ namespace Ask_Alfred.UI
             var menuCommandID = new CommandID(CommandSet, CommandId);
             var menuItem = new MenuCommand(this.Execute, menuCommandID);
             commandService.AddCommand(menuItem);
-
-            m_AlfredInputManager = new AlfredInputManager();
         }
 
         /// <summary>
@@ -104,9 +100,7 @@ namespace Ask_Alfred.UI
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
-
-            (window as AskAlfredWindow).AutoSearch(alfredInput);
+            (window as AskAlfredWindow).AutoSearch();
 
             //string selectedText = VisualStudioHandler.GetSelectedText();
             //string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");

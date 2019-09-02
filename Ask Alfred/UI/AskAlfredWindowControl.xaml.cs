@@ -9,23 +9,28 @@
     using Package = Microsoft.VisualStudio.Shell.Package;
     using Ask_Alfred.Infrastructure.Interfaces;
     using System.Windows.Input;
+    using System;
+    using Ask_Alfred.UI.VisualStudioApi;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
+        private AlfredInputManager m_AlfredInputManager;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
         public AskAlfredWindowControl()
         {
             InitializeComponent();
-            InitializeAskAlfredWindow();
+            initializeAskAlfredWindow();
         }
 
-        private void InitializeAskAlfredWindow()
+        private void initializeAskAlfredWindow()
         {
+            m_AlfredInputManager = new AlfredInputManager();
             resultsListView.Items.Clear();
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
             AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
@@ -40,13 +45,6 @@
             }
             // else...
         }
-
-        private void createWindowResult(IPage i_Page)
-        {
-            AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
-            resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
-        }
-
         private void searchIsFinished()
         {
             searchComboBox.IsEnabled = true;
@@ -55,119 +53,55 @@
         {
             //searchComboBox.IsEnabled = true;
         }
-
-        /// <summary>
-        /// Handles click on the button by displaying a message box.
-        /// </summary>
-        /// <param name="sender">The event sender.</param>
-        /// <param name="e">The event args.</param>
-        [SuppressMessage("Microsoft.Globalization", "CA1300:SpecifyMessageBoxOptions", Justification = "Sample code")]
-        [SuppressMessage("StyleCop.CSharp.NamingRules", "SA1300:ElementMustBeginWithUpperCaseLetter", Justification = "Default event handler naming pattern")]
-        private void searchButton_Click(object sender, RoutedEventArgs e)
+        private void createWindowResult(IPage i_Page)
         {
-            string errorDescription = getErrorDescription();
-            string errorCode = getErrorCode();
-
-            if (errorDescription == null)
-            {
-                //dataGridViewPages.Items.Add("No errors detected.");
-            }
-            else
-            {
-                ClearAndSearch(errorDescription);
-            }
+            AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
+            ListViewItem l = new ListViewItem();
+            l.Content = askAlfredResultUIElement.dockPanel;
+            resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
         }
 
-        private void ClearAndSearch(string i_ErrorDescription)
+        private void askAlfredSearch(IAlfredInput i_Input)
+        {
+            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
+
+            setAskAlfredWindowForNewSearch(i_Input);
+            searchByInputAsync(i_Input);
+        }
+
+        private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
             searchComboBox.IsEnabled = false;
             resultsListView.Items.Clear();
-            searchComboBox.Text = i_ErrorDescription;
-            searchingForTextBlock.Text = "Searching For '"+ i_ErrorDescription +"'";
-            AskAlfredSearchAsync(i_ErrorDescription);
+            searchComboBox.Text = i_Input.Description;
+            searchingForTextBlock.Text = "Searching For '" + i_Input.Description + "'";
         }
 
-        public async System.Threading.Tasks.Task AskAlfredSearchAsync(string i_SelectedText)
+        private async System.Threading.Tasks.Task searchByInputAsync(IAlfredInput i_Input)
         {
-            // TODO: find a normal way to do it
-            // ESupportedProgrramingLanguages currentLanguage = ESupportedProgrramingLanguages.CSharp;
-
-            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_SelectedText);
-
+            AlfredResponse response = await AlfredEngine.Instance.SearchAsync(i_Input);
             searchIsFinished();
-            // IPage or IWebDataSource?
-            //foreach (Type mytype in System.Reflection.Assembly.GetExecutingAssembly().GetTypes()
-            //     .Where(mytype => mytype.GetInterfaces().Contains(typeof(IPage))))
-            //{
-            //    var props = mytype.GetFields();
-
-            //    //Console.WriteLine(props[0].GetValue(null));
-            //}
         }
 
-        // getErrorDescription returns the description of the first error code
-        private string getErrorDescription()
-        { // should i throw exception if no errors ? 
-            string description = null;
-
-            var dte = (EnvDTE80.DTE2)Package.GetGlobalService(typeof(DTE));
-            var errorList = dte.ToolWindows.ErrorList;
-
-            if (errorList.ErrorItems.Count > 0)
-            {
-                // TODO: get SELECTED error description.
-                description = errorList.ErrorItems.Item(1).Description;
-            }
-
-            //for (int i = 1; i <= errorList.ErrorItems.Count; i++)
-            //{
-            //    // errorItem contains -> Description, FileName, Line, Column, Project
-            //    var errorItem = errorList.ErrorItems.Item(i);
-
-            //    description = errorItem.Description;
-            //}
-
-            return description;
-        }
-
-        // getErrorCode returns the selected or first error code
-        private string getErrorCode()
-        {
-            string errorCode = null;
-
-            var dte = (EnvDTE80.DTE2)Package.GetGlobalService(typeof(DTE));
-            var errorList = dte.ToolWindows.ErrorList as IErrorList;
-            var selected = errorList.TableControl.SelectedOrFirstEntry;
-
-            //if (errorList.AreErrorsShown)
-            //{
-            //    errorList.TableControl.SelectAll();
-            //}
-
-            if (selected != null)
-            {
-                object content; // how do i get the url ?
-
-                if (selected.TryGetValue("errorcode", out content))
-                {
-                    errorCode = (string)content;
-                }
-            }
-
-            return errorCode;
-        }
-        private void SearchComboBox_KeyDown(object sender, KeyEventArgs e)
+        private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
-                ClearAndSearch(searchComboBox.Text);
+                AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
+                askAlfredSearch(alfredInput);
             }
         }
 
-        //private void DockPanel_MouseDown(object sender, MouseButtonEventArgs e)
-        //{
-        //    Debug.Write("@@@@@@@@@@@@@@" + (sender as Control).Name + "@@@@@@@@@@@@@@@");
-        //    System.Diagnostics.Process.Start((sender as Control).Name);
-        //}
+        public void AutoSearch()
+        {
+            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
+            askAlfredSearch(alfredInput);
+        }
+
+        private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            // TODO: change to open relevant URL
+            System.Diagnostics.Process.Start("www.google.com");
+        }
     }
 }
