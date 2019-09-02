@@ -41,5 +41,13 @@
 
             return new AlfredInput(errorDescription, errorCode, projetType);
         }
+
+        internal AlfredInput GetInputForAlfredWindowSearchBar(string i_SearchKey)
+        {
+            string searchKey = i_SearchKey;
+            string projetType = VisualStudioHandler.GetProjectTypeAsString();
+
+            return new AlfredInput(searchKey, null, projetType);
+        }
     }
 }

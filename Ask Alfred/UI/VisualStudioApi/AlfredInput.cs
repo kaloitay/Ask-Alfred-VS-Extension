@@ -4,6 +4,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
 {
     internal class AlfredInput : IAlfredInput
     {
+        // TODO: Description should be used for search from error and search from combo box search
         public string Description { get; set; }
         public string ErrorCode { get; set; }
         public string ProjectType { get; set; }

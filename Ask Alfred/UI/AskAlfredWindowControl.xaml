@@ -22,7 +22,7 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
-        <ComboBox Grid.Row="0" x:Name="searchComboBox" IsEditable="True" KeyDown="SearchComboBox_KeyDown" Height="20" Margin="10,3,10.2,0" HorizontalAlignment="Stretch"/>
+        <ComboBox Grid.Row="0" x:Name="searchComboBox" IsEditable="True" KeyDown="searchComboBox_KeyDown" Height="20" Margin="10,3,10.2,0" HorizontalAlignment="Stretch"/>
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Image Height="7" Width="7" Margin="0,0,8,0"/>
             <TextBlock x:Name="searchingForTextBlock"/>
@@ -31,7 +31,7 @@
                       ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       HorizontalContentAlignment="Stretch" Height="Auto"
-                      BorderThickness="0">
+                      BorderThickness="0" MouseDoubleClick="ListView_MouseDoubleClick">
 
             <ListViewItem >
                 <DockPanel >

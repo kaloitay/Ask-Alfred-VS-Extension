@@ -9,7 +9,6 @@ namespace Ask_Alfred.UI
     {
         private readonly string DATE_FORMAT = "dd/MM/yyyy";
 
-        //private ListViewItem resultListViewItem { get; set; }
         public DockPanel dockPanel { get; private set; }
         private StackPanel websiteNameStackPanel { get; set; }
         private Image resultImage { get; set; }

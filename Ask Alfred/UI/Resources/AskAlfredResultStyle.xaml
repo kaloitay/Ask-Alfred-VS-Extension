@@ -4,7 +4,7 @@
     <Style TargetType="ListViewItem">
         <Setter Property="Height" Value="50" />
     </Style>
-    
+
     <Style TargetType="DockPanel" x:Key="ResultDockPanel">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="Grid.Row" Value="{Binding Path=NumOfResults}"/>
