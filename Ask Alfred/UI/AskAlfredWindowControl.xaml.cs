@@ -56,8 +56,6 @@
         private void createWindowResult(IPage i_Page)
         {
             AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
-            ListViewItem l = new ListViewItem();
-            l.Content = askAlfredResultUIElement.dockPanel;
             resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
         }
 
@@ -100,8 +98,12 @@
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            // TODO: change to open relevant URL
-            System.Diagnostics.Process.Start("www.google.com");
+            if (sender is ListView)
+            {
+                DockPanel selectedDockPanel = (DockPanel)(sender as ListView).SelectedItems[0];
+                System.Diagnostics.Process.Start(selectedDockPanel.Tag.ToString());
+            }
+
         }
     }
 }

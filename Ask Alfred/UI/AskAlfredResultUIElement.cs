@@ -39,7 +39,6 @@ namespace Ask_Alfred.UI
 
         private void setControlsStyle(ResourceDictionary i_Resources)
         {
-            dockPanel.Style = (Style)(i_Resources["ResultDockPanel"]);
             dateTextBlock.Style = (Style)(i_Resources["DateTextBlock"]);
             subjectTextBlock.Style = (Style)(i_Resources["SubjectTextBlock"]);
             websiteNameTextBlock.Style = (Style)(i_Resources["WebsiteNameTextBlock"]);
@@ -67,17 +66,17 @@ namespace Ask_Alfred.UI
             websiteNameStackPanel.Children.Add(websiteNameTextBlock);
         }
 
-        private void setControlsText(IPage page)
+        private void setControlsText(IPage i_Page)
         {
-            dateTextBlock.Text = page.Date.ToString(DATE_FORMAT);
-            websiteNameTextBlock.Text = page.WebsiteName;
-            subjectTextBlock.Text = page.Subject;
+            dockPanel.Tag = i_Page.Url;
+            dateTextBlock.Text = i_Page.Date.ToString(DATE_FORMAT);
+            websiteNameTextBlock.Text = i_Page.WebsiteName;
+            subjectTextBlock.Text = i_Page.Subject;
         }
 
         private void createControls(IPage i_Page)
         {
             dockPanel = new DockPanel();
-            //dockPanel.Name = i_Page.Url; // for launching the browser with the specefic URL
             dateTextBlock = new TextBlock();
             websiteNameStackPanel = new StackPanel();
             websiteNameTextBlock = new TextBlock();

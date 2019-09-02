@@ -7,7 +7,6 @@
 
     <Style TargetType="DockPanel" x:Key="ResultDockPanel">
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
-        <Setter Property="Grid.Row" Value="{Binding Path=NumOfResults}"/>
     </Style>
 
     <Style TargetType="TextBlock">
