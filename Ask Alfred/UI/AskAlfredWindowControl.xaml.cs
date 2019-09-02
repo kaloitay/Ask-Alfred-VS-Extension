@@ -101,9 +101,12 @@
             if (sender is ListView)
             {
                 DockPanel selectedDockPanel = (DockPanel)(sender as ListView).SelectedItems[0];
-                System.Diagnostics.Process.Start(selectedDockPanel.Tag.ToString());
-            }
 
+                if (selectedDockPanel != null)
+                {
+                    System.Diagnostics.Process.Start(selectedDockPanel.Tag.ToString());
+                }
+            }
         }
     }
 }
