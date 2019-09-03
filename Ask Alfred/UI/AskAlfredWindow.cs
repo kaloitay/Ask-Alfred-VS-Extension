@@ -32,9 +32,11 @@
             this.Content = new AskAlfredWindowControl();
         }
 
-        internal void AutoSearch()
+        internal async System.Threading.Tasks.Task AutoSearchAsync()
         {
-            (Content as AskAlfredWindowControl).AutoSearch();
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            AskAlfredWindowControl content = Content as AskAlfredWindowControl;
+            await content.AutoSearchAsync();
         }
     }
 }

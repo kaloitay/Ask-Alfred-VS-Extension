@@ -100,7 +100,8 @@ namespace Ask_Alfred.UI
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-            (window as AskAlfredWindow).AutoSearch();
+            AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
+            askAlfredWindow.AutoSearchAsync();
 
             //string selectedText = VisualStudioHandler.GetSelectedText();
             //string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");

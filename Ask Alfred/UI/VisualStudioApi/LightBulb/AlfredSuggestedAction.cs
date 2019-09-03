@@ -2,8 +2,8 @@
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
+using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
-using Microsoft.VisualStudio.Text;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,11 +16,11 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 {
     class AlfredSuggestedAction : ISuggestedAction
     {
-        private ITrackingSpan m_span;
-        private string m_upper; // *** instead of m_upper - alfred first result title
+        //private ITrackingSpan m_span;
+        //private string m_upper; // *** instead of m_upper - alfred first result title
         private string m_error;
         private string m_display;
-        private ITextSnapshot m_snapshot;
+        //private ITextSnapshot m_snapshot;
 
         public bool HasActionSets
         {
@@ -62,7 +62,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             // m_span = span;
             // m_snapshot = span.TextBuffer.CurrentSnapshot;
             // m_upper = span.GetText(m_snapshot).ToUpper();
-            
+
             m_error = i_Input.Description;//i_ErrorDescription;//VisualStudioHandler.GetCurrentLineErrorDescription();
 
             m_display = string.Format("Ask Alfred: '{0}'", m_error);
@@ -70,7 +70,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 
         public Task<IEnumerable<SuggestedActionSet>> GetActionSetsAsync(CancellationToken cancellationToken)
         {
-            return Task.FromResult<IEnumerable<SuggestedActionSet>>(null);
+            return System.Threading.Tasks.Task.FromResult<IEnumerable<SuggestedActionSet>>(null);
         }
 
         public Task<object> GetPreviewAsync(CancellationToken cancellationToken)
@@ -78,11 +78,12 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             var textBlock = new TextBlock();
             textBlock.Padding = new Thickness(5);
             textBlock.Inlines.Add(new Run() { Text = "Preview of response" }); // *** insert here a first result title ?
-            return Task.FromResult<object>(textBlock);
+            return System.Threading.Tasks.Task.FromResult<object>(textBlock);
         }
 
         public void Invoke(CancellationToken cancellationToken)
-        { // *** here we will present alfreds window 
+        { // *** here we will present alfreds window
+            ThreadHelper.ThrowIfNotOnUIThread();
             IVsWindowFrame windowFrame = openAlfredWithIVsUIShell();
 
             AskAlfredWindow alfred = getAlfredToolWindow(windowFrame);
@@ -114,9 +115,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         {
             Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
 
-            object window;
-
-            i_WindowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_DocView, out window);
+            i_WindowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_DocView, out object window);
 
             if (window is AskAlfredWindow)
                 return window as AskAlfredWindow;

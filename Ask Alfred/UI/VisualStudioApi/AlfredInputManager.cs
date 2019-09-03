@@ -1,4 +1,6 @@
-﻿namespace Ask_Alfred.UI.VisualStudioApi
+﻿using Microsoft.VisualStudio.Shell;
+
+namespace Ask_Alfred.UI.VisualStudioApi
 {
     internal class AlfredInputManager // *** TODO: should be singleton !!!! 
     {
@@ -6,11 +8,12 @@
         {
             string errorDescription = null;
             string errorCode = null;
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             // *** function for testing
-            if (VisualStudioHandler.UserIsOnEditor())
+            if (VisualStudioHandler.IsUserOnTextEditor())
             {
-                int i = 0;
+                //int i = 0;
             }
 
             if (VisualStudioHandler.IsCurrentLineHasError())
@@ -44,6 +47,7 @@
 
         internal AlfredInput GetInputForAlfredWindowSearchBar(string i_SearchKey)
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             string searchKey = i_SearchKey;
             string projetType = VisualStudioHandler.GetProjectTypeAsString();
 
