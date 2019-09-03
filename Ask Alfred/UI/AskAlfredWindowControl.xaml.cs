@@ -43,7 +43,7 @@
                 // use stackoverflowPage.Rank to get the rank
                 createWindowResult(i_Page);
             }
-            // else...
+            // else
         }
         private void searchIsFinished()
         {
