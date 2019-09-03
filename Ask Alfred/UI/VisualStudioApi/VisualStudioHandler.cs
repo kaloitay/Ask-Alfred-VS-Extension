@@ -14,7 +14,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
     {
         private static readonly Dictionary<string, string> r_ProjectGuids;
 
-        public enum eErrorListValue : int
+        public enum eErrorListValue : int 
         {
             [StringValue("text")]
             Description,
@@ -104,16 +104,17 @@ namespace Ask_Alfred.UI.VisualStudioApi
             return attribs.Length > 0 ? attribs[0].StringValue : null;
         }
 
-        public static bool UserIsOnEditor()
+        public static bool IsUserOnTextEditor()
         {
-            var dte = (DTE)Package.GetGlobalService(typeof(DTE));
+            ThreadHelper.ThrowIfNotOnUIThread();
+            DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
 
-            var what = dte.ActiveWindow;//.ObjectKind
+            Window what = dte.ActiveWindow; //.ObjectKind
             
             return false;
         }
 
-        public static bool UserIsOnErrorListToolWindow()
+        public static bool IsUserOnErrorListToolWindow()
         {
             DTE2 dte = (DTE2)Package.GetGlobalService(typeof(DTE));
 
@@ -135,7 +136,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
                     int line = errorList.ErrorItems.Item(i).Line;
 
                     if (line == i_LineNumber)
-                        errorItem = errorList.ErrorItems.Item(i);//.Description;
+                        errorItem = errorList.ErrorItems.Item(i); //.Description;
                 }
             }
 
@@ -144,6 +145,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
         public static ErrorItem GetErrorItemByActiveDocumentCurrentLine()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             dynamic selection = GetActiveDocumentTextSelection();
 
             int currentLine = selection.CurrentLine;
@@ -153,17 +155,16 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
         public static string GetCurrentLineErrorCode()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             ErrorItem errorItem = GetErrorItemByActiveDocumentCurrentLine();
             IErrorList errorList = GetErrorList();
             string errorCode = null;
 
-            var type = errorItem.GetType();
+            Type type = errorItem.GetType();
 
             foreach (ITableEntry entry in errorList.TableControl.Entries)
             {
-                int entryLineNumber;
-
-                bool hasValue = entry.TryGetValue(eErrorListValue.Line.GetStringValue(), out entryLineNumber);
+                bool hasValue = entry.TryGetValue(eErrorListValue.Line.GetStringValue(), out int entryLineNumber);
 
                 // *** bugs potential - many errors in the same line .....
                 if (hasValue && entryLineNumber + 1 == errorItem.Line)
@@ -177,16 +178,16 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
         public static bool IsCurrentLineHasError()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             return !String.IsNullOrEmpty(GetCurrentLineErrorDescription());
         }
 
         public static string GetCurrentLineErrorDescription()
         {
-            //  ThreadHelper.ThrowIfNotOnUIThread();
-
+            ThreadHelper.ThrowIfNotOnUIThread();
             ErrorItem errorItem = GetErrorItemByActiveDocumentCurrentLine();
 
-            return errorItem != null ? errorItem.Description : null;
+            return errorItem?.Description;
         }
 
         /// <summary>
@@ -195,7 +196,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
         /// <returns></returns>
         public static dynamic GetActiveDocumentTextSelection()
         {
-            //   ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
             DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
             dynamic selection = null;
@@ -215,6 +216,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
         /// <returns></returns>
         public static string GetSelectedText()
         {
+            ThreadHelper.ThrowIfNotOnUIThread();
             var selection = GetActiveDocumentTextSelection();
 
             string selectedText = selection.Text;
@@ -238,9 +240,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
             if (selected != null)
             {
-                object content;
-
-                if (selected.TryGetValue(i_Value, out content))
+                if (selected.TryGetValue(i_Value, out object content))
                 {
                     errorValue = (string)content;
                 }
@@ -274,9 +274,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
             if (selected != null)
             {
-                object content;
-
-                if (selected.TryGetValue(i_Value.GetStringValue(), out content))
+                if (selected.TryGetValue(i_Value.GetStringValue(), out object content))
                 {
                     errorValue = (string)content;
                 }
@@ -297,28 +295,28 @@ namespace Ask_Alfred.UI.VisualStudioApi
         // *** TODO: try to change from var to specific type
         private static IErrorList GetErrorList()
         {
-            //ThreadHelper.ThrowIfNotOnUIThread();
-
-            var dte = (DTE2)Package.GetGlobalService(typeof(DTE));
-
-            var errorList = dte.ToolWindows.ErrorList as IErrorList;
+            DTE2 dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            IErrorList errorList = dte.ToolWindows.ErrorList as IErrorList;
 
             return errorList;
         }
 
 
 
-       
-        private static Project getActiveProject()
+        public static string GetProjectTypeAsString()
         {
-            //ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
             DTE dte = Package.GetGlobalService(typeof(SDTE)) as DTE;
-            return getActiveProject(dte);
+            Project activeProject = getActiveProject(dte);
+
+            r_ProjectGuids.TryGetValue(activeProject.Kind, out string projectType);
+
+            return projectType;
         }
 
         private static Project getActiveProject(DTE dte)
         {
-            //ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
             Project activeProject = null;
 
             Array activeSolutionProjects = dte.ActiveSolutionProjects as Array;
@@ -328,15 +326,6 @@ namespace Ask_Alfred.UI.VisualStudioApi
             }
 
             return activeProject;
-        }
-        public static string GetProjectTypeAsString()
-        {
-            //ThreadHelper.ThrowIfNotOnUIThread();
-            string projectType = null;
-            Project activeProject = getActiveProject();
-            r_ProjectGuids.TryGetValue(activeProject.Kind, out projectType);
-
-            return projectType;
         }
     }
 }
