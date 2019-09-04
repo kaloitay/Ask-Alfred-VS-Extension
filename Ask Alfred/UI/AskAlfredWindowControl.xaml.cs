@@ -7,9 +7,7 @@
     using Ask_Alfred.Infrastructure.Interfaces;
     using System.Windows.Input;
     using Ask_Alfred.UI.VisualStudioApi;
-    using System;
     using System.Collections;
-    using System.Diagnostics;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -54,15 +52,12 @@
         }
         private void createWindowResult(IPage i_Page)
         {
-            //ThreadHelper.ThrowIfNotOnUIThread();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
 
                 int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
-                Debug.Write("@@@@@@" + "Subject Text: " + i_Page.Subject + " Rank: " + i_Page.Rank + "@@@@@");
                 resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
-                //resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
             });
         }
 
