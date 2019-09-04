@@ -33,9 +33,11 @@ namespace Ask_Alfred.Infrastructure
             {
                 urlContent = await client.DownloadStringTaskAsync(i_Url);
             }
-            catch /*(WebException e)*/
+            catch (WebException e)
             {
-                throw new WebException("No internet connection");
+                // TODO: (" + e.ToString() + ")" just for debugging
+                // TODO: split to two different WebException (over the limit/no interrnet connection)
+                throw new WebException("No internet connection (" + e.ToString() + ")");
             }
 
             return urlContent;

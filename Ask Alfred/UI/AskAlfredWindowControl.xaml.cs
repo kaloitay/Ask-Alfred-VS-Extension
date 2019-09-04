@@ -55,8 +55,12 @@
         }
         private void createWindowResult(IPage i_Page)
         {
-            AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
-            resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
+            //ThreadHelper.ThrowIfNotOnUIThread();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
+                resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
+            });
         }
 
         private async System.Threading.Tasks.Task askAlfredSearchAsync(IAlfredInput i_Input)
