@@ -2,15 +2,14 @@
 {
     using Ask_Alfred.Infrastructure;
     using Microsoft.VisualStudio.Shell;
-    using System.Diagnostics.CodeAnalysis;
     using System.Windows;
     using System.Windows.Controls;
-    using EnvDTE;
-    using Package = Microsoft.VisualStudio.Shell.Package;
     using Ask_Alfred.Infrastructure.Interfaces;
     using System.Windows.Input;
-    using System;
     using Ask_Alfred.UI.VisualStudioApi;
+    using System;
+    using System.Collections;
+    using System.Diagnostics;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -18,7 +17,7 @@
     public partial class AskAlfredWindowControl : UserControl
     {
         private AlfredInputManager m_AlfredInputManager;
-
+        ArrayList sortedRankArray = new ArrayList();
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
@@ -59,8 +58,26 @@
             Application.Current.Dispatcher.Invoke(() =>
             {
                 AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
-                resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
+
+                int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
+                Debug.Write("@@@@@@" + "Subject Text: " + i_Page.Subject + " Rank: " + i_Page.Rank + "@@@@@");
+                resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
+                //resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
             });
+        }
+
+        private int insertPageToSortedRankArray(double i_Rank)
+        {
+            int resultIndex;
+
+            for (resultIndex = 0; resultIndex < sortedRankArray.Count; ++resultIndex)
+            {
+                if ((double)sortedRankArray[resultIndex] < i_Rank)
+                    break;
+            }
+
+            sortedRankArray.Insert(resultIndex, i_Rank);
+            return resultIndex;
         }
 
         private async System.Threading.Tasks.Task askAlfredSearchAsync(IAlfredInput i_Input)
@@ -78,6 +95,7 @@
             resultsListView.Items.Clear();
             searchComboBox.Text = i_Input.Description;
             searchingForTextBlock.Text = "Searching For '" + i_Input.Description + "'";
+            sortedRankArray.RemoveRange(0, sortedRankArray.Count);
         }
 
         private async System.Threading.Tasks.Task searchByInputAsync(IAlfredInput i_Input)
@@ -107,7 +125,7 @@
         {
             if (sender is ListView)
             {
-                DockPanel selectedDockPanel = (DockPanel)(sender as ListView).SelectedItems[0];
+                DockPanel selectedDockPanel = ((sender as ListView).SelectedItems[0]) as DockPanel;
 
                 if (selectedDockPanel != null)
                 {
