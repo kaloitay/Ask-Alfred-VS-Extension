@@ -54,12 +54,16 @@
         }
         private void createWindowResult(IPage i_Page)
         {
-            AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
+            //ThreadHelper.ThrowIfNotOnUIThread();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
 
-            int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
-            Debug.Write("@@@@@@" + "Subject Text: " + i_Page.Subject + " Rank: " + i_Page.Rank + "@@@@@");
-            resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
-            //resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
+                int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
+                Debug.Write("@@@@@@" + "Subject Text: " + i_Page.Subject + " Rank: " + i_Page.Rank + "@@@@@");
+                resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
+                //resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
+            });
         }
 
         private int insertPageToSortedRankArray(double i_Rank)
@@ -67,7 +71,7 @@
             int resultIndex;
 
             for (resultIndex = 0; resultIndex < sortedRankArray.Count; ++resultIndex)
-            { 
+            {
                 if ((double)sortedRankArray[resultIndex] < i_Rank)
                     break;
             }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -15,12 +16,13 @@ namespace Ask_Alfred.Infrastructure
         public AlfredResponse Response { get; } = new AlfredResponse();
         private GoogleSearchEngine m_GoogleSearchEngine = new GoogleSearchEngine();
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
+        private CancellationTokenSource m_CancellationTokenSource;
 
         public event Action<IPage> OnPageAdded;
         public event Action OnTimeoutExpired;
-        private const int timeoutDurationInSeconds = 20; // shouldn't be const
+        private const int timeoutDurationInSeconds = 20;
         private eStatus m_Status;
-        private Timer m_TimeoutTimer = new Timer();
+        private System.Timers.Timer m_TimeoutTimer = new System.Timers.Timer();
 
         private enum eWebSite
         {
@@ -60,54 +62,55 @@ namespace Ask_Alfred.Infrastructure
             // should be checked on projects of various kinds and on projects like Alfred (1: c# 2: extension)
             if (i_Input.ProjectType != null)
             {
-                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
-                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description + " " + i_Input.ProjectType);
+                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
+                    r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description, i_Input.ProjectType));
             }
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
-                r_WebSitesUrls[eWebSite.Stackoverflow] + " " + i_Input.Description);
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+                r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
 
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync("site:" +
-                r_WebSitesUrls[eWebSite.Microsoft] + " " + i_Input.ErrorCode);
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+                r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
 
-            // TODO: this call can never end! https://stackoverflow.com/questions/10134310/how-to-cancel-a-task-in-await
-            await CreateWebDataListFromGoogleResultsAsync(); // TODO: await is needed here?
+            m_CancellationTokenSource = new CancellationTokenSource();
+            await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
 
             return Response;
         }
 
-        public async Task CreateWebDataListFromGoogleResultsAsync()
+        public void StopSearch()
+        {
+            m_CancellationTokenSource.Cancel();
+            m_Status = eStatus.Finished;
+            m_TimeoutTimer.Stop();
+        }
+
+        public async Task CreateWebDataListFromGoogleResultsAsync(CancellationToken cancellationToken)
         {
             foreach (GoogleSearchResult googleResult in m_GoogleSearchEngine.SearchResults)
             {
                 bool isPageInList = PagesList.Any(page => googleResult.Url.Contains(page.Url));
+                cancellationToken.ThrowIfCancellationRequested();
 
                 if (!isPageInList)
                 {
                     IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Url);
+
                     if (dataSource != null)
                     {
                         await dataSource.ParseDataAsync();
-
-                        // Should stop during the parse as well
-                        if (m_Status == eStatus.Searching)
-                        {
-                            PagesList.Add(dataSource.Page);
-                            OnPageAdded(dataSource.Page);
-                        }
+                        cancellationToken.ThrowIfCancellationRequested();
+                        PagesList.Add(dataSource.Page);
+                        OnPageAdded(dataSource.Page);
                     }
                 }
-                if (m_Status != eStatus.Searching)
-                    break;
             }
 
-            if (m_Status == eStatus.Searching)
-            {
-                m_Status = eStatus.Finished;
-                m_TimeoutTimer.Stop();
-            }
+            m_Status = eStatus.Finished;
+            m_TimeoutTimer.Stop();
         }
         private void timeoutExpired(object source, ElapsedEventArgs e)
         {
+            m_CancellationTokenSource.Cancel();
             m_Status = eStatus.TimeoutExpired;
             m_TimeoutTimer.Stop();
             OnTimeoutExpired();
