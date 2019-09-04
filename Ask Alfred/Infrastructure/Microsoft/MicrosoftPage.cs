@@ -13,7 +13,7 @@ namespace Ask_Alfred.Objects
         {
             get
             {
-                // TODO:
+                // TODO: fix Microsoft rank
                 return 100;
             }
         }

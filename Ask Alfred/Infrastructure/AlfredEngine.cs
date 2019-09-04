@@ -79,7 +79,8 @@ namespace Ask_Alfred.Infrastructure
 
         public void StopSearch()
         {
-            m_CancellationTokenSource.Cancel();
+            // TODO: its possible that m_CancellationTokenSource is null here?
+            m_CancellationTokenSource?.Cancel();
             m_Status = eStatus.Finished;
             m_TimeoutTimer.Stop();
         }

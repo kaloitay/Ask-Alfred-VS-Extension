@@ -5,7 +5,7 @@ using System.Net;
 
 namespace Ask_Alfred.Infrastructure
 {
-    // TODO: should be singleton ?
+    // TODO: should be singleton - YES!
     public class GoogleSearchEngine
     {
         private const string k_ApiKey = "AIzaSyBpIpws1ZmWUw8hyvpsHTXFT6C6tOmHVqQ";
@@ -49,7 +49,6 @@ namespace Ask_Alfred.Infrastructure
             // Add try catch here or in getUrlContentAsString
             // We get exeption when there is no internet connection
 
-            // TODO: &num=5 for limit the results (5 should be const)
             string searchQuery = String.Format(
                 "https://www.googleapis.com/customsearch/v1?key={0}&cx={1}&q={2}&alt=json",
                 k_ApiKey, k_CustomSearchKey, i_Query);
