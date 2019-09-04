@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using Ask_Alfred.Objects;
 using Ask_Alfred.Infrastructure.Interfaces;
+using System;
 
 namespace Ask_Alfred.UI
 {
@@ -21,7 +22,13 @@ namespace Ask_Alfred.UI
             createControls(i_Page);
             setControlsText(i_Page);
             setControlsStyle(i_Resources);
+            setControlsToolTip();
             setControlsRelations();
+        }
+
+        private void setControlsToolTip()
+        {
+            dockPanel.ToolTip = subjectTextBlock.Text;
         }
 
         private void createAddtionalInfoImage(IPage i_Page)

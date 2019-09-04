@@ -29,6 +29,8 @@
         {
             m_AlfredInputManager = new AlfredInputManager();
             resultsListView.Items.Clear();
+            searchComboBox.Text = string.Empty;
+            searchingForTextBlock.Text = string.Empty;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
             AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
         }
@@ -45,6 +47,8 @@
         private void searchIsFinished()
         {
             searchComboBox.IsEnabled = true;
+            searchingImage.IsEnabled = false;
+            searchingImage.Visibility = Visibility.Hidden;
         }
         private void timeoutExpiredHandler()
         {
@@ -87,6 +91,8 @@
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
             searchComboBox.IsEnabled = false;
+            searchingImage.IsEnabled = true;
+            searchingImage.Visibility = Visibility.Visible;
             resultsListView.Items.Clear();
             searchComboBox.Text = i_Input.Description;
             searchingForTextBlock.Text = "Searching For '" + i_Input.Description + "'";
@@ -127,6 +133,11 @@
                     System.Diagnostics.Process.Start(selectedDockPanel.Tag.ToString());
                 }
             }
+        }
+
+        private void StopSearchButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //AlfredEngine.Instance.StopSearch();
         }
     }
 }

@@ -14,40 +14,49 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
+        
+        <ComboBox x:Name="searchComboBox" Grid.Row="0" BorderBrush="White" Background="Yellow" IsTextSearchEnabled="True" IsEditable="True" KeyDown="searchComboBox_KeyDown" HorizontalAlignment="Stretch" Margin="10"/>
+        
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Grid.Column="0" x:Name="dummyTextBlock" Width="10"/>
+            <Image Grid.Column="1" x:Name="searchingImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/Icons/loading_icon.png" IsEnabled="False" Visibility="Hidden" Style="{StaticResource Spinner}" />
+            <TextBlock Grid.Column="2" x:Name="searchingForTextBlock" VerticalAlignment="Center" Text="Searching for:  'ASLDALSDlsadaskfjdskjfdsk'" Margin="6,0,0,0"/>
+        </Grid>
 
-        <ComboBox Grid.Row="0" x:Name="searchComboBox" IsEditable="True" KeyDown="searchComboBox_KeyDown" Height="20" Margin="10,3,10.2,0" HorizontalAlignment="Stretch"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <Image Height="7" Width="7" Margin="0,0,8,0"/>
-            <TextBlock x:Name="searchingForTextBlock"/>
-        </StackPanel>
         <ListView Grid.Row="2" x:Name="resultsListView" HorizontalAlignment="Stretch" Background="Transparent"
                       ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       HorizontalContentAlignment="Stretch" Height="Auto"
                       BorderThickness="0" MouseDoubleClick="ListView_MouseDoubleClick">
+
             <ListViewItem >
-                <DockPanel >
-                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon.png" Stretch="None" />
+                <DockPanel ToolTip="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss">
+                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon.png" Stretch="None"/>
                     <TextBlock x:Name="DateTextBlock1" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Image Height="7" Width="7" Margin="0,0,8,0" Source="Resources/Icons/green_checkmark_stackoverflow_icon.png"/>
                         <TextBlock x:Name="WebsiteNameTextBlock1" Text="StackOverFlow" FontSize="7" Foreground="White" Margin="0,0,8,0"/>
                     </StackPanel>
-                    <TextBlock TextWrapping="Wrap" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center" FontFamily="Calibri Light"/>
+                    <TextBlock TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center" FontFamily="Calibri Light"/>
                 </DockPanel>
             </ListViewItem>
+
             <ListViewItem >
                 <DockPanel>
-                    <Border BorderThickness="1" Background="White">
-                        <Image DockPanel.Dock="Left" Height="50" Width="40" />
-                    </Border>
+                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon.png" Stretch="None"/>
                     <TextBlock x:Name="DateTextBlock2" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Image Height="7" Width="7" Margin="0,0,8,0"/>
@@ -56,11 +65,10 @@
                     <TextBlock TextWrapping="Wrap" Text="123445546566534656" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center"/>
                 </DockPanel>
             </ListViewItem>
+
             <ListViewItem>
                 <DockPanel>
-                    <Border BorderThickness="1" Background="White">
-                        <Image DockPanel.Dock="Left" Height="50" Width="40" />
-                    </Border>
+                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon.png" Stretch="None"/>
                     <TextBlock x:Name="DateTextBlock3" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Image Height="7" Width="7" Margin="0,0,8,0"/>

@@ -47,6 +47,7 @@ namespace Ask_Alfred.Infrastructure
 
             m_TimeoutTimer.Elapsed += new ElapsedEventHandler(timeoutExpired);
             m_TimeoutTimer.Interval = timeoutDurationInSeconds * 1000;
+            m_CancellationTokenSource = new CancellationTokenSource();
         }
 
         public async Task<AlfredResponse> SearchAsync(IAlfredInput i_Input)
@@ -71,7 +72,6 @@ namespace Ask_Alfred.Infrastructure
             await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
                 r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
 
-            m_CancellationTokenSource = new CancellationTokenSource();
             await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
 
             return Response;
