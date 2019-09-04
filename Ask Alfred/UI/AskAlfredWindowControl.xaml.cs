@@ -7,9 +7,7 @@
     using Ask_Alfred.Infrastructure.Interfaces;
     using System.Windows.Input;
     using Ask_Alfred.UI.VisualStudioApi;
-    using System;
     using System.Collections;
-    using System.Diagnostics;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -31,6 +29,8 @@
         {
             m_AlfredInputManager = new AlfredInputManager();
             resultsListView.Items.Clear();
+            searchComboBox.Text = string.Empty;
+            searchingForTextBlock.Text = string.Empty;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
             AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
         }
@@ -47,6 +47,8 @@
         private void searchIsFinished()
         {
             searchComboBox.IsEnabled = true;
+            searchingImage.IsEnabled = false;
+            searchingImage.Visibility = Visibility.Hidden;
         }
         private void timeoutExpiredHandler()
         {
@@ -57,9 +59,7 @@
             AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
 
             int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
-            Debug.Write("@@@@@@" + "Subject Text: " + i_Page.Subject + " Rank: " + i_Page.Rank + "@@@@@");
             resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
-            //resultsListView.Items.Add(askAlfredResultUIElement.dockPanel);
         }
 
         private int insertPageToSortedRankArray(double i_Rank)
@@ -88,6 +88,8 @@
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
             searchComboBox.IsEnabled = false;
+            searchingImage.IsEnabled = true;
+            searchingImage.Visibility = Visibility.Visible;
             resultsListView.Items.Clear();
             searchComboBox.Text = i_Input.Description;
             searchingForTextBlock.Text = "Searching For '" + i_Input.Description + "'";
@@ -128,6 +130,11 @@
                     System.Diagnostics.Process.Start(selectedDockPanel.Tag.ToString());
                 }
             }
+        }
+
+        private void StopSearchButton_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //AlfredEngine.Instance.StopSearch();
         }
     }
 }
