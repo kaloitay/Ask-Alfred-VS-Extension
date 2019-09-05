@@ -28,12 +28,15 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
             
             <TextBlock Grid.Column="0" x:Name="dummyTextBlock" Width="10"/>
+            <Button Grid.Column="0" x:Name="StopTestButton" Click="StopTestButton_Click" Width="15" Height="15"/>
             <Image Grid.Column="1" x:Name="searchingImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/Icons/loading_icon.png" IsEnabled="False" Visibility="Hidden" Style="{StaticResource Spinner}" />
-            <TextBlock Grid.Column="2" x:Name="searchingForTextBlock" VerticalAlignment="Center" Text="Searching for:  'ASLDALSDlsadaskfjdskjfdsk'" Margin="6,0,0,0"/>
+            <TextBlock Grid.Column="2" x:Name="searchingForTextBlock" VerticalAlignment="Center" Text="Searching for:  " Margin="6,0,0,0"/>
+            <TextBlock Grid.Column="3" x:Name="searchingKeyTextBox" VerticalAlignment="Center" Text="An error in my project" TextTrimming="CharacterEllipsis" FontStyle="Italic" Margin="6,0,0,0"/>
         </Grid>
 
         <ListView Grid.Row="2" x:Name="resultsListView" HorizontalAlignment="Stretch" Background="Transparent"
