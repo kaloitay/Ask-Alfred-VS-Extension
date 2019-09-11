@@ -79,6 +79,7 @@
     <Compile Include="UI\AskAlfredWindowControl.xaml.cs">
       <DependentUpon>AskAlfredWindowControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UI\ComboBoxViewModel.cs" />
     <Compile Include="UI\ESupportedProgramingLanguages.cs" />
     <Compile Include="UI\VisualStudioApi\AlfredInput.cs" />
     <Compile Include="UI\VisualStudioApi\AlfredInputManager.cs" />

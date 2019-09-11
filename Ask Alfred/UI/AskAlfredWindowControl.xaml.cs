@@ -8,15 +8,17 @@
     using System.Windows.Input;
     using Ask_Alfred.UI.VisualStudioApi;
     using System.Collections;
-    using System;
-    using System.Threading.Tasks;
+    using System.Windows.Media;
+    using Microsoft.VisualStudio.Threading;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
-        ArrayList sortedRankArray = new ArrayList();
+        private AlfredInputManager m_AlfredInputManager;
+        private ArrayList sortedRankArray = new ArrayList();
+        private ComboBoxViewModel HistorySearches = new ComboBoxViewModel();
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
@@ -28,11 +30,14 @@
 
         private void initializeAskAlfredWindow()
         {
+            m_AlfredInputManager = new AlfredInputManager();
             resultsListView.Items.Clear();
             searchComboBox.Text = string.Empty;
             searchingForTextBlock.Text = string.Empty;
+            searchingKeyTextBox.Text = string.Empty;
+            DataContext = HistorySearches;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
-            AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
+            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished; // TODO: is name timeout is currect?
         }
 
         private void pageAddedHandler(IPage i_Page)
@@ -46,13 +51,17 @@
         }
         private void searchIsFinished()
         {
-            searchComboBox.IsEnabled = true;
-            searchingImage.IsEnabled = false;
-            searchingImage.Visibility = Visibility.Hidden;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                searchComboBox.BorderBrush = Brushes.White;
+                searchingForTextBlock.Text = "Results For:  ";
+                searchingImage.IsEnabled = false;
+                searchingImage.Visibility = Visibility.Hidden;
+            });
         }
         private void timeoutExpiredHandler()
         {
-            //searchComboBox.IsEnabled = true;
+            // TODO: need that method??
         }
         private void createWindowResult(IPage i_Page)
         {
@@ -63,11 +72,6 @@
                 int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
                 resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
             });
-        }
-
-        public async System.Threading.Tasks.Task SearchSpecificInputAsync(IAlfredInput i_Input)
-        {
-            await SearchAsync(i_Input);
         }
 
         private int insertPageToSortedRankArray(double i_Rank)
@@ -84,31 +88,35 @@
             return resultIndex;
         }
 
-        public async System.Threading.Tasks.Task SearchSelectedError()
+        private async System.Threading.Tasks.Task askAlfredSearchAsync(IAlfredInput i_Input)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            AlfredInput alfredInput = AlfredInputManager.Instance.GetInputFromSelectedError();
-            await SearchAsync(alfredInput);
-        }
+            if (!HistorySearches.HistorySearches.Contains(searchComboBox.Text))
+                HistorySearches.HistorySearches.Insert(0, searchComboBox.Text);
 
-        private async System.Threading.Tasks.Task SearchAsync(IAlfredInput i_Input)
-        {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
 
             setAskAlfredWindowForNewSearch(i_Input);
-            await AlfredEngine.Instance.SearchAsync(i_Input);
-            searchIsFinished();
+            await searchByInputAsync(i_Input);
         }
 
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
-            searchComboBox.IsEnabled = false;
+            searchComboBox.BorderBrush = Brushes.AliceBlue;
             searchingImage.IsEnabled = true;
             searchingImage.Visibility = Visibility.Visible;
             resultsListView.Items.Clear();
             searchComboBox.Text = i_Input.Description;
-            searchingForTextBlock.Text = "Searching For '" + i_Input.Description + "'";
+            searchingForTextBlock.Text = "Searching For:  ";
+            searchingKeyTextBox.Text = i_Input.Description;
+
             sortedRankArray.RemoveRange(0, sortedRankArray.Count);
+        }
+
+        private async System.Threading.Tasks.Task searchByInputAsync(IAlfredInput i_Input)
+        {
+            await AlfredEngine.Instance.SearchAsync(i_Input);
+            searchIsFinished();
         }
 
         private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
@@ -116,11 +124,17 @@
             ThreadHelper.ThrowIfNotOnUIThread();
             if (e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
-                AlfredInput alfredInput = AlfredInputManager.Instance.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
-                SearchAsync(alfredInput);
+                AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
+                askAlfredSearchAsync(alfredInput);
             }
         }
 
+        public async System.Threading.Tasks.Task AutoSearchAsync()
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
+            await askAlfredSearchAsync(alfredInput);
+        }
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
@@ -135,9 +149,10 @@
             }
         }
 
-        private void StopSearchButton_MouseDown(object sender, MouseButtonEventArgs e)
+        private void StopTestButton_Click(object sender, RoutedEventArgs e)
         {
-            //AlfredEngine.Instance.StopSearch();
+            AlfredEngine.Instance.StopSearch();
+            searchIsFinished();
         }
     }
 }
