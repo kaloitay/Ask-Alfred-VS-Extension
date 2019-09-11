@@ -1,9 +1,15 @@
 ﻿using Ask_Alfred.Infrastructure.Interfaces;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio;
 using Microsoft.VisualStudio.Imaging.Interop;
 using Microsoft.VisualStudio.Language.Intellisense;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
+using Microsoft.VisualStudio.Text;
+using Microsoft.VisualStudio.Text.Editor;
+using Microsoft.VisualStudio.Text.Operations;
+using Microsoft.VisualStudio.TextManager.Interop;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -16,23 +22,32 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 {
     class AlfredSuggestedAction : ISuggestedAction
     {
-        //private ITrackingSpan m_span;
-        //private string m_upper; // *** instead of m_upper - alfred first result title
-        private string m_error;
-        private string m_display;
-        //private ITextSnapshot m_snapshot;
-
-        public bool HasActionSets
+        private const string m_display = "Ask Alfred";
+        private readonly SuggestedActionsSourceProvider m_factory;
+        private readonly ITextBuffer m_textBuffer;
+        private readonly ITextView m_textView;
+        public AlfredSuggestedAction(SuggestedActionsSourceProvider suggestedActionsSourceProvider, ITextView textView, ITextBuffer textBuffer)
         {
-            get { return false; }
+            m_factory = suggestedActionsSourceProvider;
+            m_textBuffer = textBuffer;
+            m_textView = textView;
         }
+
         public string DisplayText
         {
             get { return m_display; }
         }
         public ImageMoniker IconMoniker
         {
+            // TODO:
             get { return default(ImageMoniker); }
+        }
+        public bool HasActionSets
+        {
+            get
+            {
+                return true;
+            }
         }
         public string IconAutomationText
         {
@@ -50,53 +65,68 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         }
         public bool HasPreview
         {
-            get { return true; }
+            get { return false; }
         }
         public void Dispose()
         {
         }
 
-        //public AlfredSuggestedAction(ITrackingSpan span)
-        public AlfredSuggestedAction(IAlfredInput i_Input)
-        {
-            // m_span = span;
-            // m_snapshot = span.TextBuffer.CurrentSnapshot;
-            // m_upper = span.GetText(m_snapshot).ToUpper();
-
-            m_error = i_Input.Description;//i_ErrorDescription;//VisualStudioHandler.GetCurrentLineErrorDescription();
-
-            m_display = string.Format("Ask Alfred: '{0}'", m_error);
-        }
-
+        [Obsolete]
         public Task<IEnumerable<SuggestedActionSet>> GetActionSetsAsync(CancellationToken cancellationToken)
         {
-            return System.Threading.Tasks.Task.FromResult<IEnumerable<SuggestedActionSet>>(null);
-        }
+            AlfredSuggestedActionItem actionItem;
+            List<SuggestedActionSet> suggestedActionSetList = new List<SuggestedActionSet>();
+            List<VisualStudioErrorCodeItem> visualStudioErrorCodeItemList = VisualStudioHandler.GetCurrentLineErrorList();
+            string selectedText;
 
+            foreach (VisualStudioErrorCodeItem codeItem in visualStudioErrorCodeItemList)
+            {
+                actionItem = new AlfredSuggestedActionItem(codeItem);
+                suggestedActionSetList.Add(new SuggestedActionSet(new ISuggestedAction[] { actionItem }));
+            }
+
+            selectedText = VisualStudioHandler.GetCurrentLineSelectedText();
+            if (String.IsNullOrEmpty(selectedText))
+            {
+                if (tryGetWordUnderCaret(out TextExtent extent) && extent.IsSignificant && extent.Span.GetText().Length > 1)
+                    selectedText = extent.Span.GetText();
+            }
+            if (!String.IsNullOrEmpty(selectedText))
+            {
+                actionItem = new AlfredSuggestedActionItem(new VisualStudioErrorCodeItem { Description = selectedText });
+                suggestedActionSetList.Add(new SuggestedActionSet(new ISuggestedAction[] { actionItem }));
+            }
+
+            return System.Threading.Tasks.Task.FromResult<IEnumerable<SuggestedActionSet>>(suggestedActionSetList);
+        }
         public Task<object> GetPreviewAsync(CancellationToken cancellationToken)
         {
-            var textBlock = new TextBlock();
-            textBlock.Padding = new Thickness(5);
-            textBlock.Inlines.Add(new Run() { Text = "Preview of response" }); // *** insert here a first result title ?
-            return System.Threading.Tasks.Task.FromResult<object>(textBlock);
+            return System.Threading.Tasks.Task.FromResult<object>(null);
         }
-
         public void Invoke(CancellationToken cancellationToken)
-        { // *** here we will present alfreds window
-            ThreadHelper.ThrowIfNotOnUIThread();
-            IVsWindowFrame windowFrame = openAlfredWithIVsUIShell();
-
-            AskAlfredWindow alfred = getAlfredToolWindow(windowFrame);
-
-            // TODO: GAL help fix that error in the line below!!!!!!!!!!!!!!!!!
-            // alfred.AutoSearchByText(m_error);
+        {
         }
+        private bool tryGetWordUnderCaret(out TextExtent o_WordExtent)
+        {
+            ITextCaret caret = m_textView.Caret;
+            SnapshotPoint point = caret.Position.BufferPosition;
 
+            if (caret.Position.BufferPosition <= 0)
+            {
+                o_WordExtent = default(TextExtent);
+                return false;
+            }
+
+            ITextStructureNavigator navigator = m_factory.NavigatorService.GetTextStructureNavigator(m_textBuffer);
+
+            o_WordExtent = navigator.GetExtentOfWord(point);
+            return true;
+        }
         private IVsWindowFrame openAlfredWithIVsUIShell()
         {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
+            ThreadHelper.ThrowIfNotOnUIThread();
 
-            IVsUIShell vsUIShell = (IVsUIShell)Microsoft.VisualStudio.Shell.Package.GetGlobalService(typeof(SVsUIShell));
+            IVsUIShell vsUIShell = (IVsUIShell)Package.GetGlobalService(typeof(SVsUIShell));
             Guid guid = typeof(AskAlfredWindow).GUID;
             IVsWindowFrame windowFrame;
 
@@ -110,19 +140,6 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 
             return windowFrame;
         }
-
-        private AskAlfredWindow getAlfredToolWindow(IVsWindowFrame i_WindowFrame)
-        {
-            Microsoft.VisualStudio.Shell.ThreadHelper.ThrowIfNotOnUIThread();
-
-            i_WindowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_DocView, out object window);
-
-            if (window is AskAlfredWindow)
-                return window as AskAlfredWindow;
-
-            throw new NotSupportedException("Cannot get Alfred tool window.");
-        }
-
         public bool TryGetTelemetryId(out Guid telemetryId)
         {
             // This is a sample action and doesn't participate in LightBulb telemetry

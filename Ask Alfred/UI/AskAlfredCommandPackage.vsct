@@ -10,8 +10,11 @@
       <Group guid="guidAskAlfredCommandPackageCmdSet" id="MyMenuGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
       </Group>
+      <Group guid="guidErrorListCommandSet" id="GroupIdErrorList" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ERRORLIST" />
+      </Group>
     </Groups>
-    
+
     <Buttons>
       <Button guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" priority="0x0100" type="Button">
         <Parent guid="guidAskAlfredCommandPackageCmdSet" id="MyMenuGroup" />
@@ -20,34 +23,42 @@
           <ButtonText>Ask Alfred</ButtonText>
         </Strings>
       </Button>
-    </Buttons>  
-    
+      
+      <Button guid="guidErrorListCommandSet" id="commandIdErrorList" priority="0x0100" type="Button">
+        <Parent guid="guidErrorListCommandSet" id="GroupIdErrorList" />
+        <Icon guid="guidImages" id="bmpPic1" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Ask Alfred</ButtonText>
+        </Strings>
+      </Button>
+    </Buttons>
+
     <Bitmaps>
       <Bitmap guid="guidImages" href="Resources\Icons\ask_alfred_icon.png" usedList="bmpPic1"/>
     </Bitmaps>
   </Commands>
 
-  <CommandPlacements>
-    <CommandPlacement guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" priority="0x000">
-      <Parent guid="guidSHLMainMenu" id="IDG_VS_ERRORLIST_ERRORGROUP" />
-    </CommandPlacement>
-  </CommandPlacements>
-
   <Symbols>
     <GuidSymbol name="guidAskAlfredCommandPackage" value="{486bdadb-56df-47b8-96ce-917cb3e58ff1}" />
-
+    
     <GuidSymbol name="guidAskAlfredCommandPackageCmdSet" value="{d4677dee-3ed3-4fa4-8483-2eea77c80219}">
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="cmdidErrorsToolWindowCommand" value="4436" />
+    </GuidSymbol>
+    
+    <GuidSymbol name="guidErrorListCommandSet" value="{9d9046da-94f8-4fd0-8a00-92bf4f6defa8}">
+      <IDSymbol name="GroupIdErrorList" value="0x1020" />
+      <IDSymbol name="commandIdErrorList" value="0x200" />
     </GuidSymbol>
 
     <GuidSymbol name="guidImages" value="{57db15c5-8e0b-4100-823b-20b10d041eb6}">
       <IDSymbol name="bmpPic1" value="1" />
     </GuidSymbol>
   </Symbols>
-  
+
   <KeyBindings>
-    <KeyBinding guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand" 
+    <KeyBinding guid="guidAskAlfredCommandPackageCmdSet" id="cmdidErrorsToolWindowCommand"
                 editor="guidVSStd97"
                 mod1="Alt" key1="a"/>
   </KeyBindings>
