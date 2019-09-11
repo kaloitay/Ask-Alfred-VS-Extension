@@ -8,6 +8,8 @@
     using System.Windows.Input;
     using Ask_Alfred.UI.VisualStudioApi;
     using System.Collections;
+    using System.Windows.Media;
+    using Microsoft.VisualStudio.Threading;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -15,7 +17,8 @@
     public partial class AskAlfredWindowControl : UserControl
     {
         private AlfredInputManager m_AlfredInputManager;
-        ArrayList sortedRankArray = new ArrayList();
+        private ArrayList sortedRankArray = new ArrayList();
+        private ComboBoxViewModel HistorySearches = new ComboBoxViewModel();
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
@@ -31,8 +34,10 @@
             resultsListView.Items.Clear();
             searchComboBox.Text = string.Empty;
             searchingForTextBlock.Text = string.Empty;
+            searchingKeyTextBox.Text = string.Empty;
+            DataContext = HistorySearches;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
-            AlfredEngine.Instance.OnTimeoutExpired += timeoutExpiredHandler;
+            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished; // TODO: is name timeout is currect?
         }
 
         private void pageAddedHandler(IPage i_Page)
@@ -46,13 +51,17 @@
         }
         private void searchIsFinished()
         {
-            searchComboBox.IsEnabled = true;
-            searchingImage.IsEnabled = false;
-            searchingImage.Visibility = Visibility.Hidden;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                searchComboBox.BorderBrush = Brushes.White;
+                searchingForTextBlock.Text = "Results For:  ";
+                searchingImage.IsEnabled = false;
+                searchingImage.Visibility = Visibility.Hidden;
+            });
         }
         private void timeoutExpiredHandler()
         {
-            //searchComboBox.IsEnabled = true;
+            // TODO: need that method??
         }
         private void createWindowResult(IPage i_Page)
         {
@@ -81,6 +90,9 @@
 
         private async System.Threading.Tasks.Task askAlfredSearchAsync(IAlfredInput i_Input)
         {
+            if (!HistorySearches.HistorySearches.Contains(searchComboBox.Text))
+                HistorySearches.HistorySearches.Insert(0, searchComboBox.Text);
+
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
 
@@ -90,12 +102,14 @@
 
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
-            searchComboBox.IsEnabled = false;
+            searchComboBox.BorderBrush = Brushes.AliceBlue;
             searchingImage.IsEnabled = true;
             searchingImage.Visibility = Visibility.Visible;
             resultsListView.Items.Clear();
             searchComboBox.Text = i_Input.Description;
-            searchingForTextBlock.Text = "Searching For '" + i_Input.Description + "'";
+            searchingForTextBlock.Text = "Searching For:  ";
+            searchingKeyTextBox.Text = i_Input.Description;
+
             sortedRankArray.RemoveRange(0, sortedRankArray.Count);
         }
 
@@ -135,9 +149,10 @@
             }
         }
 
-        private void StopSearchButton_MouseDown(object sender, MouseButtonEventArgs e)
+        private void StopTestButton_Click(object sender, RoutedEventArgs e)
         {
-            //AlfredEngine.Instance.StopSearch();
+            AlfredEngine.Instance.StopSearch();
+            searchIsFinished();
         }
     }
 }
