@@ -26,11 +26,11 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         private readonly SuggestedActionsSourceProvider m_factory;
         private readonly ITextBuffer m_textBuffer;
         private readonly ITextView m_textView;
-        public AlfredSuggestedAction(SuggestedActionsSourceProvider suggestedActionsSourceProvider, ITextView textView, ITextBuffer textBuffer)
+        public AlfredSuggestedAction(SuggestedActionsSourceProvider i_SuggestedActionsSourceProvider, ITextView i_TextView, ITextBuffer i_TextBuffer)
         {
-            m_factory = suggestedActionsSourceProvider;
-            m_textBuffer = textBuffer;
-            m_textView = textView;
+            m_factory = i_SuggestedActionsSourceProvider;
+            m_textBuffer = i_TextBuffer;
+            m_textView = i_TextView;
         }
 
         public string DisplayText
@@ -77,23 +77,10 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             AlfredSuggestedActionItem actionItem;
             List<SuggestedActionSet> suggestedActionSetList = new List<SuggestedActionSet>();
             List<VisualStudioErrorCodeItem> visualStudioErrorCodeItemList = VisualStudioHandler.GetCurrentLineErrorList();
-            string selectedText;
 
             foreach (VisualStudioErrorCodeItem codeItem in visualStudioErrorCodeItemList)
             {
                 actionItem = new AlfredSuggestedActionItem(codeItem);
-                suggestedActionSetList.Add(new SuggestedActionSet(new ISuggestedAction[] { actionItem }));
-            }
-
-            selectedText = VisualStudioHandler.GetCurrentLineSelectedText();
-            if (String.IsNullOrEmpty(selectedText))
-            {
-                if (tryGetWordUnderCaret(out TextExtent extent) && extent.IsSignificant && extent.Span.GetText().Length > 1)
-                    selectedText = extent.Span.GetText();
-            }
-            if (!String.IsNullOrEmpty(selectedText))
-            {
-                actionItem = new AlfredSuggestedActionItem(new VisualStudioErrorCodeItem { Description = selectedText });
                 suggestedActionSetList.Add(new SuggestedActionSet(new ISuggestedAction[] { actionItem }));
             }
 
@@ -105,22 +92,6 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         }
         public void Invoke(CancellationToken cancellationToken)
         {
-        }
-        private bool tryGetWordUnderCaret(out TextExtent o_WordExtent)
-        {
-            ITextCaret caret = m_textView.Caret;
-            SnapshotPoint point = caret.Position.BufferPosition;
-
-            if (caret.Position.BufferPosition <= 0)
-            {
-                o_WordExtent = default(TextExtent);
-                return false;
-            }
-
-            ITextStructureNavigator navigator = m_factory.NavigatorService.GetTextStructureNavigator(m_textBuffer);
-
-            o_WordExtent = navigator.GetExtentOfWord(point);
-            return true;
         }
         private IVsWindowFrame openAlfredWithIVsUIShell()
         {

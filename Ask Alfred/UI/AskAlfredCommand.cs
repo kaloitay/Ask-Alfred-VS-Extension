@@ -19,13 +19,14 @@ namespace Ask_Alfred.UI
         /// </summary>
         public const int toolsdId = 4436;
         public const int errorListId = 512;
+        public const int textEditorId = 256;
 
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
         public static readonly Guid toolsGuid = new Guid("d4677dee-3ed3-4fa4-8483-2eea77c80219");
         public static readonly Guid errorListGuid = new Guid("9d9046da-94f8-4fd0-8a00-92bf4f6defa8");
-
+        public static readonly Guid textEditorGuid = new Guid("aa0a3a2d-7952-4b57-89f1-73981024d2a7");
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -43,12 +44,20 @@ namespace Ask_Alfred.UI
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            CommandID menuCommandID = new CommandID(toolsGuid, toolsdId);
-            MenuCommand toolsMenuItem = new MenuCommand(this.ExecuteToolMenu, menuCommandID);
+            // tools menu
+            CommandID toolsMenuCommandID = new CommandID(toolsGuid, toolsdId);
+            MenuCommand toolsMenuItem = new MenuCommand(this.ExecuteToolMenu, toolsMenuCommandID);
             commandService.AddCommand(toolsMenuItem);
 
-            CommandID errorListCommand = new CommandID(errorListGuid, errorListId);
-            OleMenuCommand errorMenuItem = new OleMenuCommand(this.ExecuteErrrorListMenu, errorListCommand);
+            // text editor menu
+            CommandID textEditorMenuCommandID = new CommandID(textEditorGuid, textEditorId);
+            OleMenuCommand textEditorMenuItem = new OleMenuCommand(this.ExecuteToolMenuTextEditorMenu, textEditorMenuCommandID);
+            textEditorMenuItem.BeforeQueryStatus += new EventHandler(this.textEditorMenuItem_BeforeQueryStatus);
+            commandService.AddCommand(textEditorMenuItem);
+
+            // error list menu
+            CommandID errorListCommandID = new CommandID(errorListGuid, errorListId);
+            OleMenuCommand errorMenuItem = new OleMenuCommand(this.ExecuteErrrorListMenu, errorListCommandID);
             errorMenuItem.BeforeQueryStatus += new EventHandler(this.errorMenuItem_BeforeQueryStatus);
             commandService.AddCommand(errorMenuItem);
         }
@@ -116,6 +125,27 @@ namespace Ask_Alfred.UI
             // if there is selected error so search the error
         }
 
+        private void ExecuteToolMenuTextEditorMenu(object sender, System.EventArgs e)
+        {
+            OleMenuCommand menuItem = sender as OleMenuCommand;
+            ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
+
+            if ((null == window) || (null == window.Frame))
+            {
+                throw new NotSupportedException("Cannot create tool window");
+            }
+
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+            // TODO: change to dynmaic and disable if no selected text
+
+            AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
+            string selectedText = VisualStudioHandler.GetCurrentLineSelectedText();
+            AlfredInput alfredInput = AlfredInputManager.Instance.GetInputForAlfredWindowSearchBar(selectedText);
+            askAlfredWindow.SearchSpecificInput(alfredInput);
+        }
+
         private void errorMenuItem_BeforeQueryStatus(object sender, System.EventArgs e)
         {
             OleMenuCommand menuItem = sender as OleMenuCommand;
@@ -131,6 +161,32 @@ namespace Ask_Alfred.UI
 
             AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
             if (askAlfredWindow != null && VisualStudioHandler.HasSelectedError())
+            {
+                menuItem.Enabled = true;
+                menuItem.Visible = true;
+            }
+            else
+            {
+                menuItem.Enabled = false;
+                menuItem.Visible = false;
+            }
+        }
+
+        private void textEditorMenuItem_BeforeQueryStatus(object sender, System.EventArgs e)
+        {
+            OleMenuCommand menuItem = sender as OleMenuCommand;
+            ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
+
+            if ((null == window) || (null == window.Frame))
+            {
+                throw new NotSupportedException("Cannot create tool window");
+            }
+
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+            AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
+            if (askAlfredWindow != null && !String.IsNullOrEmpty(VisualStudioHandler.GetCurrentLineSelectedText()))
             {
                 menuItem.Enabled = true;
                 menuItem.Visible = true;
