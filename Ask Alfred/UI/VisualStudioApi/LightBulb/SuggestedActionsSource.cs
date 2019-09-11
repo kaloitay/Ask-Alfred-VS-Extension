@@ -35,11 +35,9 @@ namespace Ask_Alfred.UI.VisualStudioApi
         public IEnumerable<SuggestedActionSet> GetSuggestedActions(ISuggestedActionCategorySet requestedActionCategories, SnapshotSpan range, CancellationToken cancellationToken)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-
             AlfredSuggestedAction alfredAction = null;
-            string selectedText = VisualStudioHandler.GetCurrentLineSelectedText();
 
-            if (VisualStudioHandler.GetCurrentLineErrorList().Count > 0 || !String.IsNullOrEmpty(selectedText) || (tryGetWordUnderCaret(out TextExtent extent) && extent.IsSignificant && extent.Span.GetText().Length > 1))
+            if (VisualStudioHandler.GetCurrentLineErrorList().Count > 0)
             {
                 alfredAction = new AlfredSuggestedAction(m_factory, m_textView, m_textBuffer);
                 return new SuggestedActionSet[] {

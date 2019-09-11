@@ -10,6 +10,9 @@
       <Group guid="guidAskAlfredCommandPackageCmdSet" id="MyMenuGroup" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />
       </Group>
+      <Group guid="guidStyleCopFixerCmdSet" id="MyMenuGroup" priority="0x0600">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN" />
+      </Group>
       <Group guid="guidErrorListCommandSet" id="GroupIdErrorList" priority="0x0600">
         <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ERRORLIST" />
       </Group>
@@ -23,7 +26,16 @@
           <ButtonText>Ask Alfred</ButtonText>
         </Strings>
       </Button>
-      
+
+      <Button guid="guidStyleCopFixerCmdSet" id="cmdidStyleCopFixer" priority="0x0100" type="Button">
+        <Parent guid="guidStyleCopFixerCmdSet" id="MyMenuGroup" />
+        <Icon guid="guidImages" id="bmpPic1" />
+        <CommandFlag>DynamicVisibility</CommandFlag>
+        <Strings>
+          <ButtonText>Ask Alfred</ButtonText>
+        </Strings>
+      </Button>
+
       <Button guid="guidErrorListCommandSet" id="commandIdErrorList" priority="0x0100" type="Button">
         <Parent guid="guidErrorListCommandSet" id="GroupIdErrorList" />
         <Icon guid="guidImages" id="bmpPic1" />
@@ -46,7 +58,12 @@
       <IDSymbol name="MyMenuGroup" value="0x1020" />
       <IDSymbol name="cmdidErrorsToolWindowCommand" value="4436" />
     </GuidSymbol>
-    
+
+    <GuidSymbol name="guidStyleCopFixerCmdSet" value="{aa0a3a2d-7952-4b57-89f1-73981024d2a7}">
+      <IDSymbol name="MyMenuGroup" value="0x1020" />
+      <IDSymbol name="cmdidStyleCopFixer" value="0x0100" />
+    </GuidSymbol>
+
     <GuidSymbol name="guidErrorListCommandSet" value="{9d9046da-94f8-4fd0-8a00-92bf4f6defa8}">
       <IDSymbol name="GroupIdErrorList" value="0x1020" />
       <IDSymbol name="commandIdErrorList" value="0x200" />
