@@ -70,7 +70,7 @@ namespace Ask_Alfred.Infrastructure
             await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
                 r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
 
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
                 r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
 
             await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);

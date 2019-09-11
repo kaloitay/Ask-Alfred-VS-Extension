@@ -8,8 +8,11 @@ namespace Ask_Alfred.Infrastructure
     // TODO: should be singleton - YES!
     public class GoogleSearchEngine
     {
-        private const string k_ApiKey = "AIzaSyBpIpws1ZmWUw8hyvpsHTXFT6C6tOmHVqQ";
-        private const string k_CustomSearchKey = "000838436833929131088:wnddlp0oh68"; // cx
+        //private const string k_ApiKey = "AIzaSyBpIpws1ZmWUw8hyvpsHTXFT6C6tOmHVqQ";
+        //private const string k_CustomSearchKey = "000838436833929131088:wnddlp0oh68"; // cx
+        private const string k_ApiKey = "AIzaSyAM1Ayj0GtbKiyyb70w0DaINSccWKb_2GY";
+        private const string k_CustomSearchKey = "012719749979738938401:szwvp3cwm1q"; // cx
+
         public List<GoogleSearchResult> SearchResults = new List<GoogleSearchResult>();
 
         public async System.Threading.Tasks.Task AddSearchResultsFromQueryAsync(string i_Query)

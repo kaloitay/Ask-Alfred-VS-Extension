@@ -3,6 +3,9 @@
 
     <Style TargetType="ListViewItem">
         <Setter Property="Height" Value="70" />
+        <Setter Property="BorderBrush" Value="White" />
+        <Setter Property="BorderThickness" Value="0.15" />
+
     </Style>
 
     <Style TargetType="TextBlock">
@@ -18,6 +21,8 @@
 
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="WebsiteNameTextBlock">
         <Setter Property="FontSize" Value="10"/>
+        <Setter Property="Background" Value="LightSlateGray"/>
+        <Setter Property="Padding" Value="2,0,2,0"/>
     </Style>
 
     <Style TargetType="StackPanel" x:Key="WebsiteNameStackPanel">
