@@ -32,11 +32,17 @@
             this.Content = new AskAlfredWindowControl();
         }
 
-        internal async System.Threading.Tasks.Task AutoSearchAsync()
+        internal async System.Threading.Tasks.Task SearchSelectedErrorAsync()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             AskAlfredWindowControl content = Content as AskAlfredWindowControl;
-            await content.AutoSearchAsync();
+            await content.SearchSelectedError();
+        }
+        internal async System.Threading.Tasks.Task SearchSpecificInput(IAlfredInput i_Input)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
+            AskAlfredWindowControl content = Content as AskAlfredWindowControl;
+            await content.SearchSpecificInputAsync(i_Input);
         }
     }
 }

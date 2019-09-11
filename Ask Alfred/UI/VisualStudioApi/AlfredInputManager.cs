@@ -1,51 +1,31 @@
 ﻿using Microsoft.VisualStudio.Shell;
+using System;
 
 namespace Ask_Alfred.UI.VisualStudioApi
 {
-    internal class AlfredInputManager // *** TODO: should be singleton !!!! 
+    public sealed class AlfredInputManager
     {
-        internal AlfredInput GetInputForAlfred()
+        private static readonly Lazy<AlfredInputManager> lazy = new Lazy<AlfredInputManager>(() => new AlfredInputManager());
+        public static AlfredInputManager Instance { get { return lazy.Value; } }
+        public AlfredInput GetInputFromSelectedError()
         {
-            string errorDescription = null;
-            string errorCode = null;
+            // TODO: fix this function
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            // *** function for testing
-            if (VisualStudioHandler.IsUserOnTextEditor())
-            {
-                //int i = 0;
-            }
-
-            if (VisualStudioHandler.IsCurrentLineHasError())
-            {
-                errorDescription = VisualStudioHandler.GetCurrentLineErrorDescription();
-                errorCode = VisualStudioHandler.GetCurrentLineErrorCode();
-            }
-            else if (VisualStudioHandler.HasSelectedError())
-            {
-                errorDescription = VisualStudioHandler.GetSelectedErrorValue(VisualStudioHandler.eErrorListValue.Description);
-                errorCode = VisualStudioHandler.GetSelectedErrorValue(VisualStudioHandler.eErrorListValue.ErrorCode);
-            }
-
+            string errorDescription = null;
+            string errorCode = null;
             string projetType = VisualStudioHandler.GetProjectTypeAsString();
-            //else if (VisualStudioHandler.S)
-            //string selectedText = VisualStudioHandler.GetSelectedText();
-            //string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");
-            //string selectedErrorCode = VisualStudioHandler.GetSelectedOrFirstErrorValue("errorcode");
 
-            //if (!String.IsNullOrEmpty(selectedText))
-            //{
-            //    //(window as AskAlfredWindow).AutoSearchByText(selectedText);
-            //}
-            //if (!String.IsNullOrEmpty(selectedOrFirstErrorDescription))
-            //{
-            //   // (window as AskAlfredWindow).AutoSearchByText(selectedOrFirstErrorDescription);
-            //}
+            if (VisualStudioHandler.HasSelectedError())
+            {
+                errorDescription = VisualStudioHandler.GetValueFromSelectedError("text"); // description
+                errorCode = VisualStudioHandler.GetValueFromSelectedError("errorcode");
+            }
 
             return new AlfredInput(errorDescription, errorCode, projetType);
         }
 
-        internal AlfredInput GetInputForAlfredWindowSearchBar(string i_SearchKey)
+        public AlfredInput GetInputForAlfredWindowSearchBar(string i_SearchKey)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             string searchKey = i_SearchKey;

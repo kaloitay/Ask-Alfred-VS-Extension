@@ -12,59 +12,23 @@ using System.Threading.Tasks;
 
 namespace Ask_Alfred.UI.VisualStudioApi
 {
-    internal class TestSuggestedActionsSource : ISuggestedActionsSource
+    internal class SuggestedActionsSource : ISuggestedActionsSource
     {
-        // TODO: Gal, please take a look at this class
-
-        private readonly TestSuggestedActionsSourceProvider m_factory;
+        private readonly SuggestedActionsSourceProvider m_factory;
         private readonly ITextBuffer m_textBuffer;
         private readonly ITextView m_textView;
         public event EventHandler<EventArgs> SuggestedActionsChanged;
 
-        public TestSuggestedActionsSource(TestSuggestedActionsSourceProvider testSuggestedActionsSourceProvider, ITextView textView, ITextBuffer textBuffer)
+        public SuggestedActionsSource(SuggestedActionsSourceProvider suggestedActionsSourceProvider, ITextView textView, ITextBuffer textBuffer)
         {
-            m_factory = testSuggestedActionsSourceProvider;
+            m_factory = suggestedActionsSourceProvider;
             m_textBuffer = textBuffer;
             m_textView = textView;
         }
 
-        private bool TryGetWordUnderCaret(out TextExtent wordExtent)
-        {
-            ITextCaret caret = m_textView.Caret;
-            SnapshotPoint point;
-
-            if (caret.Position.BufferPosition > 0)
-            {
-                point = caret.Position.BufferPosition - 1;
-            }
-            else
-            {
-                wordExtent = default(TextExtent);
-                return false;
-            }
-
-            ITextStructureNavigator navigator = m_factory.NavigatorService.GetTextStructureNavigator(m_textBuffer);
-
-            wordExtent = navigator.GetExtentOfWord(point);
-            return true;
-        }
-
         public async Task<bool> HasSuggestedActionsAsync(ISuggestedActionCategorySet requestedActionCategories, SnapshotSpan range, CancellationToken cancellationToken)
         {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            return VisualStudioHandler.IsCurrentLineHasError();
-
-            //return await System.Threading.Tasks.Task.Factory.StartNew(() =>
-            //{ // *** here i will check if there are errors / selected text / what ever triggers alfred
-            //    //TextExtent extent;
-            //    //if (TryGetWordUnderCaret(out extent))
-            //    //{
-            //    //    // don't display the action if the extent has whitespace
-            //    //    return extent.IsSignificant;
-            //    //}
-            //    return VisualStudioHandler.IsCurrentLineHasError();
-            //    // return false;
-            //});
+            return true;
         }
 
         [Obsolete]
@@ -72,22 +36,18 @@ namespace Ask_Alfred.UI.VisualStudioApi
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
-            TextExtent extent;
-            if (TryGetWordUnderCaret(out extent) && extent.IsSignificant)
+            AlfredSuggestedAction alfredAction = null;
+            string selectedText = VisualStudioHandler.GetCurrentLineSelectedText();
+
+            if (VisualStudioHandler.GetCurrentLineErrorList().Count > 0 || !String.IsNullOrEmpty(selectedText) || (tryGetWordUnderCaret(out TextExtent extent) && extent.IsSignificant && extent.Span.GetText().Length > 1))
             {
-                ITrackingSpan trackingSpan = range.Snapshot.CreateTrackingSpan(extent.Span, SpanTrackingMode.EdgeInclusive);
-                //   var upperAction = new UpperCaseSuggestedAction(trackingSpan);
-
-                AlfredInputManager alfredInputManager = new AlfredInputManager(); // *** TODO: do not create an instance!!!!!
-                AlfredInput input = alfredInputManager.GetInputForAlfred();
-
-                var alfredAction = new AlfredSuggestedAction(input); // *** not sure that tracking span required for me
-
+                alfredAction = new AlfredSuggestedAction(m_factory, m_textView, m_textBuffer);
                 return new SuggestedActionSet[] {
                     new SuggestedActionSet(new ISuggestedAction[] { alfredAction })
                 };
             }
-            return Enumerable.Empty<SuggestedActionSet>();
+            else
+                return null;
         }
 
         public void Dispose()
@@ -99,6 +59,23 @@ namespace Ask_Alfred.UI.VisualStudioApi
             // This is a sample provider and doesn't participate in LightBulb telemetry
             telemetryId = Guid.Empty;
             return false;
+        }
+
+        private bool tryGetWordUnderCaret(out TextExtent o_WordExtent)
+        {
+            ITextCaret caret = m_textView.Caret;
+            SnapshotPoint point = caret.Position.BufferPosition;
+
+            if (caret.Position.BufferPosition <= 0)
+            {
+                o_WordExtent = default(TextExtent);
+                return false;
+            }
+
+            ITextStructureNavigator navigator = m_factory.NavigatorService.GetTextStructureNavigator(m_textBuffer);
+
+            o_WordExtent = navigator.GetExtentOfWord(point);
+            return true;
         }
     }
 }

@@ -8,13 +8,14 @@
     using System.Windows.Input;
     using Ask_Alfred.UI.VisualStudioApi;
     using System.Collections;
+    using System;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
-        private AlfredInputManager m_AlfredInputManager;
         ArrayList sortedRankArray = new ArrayList();
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
@@ -27,7 +28,6 @@
 
         private void initializeAskAlfredWindow()
         {
-            m_AlfredInputManager = new AlfredInputManager();
             resultsListView.Items.Clear();
             searchComboBox.Text = string.Empty;
             searchingForTextBlock.Text = string.Empty;
@@ -65,6 +65,11 @@
             });
         }
 
+        public async System.Threading.Tasks.Task SearchSpecificInputAsync(IAlfredInput i_Input)
+        {
+            await SearchAsync(i_Input);
+        }
+
         private int insertPageToSortedRankArray(double i_Rank)
         {
             int resultIndex;
@@ -79,13 +84,20 @@
             return resultIndex;
         }
 
-        private async System.Threading.Tasks.Task askAlfredSearchAsync(IAlfredInput i_Input)
+        public async System.Threading.Tasks.Task SearchSelectedError()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
+            AlfredInput alfredInput = AlfredInputManager.Instance.GetInputFromSelectedError();
+            await SearchAsync(alfredInput);
+        }
+
+        private async System.Threading.Tasks.Task SearchAsync(IAlfredInput i_Input)
+        {
+            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
             setAskAlfredWindowForNewSearch(i_Input);
-            await searchByInputAsync(i_Input);
+            await AlfredEngine.Instance.SearchAsync(i_Input);
+            searchIsFinished();
         }
 
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
@@ -99,28 +111,16 @@
             sortedRankArray.RemoveRange(0, sortedRankArray.Count);
         }
 
-        private async System.Threading.Tasks.Task searchByInputAsync(IAlfredInput i_Input)
-        {
-            await AlfredEngine.Instance.SearchAsync(i_Input);
-            searchIsFinished();
-        }
-
         private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
             if (e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
-                AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
-                askAlfredSearchAsync(alfredInput);
+                AlfredInput alfredInput = AlfredInputManager.Instance.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
+                SearchAsync(alfredInput);
             }
         }
 
-        public async System.Threading.Tasks.Task AutoSearchAsync()
-        {
-            await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
-            AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
-            await askAlfredSearchAsync(alfredInput);
-        }
 
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {

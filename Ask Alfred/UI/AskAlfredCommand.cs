@@ -1,4 +1,6 @@
 ﻿using Ask_Alfred.UI.VisualStudioApi;
+using EnvDTE;
+using EnvDTE80;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
@@ -15,12 +17,15 @@ namespace Ask_Alfred.UI
         /// <summary>
         /// Command ID.
         /// </summary>
-        public const int CommandId = 4436;
+        public const int toolsdId = 4436;
+        public const int errorListId = 512;
 
         /// <summary>
         /// Command menu group (command set GUID).
         /// </summary>
-        public static readonly Guid CommandSet = new Guid("d4677dee-3ed3-4fa4-8483-2eea77c80219");
+        public static readonly Guid toolsGuid = new Guid("d4677dee-3ed3-4fa4-8483-2eea77c80219");
+        public static readonly Guid errorListGuid = new Guid("9d9046da-94f8-4fd0-8a00-92bf4f6defa8");
+
 
         /// <summary>
         /// VS Package that provides this command, not null.
@@ -38,9 +43,14 @@ namespace Ask_Alfred.UI
             this.package = package ?? throw new ArgumentNullException(nameof(package));
             commandService = commandService ?? throw new ArgumentNullException(nameof(commandService));
 
-            var menuCommandID = new CommandID(CommandSet, CommandId);
-            var menuItem = new MenuCommand(this.Execute, menuCommandID);
-            commandService.AddCommand(menuItem);
+            CommandID menuCommandID = new CommandID(toolsGuid, toolsdId);
+            MenuCommand toolsMenuItem = new MenuCommand(this.ExecuteToolMenu, menuCommandID);
+            commandService.AddCommand(toolsMenuItem);
+
+            CommandID errorListCommand = new CommandID(errorListGuid, errorListId);
+            OleMenuCommand errorMenuItem = new OleMenuCommand(this.ExecuteErrrorListMenu, errorListCommand);
+            errorMenuItem.BeforeQueryStatus += new EventHandler(this.errorMenuItem_BeforeQueryStatus);
+            commandService.AddCommand(errorMenuItem);
         }
 
         /// <summary>
@@ -82,7 +92,7 @@ namespace Ask_Alfred.UI
         /// </summary>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event args.</param>
-        private void Execute(object sender, EventArgs e)
+        private void ExecuteToolMenu(object sender, EventArgs e)
         {
             // *** CODE DUPLICATION extracted to method but havent used here
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -101,20 +111,52 @@ namespace Ask_Alfred.UI
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
             AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
-            askAlfredWindow.AutoSearchAsync();
+            //askAlfredWindow.SearchSelectedErrorAsync();
 
-            //string selectedText = VisualStudioHandler.GetSelectedText();
-            //string selectedOrFirstErrorDescription = VisualStudioHandler.GetSelectedOrFirstErrorValue("text");
-            ////  string selectedErrorCode = GetSelectedOrFirstErrorCode();
+            // if there is selected error so search the error
+        }
 
-            //if (!String.IsNullOrEmpty(selectedText))
-            //{
-            //    (window as AskAlfredWindow).AutoSearchByText(selectedText);
-            //}
-            //if (!String.IsNullOrEmpty(selectedOrFirstErrorDescription))
-            //{
-            //    (window as AskAlfredWindow).AutoSearchByText(selectedOrFirstErrorDescription);
-            //}
+        private void errorMenuItem_BeforeQueryStatus(object sender, System.EventArgs e)
+        {
+            OleMenuCommand menuItem = sender as OleMenuCommand;
+            ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
+
+            if ((null == window) || (null == window.Frame))
+            {
+                throw new NotSupportedException("Cannot create tool window");
+            }
+
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+            AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
+            if (askAlfredWindow != null && VisualStudioHandler.HasSelectedError())
+            {
+                menuItem.Enabled = true;
+                menuItem.Visible = true;
+            }
+            else
+            {
+                menuItem.Enabled = false;
+                menuItem.Visible = false;
+            }
+        }
+
+        private void ExecuteErrrorListMenu(object sender, EventArgs e)
+        {
+            OleMenuCommand menuItem = sender as OleMenuCommand;
+            ToolWindowPane window = this.package.FindToolWindow(typeof(AskAlfredWindow), 0, true);
+
+            if ((null == window) || (null == window.Frame))
+            {
+                throw new NotSupportedException("Cannot create tool window");
+            }
+
+            IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
+            Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
+
+            AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
+            askAlfredWindow.SearchSelectedErrorAsync();
         }
     }
 }

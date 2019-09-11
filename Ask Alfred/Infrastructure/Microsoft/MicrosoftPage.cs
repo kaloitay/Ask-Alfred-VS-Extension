@@ -13,9 +13,16 @@ namespace Ask_Alfred.Objects
         {
             get
             {
-                // TODO: fix Microsoft rank
-                return 100;
+                return getDateRank();
             }
+
+        }
+        private double getDateRank()
+        {
+            // TODO: fix Microsoft rank
+            DateTime currentTime = DateTime.Now;
+
+            return 100;
         }
     }
 }

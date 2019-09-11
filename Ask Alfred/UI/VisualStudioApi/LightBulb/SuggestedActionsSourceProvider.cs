@@ -10,7 +10,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
     [Export(typeof(ISuggestedActionsSourceProvider))]
     [Name("Test Suggested Actions")]
     [ContentType("text")]
-    internal class TestSuggestedActionsSourceProvider : ISuggestedActionsSourceProvider
+    internal class SuggestedActionsSourceProvider : ISuggestedActionsSourceProvider
     {
         [Import(typeof(ITextStructureNavigatorSelectorService))]
         internal ITextStructureNavigatorSelectorService NavigatorService { get; set; }
@@ -21,7 +21,8 @@ namespace Ask_Alfred.UI.VisualStudioApi
             {
                 return null;
             }
-            return new TestSuggestedActionsSource(this, textView, textBuffer);
+
+            return new SuggestedActionsSource(this, textView, textBuffer);
         }
     }
 }

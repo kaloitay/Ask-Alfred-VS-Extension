@@ -6,25 +6,14 @@ using Microsoft.VisualStudio.Shell.TableControl;
 using Microsoft.VisualStudio.Shell.TableManager;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Ask_Alfred.UI.VisualStudioApi
-{// *** TODO: should be internal class ... ?
+{
     public static class VisualStudioHandler
     {
         private static readonly Dictionary<string, string> r_ProjectGuids;
-
-        public enum eErrorListValue : int 
-        {
-            [StringValue("text")]
-            Description,
-
-            [StringValue("errorcode")]
-            ErrorCode,
-
-            [StringValue("line")]
-            Line
-        }
 
         static VisualStudioHandler()
         {
@@ -103,206 +92,62 @@ namespace Ask_Alfred.UI.VisualStudioApi
             // Return the first if there was a match.
             return attribs.Length > 0 ? attribs[0].StringValue : null;
         }
-
-        public static bool IsUserOnTextEditor()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
-
-            Window what = dte.ActiveWindow; //.ObjectKind
-            
-            return false;
-        }
-
-        public static bool IsUserOnErrorListToolWindow()
-        {
-            DTE2 dte = (DTE2)Package.GetGlobalService(typeof(DTE));
-
-            //dte.ToolWindows.ErrorList
-            return false;
-        }
-
-        public static ErrorItem GetErrorItemByActiveDocumentLineNumber(int i_LineNumber)
-        {
-            ErrorItem errorItem = null;
-
-            var dte = (EnvDTE80.DTE2)Package.GetGlobalService(typeof(DTE));
-            var errorList = dte.ToolWindows.ErrorList;
-
-            if (errorList != null && errorList.ErrorItems != null)
-            {
-                for (int i = 1; i <= errorList.ErrorItems.Count; i++)
-                {
-                    int line = errorList.ErrorItems.Item(i).Line;
-
-                    if (line == i_LineNumber)
-                        errorItem = errorList.ErrorItems.Item(i); //.Description;
-                }
-            }
-
-            return errorItem;
-        }
-
-        public static ErrorItem GetErrorItemByActiveDocumentCurrentLine()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            dynamic selection = GetActiveDocumentTextSelection();
-
-            int currentLine = selection.CurrentLine;
-
-            return GetErrorItemByActiveDocumentLineNumber(currentLine);
-        }
-
-        public static string GetCurrentLineErrorCode()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            ErrorItem errorItem = GetErrorItemByActiveDocumentCurrentLine();
-            IErrorList errorList = GetErrorList();
-            string errorCode = null;
-
-            Type type = errorItem.GetType();
-
-            foreach (ITableEntry entry in errorList.TableControl.Entries)
-            {
-                bool hasValue = entry.TryGetValue(eErrorListValue.Line.GetStringValue(), out int entryLineNumber);
-
-                // *** bugs potential - many errors in the same line .....
-                if (hasValue && entryLineNumber + 1 == errorItem.Line)
-                {
-                    entry.TryGetValue(eErrorListValue.ErrorCode.GetStringValue(), out errorCode);
-                }
-            }
-
-            return errorCode;
-        }
-
         public static bool IsCurrentLineHasError()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            return !String.IsNullOrEmpty(GetCurrentLineErrorDescription());
+            return getErrorListByCurrentLine().Count > 0;
         }
-
-        public static string GetCurrentLineErrorDescription()
+        public static string GetValueFromSelectedError(string i_Value)
         {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            ErrorItem errorItem = GetErrorItemByActiveDocumentCurrentLine();
-
-            return errorItem?.Description;
+            ITableEntryHandle selected = getSelectedErrorListEntry();
+            return GetStringFromTableEntry(selected, i_Value);
         }
-
-        /// <summary>
-        /// Gets the active document selection, or null if there isnt
-        /// </summary>
-        /// <returns></returns>
-        public static dynamic GetActiveDocumentTextSelection()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-
-            DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
-            dynamic selection = null;
-
-            if (dte.ActiveDocument != null)
-            {
-                selection = (TextSelection)dte.ActiveDocument.Selection;
-
-            }
-
-            return selection;
-        }
-
-        /// <summary>
-        /// Gets the selected text from the active document
-        /// </summary>
-        /// <returns></returns>
-        public static string GetSelectedText()
-        {
-            ThreadHelper.ThrowIfNotOnUIThread();
-            var selection = GetActiveDocumentTextSelection();
-
-            string selectedText = selection.Text;
-
-            return selectedText;
-        }
-
-        /// <summary>
-        /// Gets the selected or first error value (by errorCode || description || error list window options)
-        /// </summary>
-        /// <param name="i_Value">
-        /// param options -> description == "text", errorCode == "errorcode"
-        /// </param>
-        /// <returns></returns>
-        public static string GetSelectedOrFirstErrorValue(string i_Value)
+        public static string GetStringFromTableEntry(ITableEntryHandle i_TableEntry, string i_Value)
         {
             string errorValue = null;
-
-            IErrorList errorList = GetErrorList();
-            var selected = errorList.TableControl.SelectedOrFirstEntry;
-
-            if (selected != null)
-            {
-                if (selected.TryGetValue(i_Value, out object content))
-                {
-                    errorValue = (string)content;
-                }
-
-            }
+            i_TableEntry?.TryGetValue(i_Value, out errorValue);
 
             return errorValue;
         }
 
-        /// <summary>
-        /// Returns true if there is a selected error in error list tool window, false otherwise.
-        /// </summary>
-        /// <returns></returns>
-        public static bool HasSelectedError()
+        public static List<VisualStudioErrorCodeItem> GetCurrentLineErrorList()
         {
-            return (GetSelectedErrorListEntry() != null);
-        }
+            List<VisualStudioErrorCodeItem> visualStudioErrorCodeList = new List<VisualStudioErrorCodeItem>();
 
-        /// <summary>
-        /// Gets the selected error value (by errorCode || description || error list window options)
-        /// </summary>
-        /// <param name="i_Value">
-        /// param options -> description == "text", errorCode == "errorcode"
-        /// </param>
-        /// <returns></returns>
-        public static string GetSelectedErrorValue(eErrorListValue i_Value)
-        {
-            string errorValue = null;
+            ThreadHelper.ThrowIfNotOnUIThread();
+            List<ErrorItem> errorItemsList = getErrorListByCurrentLine();
+            IErrorList errrorList = getErrorList();
+            IEnumerable<ITableEntryHandle> tableEntries = errrorList.TableControl.Entries;
+            string errorCode;
 
-            ITableEntryHandle selected = GetSelectedErrorListEntry();
+            //RightClickErrroList a = new RightClickErrroList();
+            //a.Initialize(); 
 
-            if (selected != null)
+            foreach (ErrorItem item in errorItemsList)
             {
-                if (selected.TryGetValue(i_Value.GetStringValue(), out object content))
-                {
-                    errorValue = (string)content;
-                }
+                // TODO: move to other function
+                errorCode = null;
 
+                foreach (var tableEntry in tableEntries)
+                {
+                    if (item.Description == GetStringFromTableEntry(tableEntry, "text"))
+                        errorCode = GetStringFromTableEntry(tableEntry, "errorcode");
+                }
+                // until here
+
+                visualStudioErrorCodeList.Add(new VisualStudioErrorCodeItem
+                {
+                    Description = item.Description,
+                    Line = item.Line,
+                    Column = item.Column,
+                    File = item.FileName,
+                    Project = item.Project,
+                    ErrorCode = errorCode
+                });
             }
 
-            return errorValue;
+            return visualStudioErrorCodeList;
         }
-
-        private static ITableEntryHandle GetSelectedErrorListEntry()
-        {
-            IErrorList errorList = GetErrorList();
-
-            ITableEntryHandle selected = errorList.TableControl.SelectedEntry;
-
-            return selected;
-        }
-        // *** TODO: try to change from var to specific type
-        private static IErrorList GetErrorList()
-        {
-            DTE2 dte = (DTE2)Package.GetGlobalService(typeof(DTE));
-            IErrorList errorList = dte.ToolWindows.ErrorList as IErrorList;
-
-            return errorList;
-        }
-
-
-
         public static string GetProjectTypeAsString()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -313,7 +158,74 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
             return projectType;
         }
+        public static bool HasSelectedError()
+        {
+            return getSelectedErrorListEntry() != null;
+        }
+        public static string GetCurrentLineSelectedText()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
 
+            DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
+            dynamic selection = null;
+
+            if (dte.ActiveDocument != null)
+                selection = (TextSelection)dte.ActiveDocument.Selection;
+
+            return selection.Text;
+        }
+
+        private static List<ErrorItem> getErrorListByCurrentLine()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+            int currentLine = getCurrentLineNumber();
+
+            return getErrorListByLineNumber(currentLine);
+        }
+        private static List<ErrorItem> getErrorListByLineNumber(int i_LineNumber)
+        {
+            DTE2 dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            List<ErrorItem> lineErrorList = new List<ErrorItem>();
+
+            ErrorList errorList = dte.ToolWindows.ErrorList;
+
+            if (errorList != null && errorList.ErrorItems != null)
+            {
+                for (int i = 1; i <= errorList.ErrorItems.Count; i++)
+                {
+                    if (errorList.ErrorItems.Item(i).Line == i_LineNumber)
+                        lineErrorList.Add(errorList.ErrorItems.Item(i));
+                }
+            }
+
+            return lineErrorList;
+        }
+        private static int getCurrentLineNumber()
+        {
+            ThreadHelper.ThrowIfNotOnUIThread();
+
+            DTE dte = (DTE)Package.GetGlobalService(typeof(DTE));
+            dynamic selection = null;
+
+            if (dte.ActiveDocument != null)
+                selection = (TextSelection)dte.ActiveDocument.Selection;
+
+            return selection.CurrentLine;
+        }
+        private static ITableEntryHandle getSelectedErrorListEntry()
+        {
+            IErrorList errorList = getErrorList();
+            ITableEntryHandle selected = errorList.TableControl.SelectedEntry;
+
+            return selected;
+        }
+        private static IErrorList getErrorList()
+        {
+            DTE2 dte = (DTE2)Package.GetGlobalService(typeof(DTE));
+            IErrorList errorList = dte.ToolWindows.ErrorList as IErrorList;
+
+            return errorList;
+        }
         private static Project getActiveProject(DTE dte)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
