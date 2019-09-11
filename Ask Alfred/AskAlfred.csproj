@@ -107,10 +107,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="stylesheet.css" />
-    <Resource Include="UI\Resources\Icons\loading_icon.png" />
     <Resource Include="UI\Resources\Icons\ask_alfred_icon.png" />
-    <Resource Include="UI\Resources\Icons\go_to_web_icon.png" />
+    <Resource Include="UI\Resources\Icons\go_to_web_icon_white.png" />
     <Resource Include="UI\Resources\Icons\green_checkmark_stackoverflow_icon.png" />
+    <Resource Include="UI\Resources\Icons\loading_icon_black.png" />
+    <Resource Include="UI\Resources\Icons\loading_icon_white.png" />
+    <Resource Include="UI\Resources\Icons\not_loading_icon_black.png" />
+    <Resource Include="UI\Resources\Icons\not_loading_icon_white.png" />
     <VSCTCompile Include="UI\AskAlfredCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
@@ -417,6 +420,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="UI\Resources\Icons\go_to_web_icon_black.png" />
     <EmbeddedResource Include="UI\VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>

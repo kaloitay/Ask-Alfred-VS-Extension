@@ -17,8 +17,8 @@
     public partial class AskAlfredWindowControl : UserControl
     {
         private AlfredInputManager m_AlfredInputManager;
-        private ArrayList sortedRankArray = new ArrayList();
-        private ComboBoxViewModel HistorySearchesViewModel = new ComboBoxViewModel();
+        private ArrayList m_SortedRankArray = new ArrayList();
+        private ComboBoxViewModel m_HistorySearchesViewModel = new ComboBoxViewModel();
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
@@ -34,7 +34,9 @@
             resultsListView.Items.Clear();
             searchComboBox.Text = string.Empty;
             searchingForTextBlock.Text = string.Empty;
-            DataContext = HistorySearchesViewModel;
+            DataContext = m_HistorySearchesViewModel;
+            searchingImage.Visibility = Visibility.Hidden;
+            notSearchingImage.Visibility = Visibility.Hidden;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
             AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished; // TODO: is name timeout is currect?
         }
@@ -51,10 +53,10 @@
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                searchComboBox.BorderBrush = Brushes.White;
                 searchingForTextBlock.Text = "Found " + resultsListView.Items.Count + " results";
                 searchingImage.IsEnabled = false;
                 searchingImage.Visibility = Visibility.Hidden;
+                notSearchingImage.Visibility = Visibility.Visible;
             });
         }
         private void timeoutExpiredHandler()
@@ -79,13 +81,13 @@
         {
             int resultIndex;
 
-            for (resultIndex = 0; resultIndex < sortedRankArray.Count; ++resultIndex)
+            for (resultIndex = 0; resultIndex < m_SortedRankArray.Count; ++resultIndex)
             {
-                if ((double)sortedRankArray[resultIndex] < i_Rank)
+                if ((double)m_SortedRankArray[resultIndex] < i_Rank)
                     break;
             }
 
-            sortedRankArray.Insert(resultIndex, i_Rank);
+            m_SortedRankArray.Insert(resultIndex, i_Rank);
             return resultIndex;
         }
         public async System.Threading.Tasks.Task SearchSelectedError()
@@ -99,22 +101,22 @@
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             setAskAlfredWindowForNewSearch(i_Input);
 
-            if (!HistorySearchesViewModel.HistorySearches.Contains(searchComboBox.Text))
-                HistorySearchesViewModel.HistorySearches.Insert(0, searchComboBox.Text);
+            if (!m_HistorySearchesViewModel.HistorySearches.Contains(searchComboBox.Text))
+                m_HistorySearchesViewModel.HistorySearches.Insert(0, searchComboBox.Text);
 
             await AlfredEngine.Instance.SearchAsync(i_Input);
             searchIsFinished();
         }
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
-            searchComboBox.BorderBrush = Brushes.AliceBlue;
             searchingImage.IsEnabled = true;
             searchingImage.Visibility = Visibility.Visible;
+            notSearchingImage.Visibility = Visibility.Hidden;
             resultsListView.Items.Clear();
             searchComboBox.Text = i_Input.Description;
             searchingForTextBlock.Text = "Searching...";
 
-            sortedRankArray.RemoveRange(0, sortedRankArray.Count);
+            m_SortedRankArray.RemoveRange(0, m_SortedRankArray.Count);
         }
         private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -137,5 +139,6 @@
                 }
             }
         }
+
     }
 }

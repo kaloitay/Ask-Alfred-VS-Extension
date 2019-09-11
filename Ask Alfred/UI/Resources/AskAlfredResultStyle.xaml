@@ -3,14 +3,14 @@
 
     <Style TargetType="ListViewItem">
         <Setter Property="Height" Value="70" />
-        <Setter Property="BorderBrush" Value="White" />
+        <Setter Property="BorderBrush" Value="DarkSlateGray" />
         <Setter Property="BorderThickness" Value="0.15" />
 
     </Style>
 
     <Style TargetType="TextBlock">
         <Setter Property="FontFamily" Value="Calibri Light"/>
-        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Foreground" Value="Black"/>
     </Style>
 
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="DateTextBlock">
@@ -22,6 +22,7 @@
     <Style BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="TextBlock" x:Key="WebsiteNameTextBlock">
         <Setter Property="FontSize" Value="10"/>
         <Setter Property="Background" Value="LightSlateGray"/>
+        <Setter Property="Foreground" Value="White"/>
         <Setter Property="Padding" Value="2,0,2,0"/>
     </Style>
 
@@ -45,7 +46,7 @@
         <Setter Property="Height" Value="Auto"/>
         <Setter Property="Width" Value="40"/>
         <Setter Property="Stretch" Value="None"/>
-        <Setter Property="Source" Value="Icons/go_to_web_icon.png"/>
+        <Setter Property="Source" Value="Icons/go_to_web_icon_black.png"/>
     </Style>
 
     <Style TargetType="Image" x:Key="AddtionalInfoImage">
