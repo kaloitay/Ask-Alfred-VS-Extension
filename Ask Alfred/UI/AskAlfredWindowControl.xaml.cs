@@ -17,7 +17,8 @@
     public partial class AskAlfredWindowControl : UserControl
     {
         private AlfredInputManager m_AlfredInputManager;
-        ArrayList sortedRankArray = new ArrayList();
+        private ArrayList sortedRankArray = new ArrayList();
+        private ComboBoxViewModel HistorySearches = new ComboBoxViewModel();
         /// <summary>
         /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
         /// </summary>
@@ -34,6 +35,7 @@
             searchComboBox.Text = string.Empty;
             searchingForTextBlock.Text = string.Empty;
             searchingKeyTextBox.Text = string.Empty;
+            DataContext = HistorySearches;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
             AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished; // TODO: is name timeout is currect?
         }
@@ -88,6 +90,9 @@
 
         private async System.Threading.Tasks.Task askAlfredSearchAsync(IAlfredInput i_Input)
         {
+            if (!HistorySearches.HistorySearches.Contains(searchComboBox.Text))
+                HistorySearches.HistorySearches.Insert(0, searchComboBox.Text);
+
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfred();
 

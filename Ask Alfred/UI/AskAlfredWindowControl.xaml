@@ -21,8 +21,8 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        
-        <ComboBox x:Name="searchComboBox" Grid.Row="0" BorderBrush="White" Background="Yellow" IsTextSearchEnabled="True" IsEditable="True" KeyDown="searchComboBox_KeyDown" HorizontalAlignment="Stretch" Margin="10"/>
+
+        <ComboBox x:Name="searchComboBox" Grid.Row="0" BorderBrush="White" Background="Yellow" IsTextSearchEnabled="True" IsEditable="True" KeyDown="searchComboBox_KeyDown" HorizontalAlignment="Stretch" Margin="10" ItemsSource="{Binding HistorySearches} "/>
         
         <Grid Grid.Row="1" Margin="5">
             <Grid.ColumnDefinitions>
