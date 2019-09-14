@@ -13,16 +13,10 @@ namespace Ask_Alfred.Objects
         {
             get
             {
-                return getDateRank();
+                // Just for POC, no implementation
+                return 1;
             }
 
-        }
-        private double getDateRank()
-        {
-            // TODO: fix Microsoft rank
-            DateTime currentTime = DateTime.Now;
-
-            return 100;
         }
     }
 }

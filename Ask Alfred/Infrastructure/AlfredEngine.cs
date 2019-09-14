@@ -17,6 +17,7 @@ namespace Ask_Alfred.Infrastructure
         private GoogleSearchEngine m_GoogleSearchEngine = new GoogleSearchEngine();
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
         private CancellationTokenSource m_CancellationTokenSource = null;
+        private WaitToFinishMemoryCache<IPage> m_PagesMemoryCache = new WaitToFinishMemoryCache<IPage>();
 
         public event Action<IPage> OnPageAdded;
         public event Action OnTimeoutExpired;
@@ -67,11 +68,12 @@ namespace Ask_Alfred.Infrastructure
                 await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
                     r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description, i_Input.ProjectType));
             }
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
-                r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
+            // TODO:
+            //await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+            //    r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
 
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
-                r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
+            //await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
+            //    r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
 
             await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
 
@@ -99,10 +101,11 @@ namespace Ask_Alfred.Infrastructure
 
                     if (dataSource != null)
                     {
-                        await dataSource.ParseDataAsync();
+                        IPage page = await m_PagesMemoryCache.GetOrCreate(googleResult.Url,
+                            async () => await dataSource.ParseDataAndGetPageAsync());
                         cancellationToken.ThrowIfCancellationRequested();
-                        PagesList.Add(dataSource.Page);
-                        OnPageAdded(dataSource.Page);
+                        PagesList.Add(page);
+                        OnPageAdded(page);
                     }
                 }
             }
