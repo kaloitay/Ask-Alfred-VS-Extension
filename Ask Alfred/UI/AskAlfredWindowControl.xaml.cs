@@ -10,6 +10,7 @@
     using System.Collections;
     using System.Windows.Media;
     using Microsoft.VisualStudio.Threading;
+    using System;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -38,16 +39,16 @@
             searchingImage.Visibility = Visibility.Hidden;
             notSearchingImage.Visibility = Visibility.Hidden;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
-            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished; // TODO: is name timeout is currect?
+            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished;
         }
         private void pageAddedHandler(IPage i_Page)
         {
-            if (i_Page != null)
-            {
-                // use stackoverflowPage.Rank to get the rank
-                createWindowResult(i_Page);
-            }
-            // else
+            createResultItem(i_Page);
+        }
+        private void noInternetConnection()
+        {
+            // TODO:
+            int x = 5;
         }
         private void searchIsFinished()
         {
@@ -63,15 +64,22 @@
         {
             // TODO: need that method??
         }
-        private void createWindowResult(IPage i_Page)
+        // TODO: this should should call update instead of create?
+        private void createResultItem(IPage i_Page)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            if (i_Page != null)
             {
-                AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
 
-                int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
-                resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
-            });
+                    // TODO: remove this print
+                    System.Diagnostics.Debug.WriteLine("Site: {0} Rank: {1}", i_Page.WebsiteName, i_Page.Rank);
+
+                    int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
+                    resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
+                });
+            }
         }
         public async System.Threading.Tasks.Task SearchSpecificInputAsync(IAlfredInput i_Input)
         {
@@ -104,8 +112,15 @@
             if (!m_HistorySearchesViewModel.HistorySearches.Contains(searchComboBox.Text))
                 m_HistorySearchesViewModel.HistorySearches.Insert(0, searchComboBox.Text);
 
-            await AlfredEngine.Instance.SearchAsync(i_Input);
-            searchIsFinished();
+            try
+            {
+                await AlfredEngine.Instance.SearchAsync(i_Input);
+                searchIsFinished();
+            }
+            catch
+            {
+                noInternetConnection();
+            }
         }
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
@@ -121,7 +136,7 @@
         private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
-            if (e.Key == Key.Enter && searchComboBox.IsEnabled == true)
+            if (!String.IsNullOrEmpty(searchComboBox.Text) && e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
                 AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
                 SearchAsync(alfredInput);

@@ -6,7 +6,6 @@ namespace Ask_Alfred.Infrastructure
 {
     public static class WebDataSourceFactory
     {
-        // TODO: mabye the input should be eWebSite instead of string?
         public static IWebDataSource CreateWebDataSource(string i_Url)
         {
             IWebDataSource webDataSource = null;
@@ -14,7 +13,6 @@ namespace Ask_Alfred.Infrastructure
 
             switch (myUri.Host)
             {
-                // TODO: two cases is needed here?
                 case "www.stackoverflow.com":
                 case "stackoverflow.com":
                     webDataSource = TryCreateStackoverflowWebDataSource(i_Url);
@@ -38,8 +36,12 @@ namespace Ask_Alfred.Infrastructure
         }
         public static MicrosoftDataSource TryCreateMicrosoftWebDataSource(string i_Url)
         {
-            return new MicrosoftDataSource(i_Url);
-        }
+            MicrosoftDataSource dataSource = null;
 
+            if (MicrosoftDataSource.IsValidUrl(i_Url) == true)
+                dataSource = new MicrosoftDataSource(i_Url);
+
+            return dataSource;
+        }
     }
 }
