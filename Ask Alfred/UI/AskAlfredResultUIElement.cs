@@ -2,14 +2,12 @@
 using System.Windows.Controls;
 using Ask_Alfred.Objects;
 using Ask_Alfred.Infrastructure.Interfaces;
-using System;
 
 namespace Ask_Alfred.UI
 {
     public class AskAlfredResultUIElement
     {
         private readonly string DATE_FORMAT = "dd/MM/yyyy";
-
         public DockPanel dockPanel { get; private set; }
         private StackPanel websiteNameStackPanel { get; set; }
         private Image resultImage { get; set; }
@@ -37,7 +35,7 @@ namespace Ask_Alfred.UI
             {
                 StackoverflowPage stackoverflowPage = i_Page as StackoverflowPage;
 
-                if (stackoverflowPage.IsAnswered) // TODO: need to fix this condition to green v condition
+                if (stackoverflowPage.IsAcceptedAnswer)
                 {
                     addtionalInfoImage = new Image();
                 }
@@ -78,7 +76,8 @@ namespace Ask_Alfred.UI
             dockPanel.Tag = i_Page.Url;
             dateTextBlock.Text = i_Page.Date.ToString(DATE_FORMAT);
             websiteNameTextBlock.Text = i_Page.WebsiteName;
-            subjectTextBlock.Text = i_Page.Subject;
+            // TODO:
+            subjectTextBlock.Text = i_Page.Subject + " @@@ " + i_Page.Rank;
         }
 
         private void createControls(IPage i_Page)

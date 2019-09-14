@@ -25,15 +25,14 @@ namespace Ask_Alfred.Objects
             if (splitedUrl.Length > 4)
                 int.TryParse(splitedUrl[4], out m_ID);
         }
-
         public static bool IsValidUrl(string i_Url)
         {
             Regex regex = new Regex(@"stackoverflow.com\/questions\/\d+");
             return regex.Match(i_Url).Success;
         }
-
-        public async Task ParseDataAsync()
+        public async Task<IPage> ParseDataAndGetPageAsync()
         {
+            IPage page = null;
             var client = new StackExchangeClient(k_ClientID, k_Key, Scopes.NoExpiry);
             IList<int> ids = new List<int> { m_ID };
 
@@ -44,12 +43,11 @@ namespace Ask_Alfred.Objects
                 filter: "!)5d3yYdB0grnr6gO7E9oMFDnlZMk",
                 ids: ids);
 
-            // TODO: Throw exception if query.QuotaRemaining = query.QuotaMax?
-
             if (query.Items != null)
             {
                 Question question = query.Items.First();
-                this.Page = new StackoverflowPage
+
+                page = new StackoverflowPage
                 {
                     WebsiteName = "Stackoverflow",
                     Url = "https://stackoverflow.com/questions/" + m_ID,
@@ -58,11 +56,12 @@ namespace Ask_Alfred.Objects
                     Score = question.Score,
                     FavoriteCount = question.FavoriteCount,
                     ViewCount = question.ViewCount,
-                    IsAnswered = question.IsAnswered,
+                    IsAcceptedAnswer = question.IsAnswered,
                     AnswerCount = question.AnswerCount
                 };
             }
-            // TODO: else?
+
+            return page;
         }
     }
 }
