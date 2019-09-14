@@ -62,7 +62,7 @@
 
             <ListViewItem >
                 <DockPanel>
-                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon.png" Stretch="None"/>
+                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon_black.png" Stretch="None"/>
                     <TextBlock x:Name="DateTextBlock2" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Image Height="7" Width="7" Margin="0,0,8,0"/>
@@ -74,7 +74,7 @@
 
             <ListViewItem>
                 <DockPanel>
-                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon.png" Stretch="None"/>
+                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon_black.png" Stretch="None"/>
                     <TextBlock x:Name="DateTextBlock3" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
                     <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
                         <Image Height="7" Width="7" Margin="0,0,8,0"/>

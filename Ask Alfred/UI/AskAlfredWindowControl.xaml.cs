@@ -8,8 +8,6 @@
     using System.Windows.Input;
     using Ask_Alfred.UI.VisualStudioApi;
     using System.Collections;
-    using System.Windows.Media;
-    using Microsoft.VisualStudio.Threading;
     using System;
 
     /// <summary>
@@ -39,16 +37,42 @@
             searchingImage.Visibility = Visibility.Hidden;
             notSearchingImage.Visibility = Visibility.Hidden;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
-            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished;
+            AlfredEngine.Instance.OnTimeoutExpired += onTimeoutExpired;
         }
+
+        private void onTimeoutExpired()
+        {
+            searchIsFinished();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
+                {
+                    Text = "Slow internet connection. Partial results presented",
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            });
+        }
+
         private void pageAddedHandler(IPage i_Page)
         {
             createResultItem(i_Page);
         }
         private void noInternetConnection()
         {
-            // TODO:
-            int x = 5;
+            searchIsFinished();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
+                {
+                    Text = "No internet connection",
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            });
+
         }
         private void searchIsFinished()
         {
