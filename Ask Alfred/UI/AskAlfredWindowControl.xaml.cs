@@ -39,11 +39,16 @@
             searchingImage.Visibility = Visibility.Hidden;
             notSearchingImage.Visibility = Visibility.Hidden;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
-            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished; // TODO: is name timeout is currect?
+            AlfredEngine.Instance.OnTimeoutExpired += searchIsFinished;
         }
         private void pageAddedHandler(IPage i_Page)
         {
             createResultItem(i_Page);
+        }
+        private void noInternetConnection()
+        {
+            // TODO:
+            int x = 5;
         }
         private void searchIsFinished()
         {
@@ -107,8 +112,15 @@
             if (!m_HistorySearchesViewModel.HistorySearches.Contains(searchComboBox.Text))
                 m_HistorySearchesViewModel.HistorySearches.Insert(0, searchComboBox.Text);
 
-            await AlfredEngine.Instance.SearchAsync(i_Input);
-            searchIsFinished();
+            try
+            {
+                await AlfredEngine.Instance.SearchAsync(i_Input);
+                searchIsFinished();
+            }
+            catch
+            {
+                noInternetConnection();
+            }
         }
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {

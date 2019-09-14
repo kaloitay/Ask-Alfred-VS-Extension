@@ -31,19 +31,18 @@ namespace Ask_Alfred.Infrastructure
 
         private async System.Threading.Tasks.Task<string> getUrlContentAsStringAsync(string i_Url)
         {
-            WebClient client = new WebClient();
             string urlContent;
 
-            // TODO: using () pattern
-            try
+            using (WebClient client = new WebClient())
             {
-                urlContent = await client.DownloadStringTaskAsync(i_Url);
-            }
-            catch (WebException e)
-            {
-                // TODO: (" + e.ToString() + ")" just for debugging
-                // TODO: split to two different WebException (over the limit/no interrnet connection)
-                throw new WebException("No internet connection (" + e.ToString() + ")");
+                try
+                {
+                    urlContent = await client.DownloadStringTaskAsync(i_Url);
+                }
+                catch (WebException e)
+                {
+                    throw new WebException("No internet connection");
+                }
             }
 
             return urlContent;

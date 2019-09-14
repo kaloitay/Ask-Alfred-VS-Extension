@@ -17,7 +17,7 @@ namespace Ask_Alfred.Infrastructure
         private GoogleSearchEngine m_GoogleSearchEngine = new GoogleSearchEngine();
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
         private CancellationTokenSource m_CancellationTokenSource = null;
-        private WaitToFinishMemoryCache<IPage> m_PagesMemoryCache = new WaitToFinishMemoryCache<IPage>();
+        private MemoryCacheIPage m_PagesMemoryCache = new MemoryCacheIPage();
 
         public event Action<IPage> OnPageAdded;
         public event Action OnTimeoutExpired;
@@ -52,6 +52,7 @@ namespace Ask_Alfred.Infrastructure
 
         public async Task<AlfredResponse> SearchAsync(IAlfredInput i_Input)
         {
+            // TODO:
             // if i_Input.ErrorCode or Description is null... (in UI too)
 
             m_Status = eStatus.Searching;
@@ -62,18 +63,16 @@ namespace Ask_Alfred.Infrastructure
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = new CancellationTokenSource();
 
-            // should be checked on projects of various kinds and on projects like Alfred (1: c# 2: extension)
             if (i_Input.ProjectType != null)
             {
                 await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
                     r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description, i_Input.ProjectType));
             }
-            // TODO:
-            //await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
-            //    r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+                r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
 
-            //await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
-            //    r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
+            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
+                r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
 
             await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
 

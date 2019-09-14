@@ -69,7 +69,7 @@
     <Compile Include="Infrastructure\Microsoft\MicrosoftDataSource.cs" />
     <Compile Include="Infrastructure\Microsoft\MicrosoftPage.cs" />
     <Compile Include="Infrastructure\Utils.cs" />
-    <Compile Include="Infrastructure\WaitToFinishMemoryCache.cs" />
+    <Compile Include="Infrastructure\MemoryCacheIPage.cs" />
     <Compile Include="Infrastructure\WebDataSourceFactory.cs" />
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowDataSource.cs" />
     <Compile Include="Infrastructure\Stackoverflow\StackoverflowPage.cs" />
