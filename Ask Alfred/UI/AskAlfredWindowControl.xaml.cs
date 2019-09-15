@@ -9,6 +9,7 @@
     using Ask_Alfred.UI.VisualStudioApi;
     using System.Collections;
     using System;
+    using System.Net;
 
     /// <summary>
     /// Interaction logic for AskAlfredWindowControl.
@@ -37,22 +38,6 @@
             searchingImage.Visibility = Visibility.Hidden;
             notSearchingImage.Visibility = Visibility.Hidden;
             AlfredEngine.Instance.OnPageAdded += pageAddedHandler;
-            AlfredEngine.Instance.OnTimeoutExpired += onTimeoutExpired;
-        }
-
-        private void onTimeoutExpired()
-        {
-            searchIsFinished();
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
-                {
-                    Text = "Slow internet connection. Partial results presented",
-                    FontSize = 12,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                });
-            });
         }
 
         private void pageAddedHandler(IPage i_Page)
@@ -72,7 +57,34 @@
                     VerticalAlignment = VerticalAlignment.Center
                 });
             });
-
+        }
+        private void timeoutExpired()
+        {
+            searchIsFinished();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
+                {
+                    Text = "Slow internet connection. Partial results presented",
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            });
+        }
+        private void unexpectedError()
+        {
+            searchIsFinished();
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
+                {
+                    Text = "Unexpected error",
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            });
         }
         private void searchIsFinished()
         {
@@ -84,11 +96,6 @@
                 notSearchingImage.Visibility = Visibility.Visible;
             });
         }
-        private void timeoutExpiredHandler()
-        {
-            // TODO: need that method??
-        }
-        // TODO: this should should call update instead of create?
         private void createResultItem(IPage i_Page)
         {
             if (i_Page != null)
@@ -96,9 +103,6 @@
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     AskAlfredResultUIElement askAlfredResultUIElement = new AskAlfredResultUIElement(i_Page, this.Resources);
-
-                    // TODO: remove this print
-                    System.Diagnostics.Debug.WriteLine("Site: {0} Rank: {1}", i_Page.WebsiteName, i_Page.Rank);
 
                     int resultIndex = insertPageToSortedRankArray(i_Page.Rank);
                     resultsListView.Items.Insert(resultIndex, askAlfredResultUIElement.dockPanel);
@@ -141,9 +145,17 @@
                 await AlfredEngine.Instance.SearchAsync(i_Input);
                 searchIsFinished();
             }
-            catch
+            catch (WebException ex)
             {
                 noInternetConnection();
+            }
+            catch (OperationCanceledException ex)
+            {
+                timeoutExpired();
+            }
+            catch (Exception ex)
+            {
+                unexpectedError();
             }
         }
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)

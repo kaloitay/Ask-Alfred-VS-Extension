@@ -76,8 +76,7 @@ namespace Ask_Alfred.UI
             dockPanel.Tag = i_Page.Url;
             dateTextBlock.Text = i_Page.Date.ToString(DATE_FORMAT);
             websiteNameTextBlock.Text = i_Page.WebsiteName;
-            // TODO:
-            subjectTextBlock.Text = i_Page.Subject + " @@@ " + i_Page.Rank;
+            subjectTextBlock.Text = i_Page.Subject;
         }
 
         private void createControls(IPage i_Page)

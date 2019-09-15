@@ -9,7 +9,6 @@ namespace Ask_Alfred.UI.VisualStudioApi
         public static AlfredInputManager Instance { get { return lazy.Value; } }
         public AlfredInput GetInputFromSelectedError()
         {
-            // TODO: fix this function
             ThreadHelper.ThrowIfNotOnUIThread();
 
             string errorDescription = null;

@@ -8,7 +8,6 @@ namespace Ask_Alfred.UI.VisualStudioApi
 {
     public class VisualStudioErrorCodeItem
     {
-        // TODO: all needed here?
         public string Description { get; set; }
         public string ErrorCode { get; set; }
         public string Project { get; set; }

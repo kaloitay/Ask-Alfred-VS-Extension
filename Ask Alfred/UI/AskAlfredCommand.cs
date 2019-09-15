@@ -138,8 +138,6 @@ namespace Ask_Alfred.UI
             IVsWindowFrame windowFrame = (IVsWindowFrame)window.Frame;
             Microsoft.VisualStudio.ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
-            // TODO: change to dynmaic and disable if no selected text
-
             AskAlfredWindow askAlfredWindow = window as AskAlfredWindow;
             string selectedText = VisualStudioHandler.GetCurrentLineSelectedText();
             AlfredInput alfredInput = AlfredInputManager.Instance.GetInputForAlfredWindowSearchBar(selectedText);

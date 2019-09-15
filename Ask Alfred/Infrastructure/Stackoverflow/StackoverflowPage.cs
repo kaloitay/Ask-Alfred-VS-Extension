@@ -6,16 +6,16 @@ namespace Ask_Alfred.Objects
     public class StackoverflowPage : IPage
     {
         private const int k_ScoreMaximumWeight = 100;
-        private const int k_HighestScore = 25000;
+        private const int k_ScoreThreshold = 20000;
 
         private const int k_ViewsMaximumWeight = 50;
-        private const int k_HighestViews = 8100000;
+        private const int k_ViewsThreshold = 1000000;
 
         private const int k_IsAcceptedAnswer = 50;
 
         // Stackoverflow was founded on July 2008
         private readonly DateTime m_LaunchedDate = new DateTime(2008, 07, 01);
-        private const int k_DateMaximumWeight = 2;
+        private const int k_DateMaximumWeight = 1;
 
         public string WebsiteName { get; set; }
         public string Url { get; set; }
@@ -53,13 +53,13 @@ namespace Ask_Alfred.Objects
         }
         private double getViewsRank()
         {
-            double viewsRank = ((double)ViewCount / k_HighestViews) * k_ViewsMaximumWeight;
+            double viewsRank = ((double)ViewCount / k_ViewsThreshold) * k_ViewsMaximumWeight;
 
             return (viewsRank <= k_ViewsMaximumWeight) ? viewsRank : k_ViewsMaximumWeight;
         }
         private double getScoreRank()
         {
-            double scoreRank = ((double)Score / k_HighestScore) * k_ScoreMaximumWeight;
+            double scoreRank = ((double)Score / k_ScoreThreshold) * k_ScoreMaximumWeight;
 
             return (scoreRank <= k_ScoreMaximumWeight) ? scoreRank : k_ScoreMaximumWeight;
         }

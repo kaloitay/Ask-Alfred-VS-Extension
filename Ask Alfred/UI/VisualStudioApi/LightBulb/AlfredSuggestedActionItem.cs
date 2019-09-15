@@ -29,7 +29,10 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         public ImageMoniker IconMoniker
         {
             // TODO:
-            get { return default(ImageMoniker); }
+            get
+            {
+                return default(ImageMoniker);
+            }
         }
         public string IconAutomationText
         {
