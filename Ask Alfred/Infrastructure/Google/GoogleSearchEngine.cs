@@ -16,6 +16,10 @@ namespace Ask_Alfred.Infrastructure
         //private const string k_CustomSearchKey = "012719749979738938401:1syzzn4sxhb"; // cx
         //private const string k_ApiKey = "AIzaSyDbyXpjHad4oQNixjE0jKZfriUq6E2pky8";
         //private const string k_CustomSearchKey = "011366759328101593804:7bf803lfg9m"; // cx
+        //private const string k_ApiKey = "AIzaSyAhuyqu7vVv_d5pwIRydLu04zZXx1eG93I";
+        //private const string k_CustomSearchKey = "015558687711821100062:zlpg17dqxoz"; // cx
+        //private const string k_ApiKey = "AIzaSyAQvMdBvI3QgPcpwDKNH6BIOn4edEkhakQ";
+        //private const string k_CustomSearchKey = "004793129189650674979:v0uurmusbqe"; // cx
 
         public List<GoogleSearchResult> SearchResults = new List<GoogleSearchResult>();
         public async System.Threading.Tasks.Task AddSearchResultsFromQueryAsync(string i_Query)
@@ -35,14 +39,7 @@ namespace Ask_Alfred.Infrastructure
 
             using (WebClient client = new WebClient())
             {
-                try
-                {
-                    urlContent = await client.DownloadStringTaskAsync(i_Url);
-                }
-                catch (WebException e)
-                {
-                    throw new WebException("No internet connection");
-                }
+                urlContent = await client.DownloadStringTaskAsync(i_Url);
             }
 
             return urlContent;
@@ -50,10 +47,6 @@ namespace Ask_Alfred.Infrastructure
 
         private async System.Threading.Tasks.Task<dynamic> getResultsAsync(string i_Query)
         {
-            // TODO:
-            // Add try catch here or in getUrlContentAsString
-            // We get exeption when there is no internet connection
-
             string searchQuery = String.Format(
                 "https://www.googleapis.com/customsearch/v1?key={0}&cx={1}&q={2}&alt=json",
                 k_ApiKey, k_CustomSearchKey, i_Query);

@@ -36,8 +36,6 @@ namespace Ask_Alfred.Objects
             var client = new StackExchangeClient(k_ClientID, k_Key, Scopes.NoExpiry);
             IList<int> ids = new List<int> { m_ID };
 
-            // TODO: this call can never end!
-            // https://stackoverflow.com/questions/10134310/how-to-cancel-a-task-in-await
             var query = await client.Questions.GetAsync(
                 site: "stackoverflow",
                 filter: "!)5d3yYdB0grnr6gO7E9oMFDnlZMk",

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -20,9 +21,7 @@ namespace Ask_Alfred.Infrastructure
         private MemoryCacheIPage m_PagesMemoryCache = new MemoryCacheIPage();
 
         public event Action<IPage> OnPageAdded;
-        public event Action OnTimeoutExpired;
         private const int timeoutDurationInSeconds = 60;
-        private eStatus m_Status; // TODO: remove this member?
         private System.Timers.Timer m_TimeoutTimer = new System.Timers.Timer();
 
         private enum eWebSite
@@ -30,18 +29,11 @@ namespace Ask_Alfred.Infrastructure
             Stackoverflow,
             Microsoft
         }
-        private enum eStatus // TODO: remove this enum?
-        {
-            Searching,
-            Finished,
-            TimeoutExpired
-        }
 
         private AlfredEngine()
         {
             r_WebSitesUrls = new Dictionary<eWebSite, string>
             {
-                // when removing /questions ParseDataAsync can never end! - must check it
                 { eWebSite.Stackoverflow, "stackoverflow.com/questions/" },
                 { eWebSite.Microsoft, "docs.microsoft.com" }
             };
@@ -52,10 +44,8 @@ namespace Ask_Alfred.Infrastructure
 
         public async Task<AlfredResponse> SearchAsync(IAlfredInput i_Input)
         {
-            // TODO:
-            // if i_Input.ErrorCode or Description is null... (in UI too)
+            // TODO: handle ErrorCode or Description is null
 
-            m_Status = eStatus.Searching;
             m_TimeoutTimer.Enabled = true;
             PagesList.Clear();
             m_GoogleSearchEngine.ClearResults();
@@ -63,27 +53,43 @@ namespace Ask_Alfred.Infrastructure
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = new CancellationTokenSource();
 
-            if (i_Input.ProjectType != null)
+            try
             {
-                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
-                    r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description, i_Input.ProjectType));
+                if (i_Input.ProjectType != null)
+                {
+                    await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
+                        r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description, i_Input.ProjectType));
+                }
+                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+                    r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
+
+                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
+                    r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
+
+                await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
             }
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
-                r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
-
-            await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
-                r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
-
-            await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
+            catch (WebException ex)
+            {
+                StopSearch();
+                throw new WebException("No internet connection");
+            }
+            catch (OperationCanceledException ex)
+            {
+                StopSearch();
+                throw new OperationCanceledException("Operation canceled - timeout expired");
+            }
+            catch (Exception ex)
+            {
+                StopSearch();
+                throw new WebException("Uunexpected error");
+            }
 
             return Response;
         }
 
         public void StopSearch()
         {
-            // TODO: its possible that m_CancellationTokenSource is null here?
             m_CancellationTokenSource?.Cancel();
-            m_Status = eStatus.Finished;
             m_TimeoutTimer.Stop();
         }
 
@@ -109,15 +115,11 @@ namespace Ask_Alfred.Infrastructure
                 }
             }
 
-            m_Status = eStatus.Finished;
             m_TimeoutTimer.Stop();
         }
         private void timeoutExpired(object source, ElapsedEventArgs e)
         {
-            m_CancellationTokenSource.Cancel();
-            m_Status = eStatus.TimeoutExpired;
-            m_TimeoutTimer.Stop();
-            OnTimeoutExpired();
+            StopSearch();
         }
     }
 }
