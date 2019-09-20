@@ -3,10 +3,13 @@ using System;
 
 namespace Ask_Alfred.UI.VisualStudioApi
 {
-    public sealed class AlfredInputManager
+    public class AlfredInputManager
     {
         private static readonly Lazy<AlfredInputManager> lazy = new Lazy<AlfredInputManager>(() => new AlfredInputManager());
         public static AlfredInputManager Instance { get { return lazy.Value; } }
+
+        private AlfredInputManager() { }
+
         public AlfredInput GetInputFromSelectedError()
         {
             ThreadHelper.ThrowIfNotOnUIThread();

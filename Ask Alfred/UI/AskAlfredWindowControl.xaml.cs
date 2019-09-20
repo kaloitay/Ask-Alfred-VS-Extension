@@ -16,7 +16,6 @@
     /// </summary>
     public partial class AskAlfredWindowControl : UserControl
     {
-        private AlfredInputManager m_AlfredInputManager;
         private ArrayList m_SortedRankArray = new ArrayList();
         private ComboBoxViewModel m_HistorySearchesViewModel = new ComboBoxViewModel();
         private const string k_NoInternetString = "No internet connection";
@@ -31,7 +30,6 @@
 
         private void initializeAskAlfredWindow()
         {
-            m_AlfredInputManager = new AlfredInputManager();
             resultsListView.Items.Clear();
             searchComboBox.Text = string.Empty;
             searchingForTextBlock.Text = string.Empty;
@@ -172,7 +170,7 @@
             ThreadHelper.ThrowIfNotOnUIThread();
             if (!String.IsNullOrEmpty(searchComboBox.Text) && e.Key == Key.Enter && searchComboBox.IsEnabled == true)
             {
-                AlfredInput alfredInput = m_AlfredInputManager.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
+                AlfredInput alfredInput = AlfredInputManager.Instance.GetInputForAlfredWindowSearchBar(searchComboBox.Text);
                 SearchAsync(alfredInput);
             }
         }

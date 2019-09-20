@@ -14,6 +14,8 @@ namespace Ask_Alfred.Infrastructure
         private const string k_CustomSearchKey = "000838436833929131088:wnddlp0oh68"; // cx
 
         public List<GoogleSearchResult> SearchResults = new List<GoogleSearchResult>();
+
+        private GoogleSearchEngine() { }
         public async System.Threading.Tasks.Task AddSearchResultsFromQueryAsync(string i_Query)
         {
             dynamic queryResult = await getResultsAsync(i_Query);
