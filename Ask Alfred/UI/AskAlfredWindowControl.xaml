@@ -31,15 +31,12 @@
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="38*"/>
-                <ColumnDefinition Width="66*"/>
-                <ColumnDefinition Width="9*"/>
             </Grid.ColumnDefinitions>
 
             <TextBlock Grid.Column="0" x:Name="dummyTextBlock" Width="10"/>
             <Image Grid.Column="1" x:Name="searchingImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/Icons/loading_icon_black.png" IsEnabled="False" Visibility="Hidden" Style="{StaticResource Spinner}" />
             <Image Grid.Column="1" x:Name="notSearchingImage" HorizontalAlignment="Center" VerticalAlignment="Center" Source="Resources/Icons/not_loading_icon_black.png" IsEnabled="False" Visibility="Hidden" Style="{StaticResource Spinner}" />
-            <TextBlock Grid.Column="3" x:Name="searchingForTextBlock" HorizontalAlignment="left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+            <TextBlock Grid.Column="2" x:Name="searchingForTextBlock" HorizontalAlignment="left" VerticalAlignment="Center" Margin="5,0,0,0"/>
         </Grid>
 
         <ListView Grid.Row="2" x:Name="resultsListView" HorizontalAlignment="Stretch" Background="Transparent"
@@ -47,42 +44,6 @@
                       ScrollViewer.VerticalScrollBarVisibility="Visible"
                       HorizontalContentAlignment="Stretch" Height="Auto"
                       BorderThickness="0" MouseDoubleClick="ListView_MouseDoubleClick">
-
-            <ListViewItem>
-                <DockPanel ToolTip="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss">
-                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon_black.png" Stretch="None"/>
-                    <TextBlock x:Name="DateTextBlock1" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Image Height="7" Width="7" Margin="0,0,8,0" Source="Resources/Icons/green_checkmark_stackoverflow_icon.png" />
-                        <TextBlock x:Name="WebsiteNameTextBlock1" Text="StackOverFlow" Background="LightSlateGray" FontSize="7" Foreground="White" Padding="2,0,2,0" Margin="0,0,8,0"/>
-                    </StackPanel>
-                    <TextBlock TextWrapping="Wrap" TextTrimming="CharacterEllipsis" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center" FontFamily="Calibri Light"/>
-                </DockPanel>
-            </ListViewItem>
-
-            <ListViewItem >
-                <DockPanel>
-                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon_black.png" Stretch="None"/>
-                    <TextBlock x:Name="DateTextBlock2" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Image Height="7" Width="7" Margin="0,0,8,0"/>
-                        <TextBlock x:Name="WebsiteNameTextBlock2" Text="StackOverFlow" FontSize="7" Foreground="White" Margin="0,0,8,0"/>
-                    </StackPanel>
-                    <TextBlock TextWrapping="Wrap" Text="123445546566534656" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center"/>
-                </DockPanel>
-            </ListViewItem>
-
-            <ListViewItem>
-                <DockPanel>
-                    <Image DockPanel.Dock="Left" Height="50" Width="40" Source="Resources/Icons/go_to_web_icon_black.png" Stretch="None"/>
-                    <TextBlock x:Name="DateTextBlock3" DockPanel.Dock="Top" HorizontalAlignment="Right" Text="23/09/2017" FontSize="5" Foreground="White" Margin="0,3,3,0"/>
-                    <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Image Height="7" Width="7" Margin="0,0,8,0"/>
-                        <TextBlock x:Name="WebsiteNameTextBlock3" Text="StackOverFlow" FontSize="7" Foreground="White" Margin="0,0,8,0"/>
-                    </StackPanel>
-                    <TextBlock TextWrapping="Wrap" Text="Keep mouse's scrollwheel to work on Scrollview when placed on top of Mapview/MapMarkerPopup and auto_dismiss" Margin="1,5,30,5" FontSize="9" Foreground="White" TextAlignment="Justify" VerticalAlignment="Center"/>
-                </DockPanel>
-            </ListViewItem>
         </ListView>
     </Grid>
 </UserControl>
