@@ -17,7 +17,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
             if (VisualStudioHandler.HasSelectedError())
             {
-                errorDescription = VisualStudioHandler.GetValueFromSelectedError("text"); // description
+                errorDescription = VisualStudioHandler.GetValueFromSelectedError("text");
                 errorCode = VisualStudioHandler.GetValueFromSelectedError("errorcode");
             }
 

@@ -19,9 +19,10 @@
         private AlfredInputManager m_AlfredInputManager;
         private ArrayList m_SortedRankArray = new ArrayList();
         private ComboBoxViewModel m_HistorySearchesViewModel = new ComboBoxViewModel();
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AskAlfredWindowControl"/> class.
-        /// </summary>
+        private const string k_NoInternetString = "No internet connection";
+        private const string k_SlowInternetString = "Slow internet connection. Partial results presented";
+        private const string k_UnexpectedErrorString = "Unexpected error";
+
         public AskAlfredWindowControl()
         {
             InitializeComponent();
@@ -44,48 +45,38 @@
         {
             createResultItem(i_Page);
         }
+
+        private void stopSearchAndInsertMessage(string i_Text)
+        {
+            searchIsFinished();
+
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
+                {
+                    Text = i_Text,
+                    FontSize = 12,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                });
+            });
+        }
+
         private void noInternetConnection()
         {
-            searchIsFinished();
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
-                {
-                    Text = "No internet connection",
-                    FontSize = 12,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                });
-            });
+            stopSearchAndInsertMessage(k_NoInternetString);
         }
+
         private void timeoutExpired()
         {
-            searchIsFinished();
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
-                {
-                    Text = "Slow internet connection. Partial results presented",
-                    FontSize = 12,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                });
-            });
+            stopSearchAndInsertMessage(k_SlowInternetString);
         }
+
         private void unexpectedError()
         {
-            searchIsFinished();
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                resultsListView.Items.Insert(m_SortedRankArray.Count, new TextBlock
-                {
-                    Text = "Unexpected error",
-                    FontSize = 12,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                });
-            });
+            stopSearchAndInsertMessage(k_UnexpectedErrorString);
         }
+
         private void searchIsFinished()
         {
             Application.Current.Dispatcher.Invoke(() =>
@@ -96,6 +87,7 @@
                 notSearchingImage.Visibility = Visibility.Visible;
             });
         }
+
         private void createResultItem(IPage i_Page)
         {
             if (i_Page != null)
@@ -109,10 +101,12 @@
                 });
             }
         }
+
         public async System.Threading.Tasks.Task SearchSpecificInputAsync(IAlfredInput i_Input)
         {
             await SearchAsync(i_Input);
         }
+
         private int insertPageToSortedRankArray(double i_Rank)
         {
             int resultIndex;
@@ -126,12 +120,14 @@
             m_SortedRankArray.Insert(resultIndex, i_Rank);
             return resultIndex;
         }
+
         public async System.Threading.Tasks.Task SearchSelectedError()
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
             AlfredInput alfredInput = AlfredInputManager.Instance.GetInputFromSelectedError();
             await SearchAsync(alfredInput);
         }
+
         private async System.Threading.Tasks.Task SearchAsync(IAlfredInput i_Input)
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -158,6 +154,7 @@
                 unexpectedError();
             }
         }
+
         private void setAskAlfredWindowForNewSearch(IAlfredInput i_Input)
         {
             searchingImage.IsEnabled = true;
@@ -169,6 +166,7 @@
 
             m_SortedRankArray.RemoveRange(0, m_SortedRankArray.Count);
         }
+
         private void searchComboBox_KeyDown(object sender, KeyEventArgs e)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -178,6 +176,7 @@
                 SearchAsync(alfredInput);
             }
         }
+
         private void ListView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (sender is ListView)
@@ -190,6 +189,5 @@
                 }
             }
         }
-
     }
 }

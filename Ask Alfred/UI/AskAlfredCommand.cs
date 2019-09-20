@@ -95,7 +95,6 @@ namespace Ask_Alfred.UI
             OleMenuCommandService commandService = await package.GetServiceAsync((typeof(IMenuCommandService))) as OleMenuCommandService;
             Instance = new AskAlfredCommand(package, commandService);
         }
-
         /// <summary>
         /// Shows the tool window when the menu item is clicked.
         /// </summary>

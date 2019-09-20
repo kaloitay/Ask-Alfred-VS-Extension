@@ -87,12 +87,12 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             Guid guid = typeof(AskAlfredWindow).GUID;
             IVsWindowFrame windowFrame;
 
-            int result = vsUIShell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fFindFirst, ref guid, out windowFrame);   // Find MyToolWindow
+            int result = vsUIShell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fFindFirst, ref guid, out windowFrame);
 
             if (result != VSConstants.S_OK)
-                result = vsUIShell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fForceCreate, ref guid, out windowFrame); // Create MyToolWindow if not found
+                result = vsUIShell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fForceCreate, ref guid, out windowFrame);
 
-            if (result == VSConstants.S_OK)                                                                           // Show MyToolWindow
+            if (result == VSConstants.S_OK)
                 ErrorHandler.ThrowOnFailure(windowFrame.Show());
 
             return windowFrame;
@@ -112,7 +112,6 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
 
         public bool TryGetTelemetryId(out Guid telemetryId)
         {
-            // This is a sample action and doesn't participate in LightBulb telemetry
             telemetryId = Guid.Empty;
             return false;
         }
