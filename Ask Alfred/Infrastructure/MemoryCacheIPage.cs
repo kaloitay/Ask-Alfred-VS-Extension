@@ -17,7 +17,7 @@ namespace Ask_Alfred.Infrastructure
         {
             IPage cacheEntry;
 
-            if (!m_Cache.TryGetValue(key, out cacheEntry)) // Look for cache key
+            if (!m_Cache.TryGetValue(key, out cacheEntry))
             {
                 SemaphoreSlim mylock = m_Locks.GetOrAdd(key, k => new SemaphoreSlim(1, 1));
 
@@ -26,7 +26,6 @@ namespace Ask_Alfred.Infrastructure
                 {
                     if (!m_Cache.TryGetValue(key, out cacheEntry))
                     {
-                        // Key not in cache, so get data
                         cacheEntry = await createItem();
                         m_Cache.Set(key, cacheEntry);
                     }

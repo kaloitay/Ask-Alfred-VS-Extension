@@ -9,9 +9,7 @@ namespace Ask_Alfred.Objects
     public class MicrosoftDataSource : IWebDataSource
     {
         private readonly string m_Url;
-
         public IPage Page { get; private set; }
-
         public MicrosoftDataSource(string i_Url)
         {
             m_Url = i_Url;
@@ -31,7 +29,6 @@ namespace Ask_Alfred.Objects
 
             return xmlStr;
         }
-
         public async Task<IPage> ParseDataAndGetPageAsync()
         {
             string xmlStr = await getDocumentFromUrlAsync(m_Url);

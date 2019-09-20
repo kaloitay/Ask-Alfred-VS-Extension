@@ -3,10 +3,13 @@ using System;
 
 namespace Ask_Alfred.UI.VisualStudioApi
 {
-    public sealed class AlfredInputManager
+    public class AlfredInputManager
     {
         private static readonly Lazy<AlfredInputManager> lazy = new Lazy<AlfredInputManager>(() => new AlfredInputManager());
         public static AlfredInputManager Instance { get { return lazy.Value; } }
+
+        private AlfredInputManager() { }
+
         public AlfredInput GetInputFromSelectedError()
         {
             ThreadHelper.ThrowIfNotOnUIThread();
@@ -17,7 +20,7 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
             if (VisualStudioHandler.HasSelectedError())
             {
-                errorDescription = VisualStudioHandler.GetValueFromSelectedError("text"); // description
+                errorDescription = VisualStudioHandler.GetValueFromSelectedError("text");
                 errorCode = VisualStudioHandler.GetValueFromSelectedError("errorcode");
             }
 

@@ -15,7 +15,6 @@ namespace Ask_Alfred.Infrastructure
         public static AlfredEngine Instance { get { return lazy.Value; } }
         public List<IPage> PagesList { get; private set; } = new List<IPage>();
         public AlfredResponse Response { get; } = new AlfredResponse();
-        private GoogleSearchEngine m_GoogleSearchEngine = new GoogleSearchEngine();
         private readonly Dictionary<eWebSite, string> r_WebSitesUrls;
         private CancellationTokenSource m_CancellationTokenSource = null;
         private MemoryCacheIPage m_PagesMemoryCache = new MemoryCacheIPage();
@@ -44,11 +43,9 @@ namespace Ask_Alfred.Infrastructure
 
         public async Task<AlfredResponse> SearchAsync(IAlfredInput i_Input)
         {
-            // TODO: handle ErrorCode or Description is null
-
             m_TimeoutTimer.Enabled = true;
             PagesList.Clear();
-            m_GoogleSearchEngine.ClearResults();
+            GoogleSearchEngine.Instance.ClearResults();
 
             m_CancellationTokenSource?.Dispose();
             m_CancellationTokenSource = new CancellationTokenSource();
@@ -57,28 +54,28 @@ namespace Ask_Alfred.Infrastructure
             {
                 if (i_Input.ProjectType != null)
                 {
-                    await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
+                    await GoogleSearchEngine.Instance.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1} {2}",
                         r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description, i_Input.ProjectType));
                 }
-                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
+                await GoogleSearchEngine.Instance.AddSearchResultsFromQueryAsync(String.Format("site: {0} {1}",
                     r_WebSitesUrls[eWebSite.Stackoverflow], i_Input.Description));
 
-                await m_GoogleSearchEngine.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
+                await GoogleSearchEngine.Instance.AddSearchResultsFromQueryAsync(String.Format("site: {0} \"{1}\"",
                     r_WebSitesUrls[eWebSite.Microsoft], i_Input.ErrorCode));
 
                 await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 StopSearch();
                 throw new WebException("No internet connection");
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
                 StopSearch();
                 throw new OperationCanceledException("Operation canceled - timeout expired");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StopSearch();
                 throw new WebException("Uunexpected error");
@@ -95,7 +92,7 @@ namespace Ask_Alfred.Infrastructure
 
         public async Task CreateWebDataListFromGoogleResultsAsync(CancellationToken cancellationToken)
         {
-            foreach (GoogleSearchResult googleResult in m_GoogleSearchEngine.SearchResults)
+            foreach (GoogleSearchResult googleResult in GoogleSearchEngine.Instance.SearchResults)
             {
                 bool isPageInList = PagesList.Any(page => googleResult.Url.Contains(page.Url));
                 cancellationToken.ThrowIfCancellationRequested();
