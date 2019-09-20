@@ -2,6 +2,7 @@
 using Ask_Alfred.Infrastructure.Interfaces;
 using RavinduL.SEStandard;
 using RavinduL.SEStandard.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,14 +21,23 @@ namespace Ask_Alfred.Objects
 
         public StackoverflowDataSource(string i_Url)
         {
-            // TODO: move this logic to function
-            string[] splitedUrl = i_Url.Split('/');
-            if (splitedUrl.Length > 4)
-                int.TryParse(splitedUrl[4], out m_ID);
+            m_ID = urlToStackoverflowId(i_Url);
         }
+
+        private int urlToStackoverflowId(string i_Url)
+        {
+            int id = 0;
+            string[] splitedUrl = i_Url.Split('/');
+
+            if (splitedUrl.Length > 4)
+                int.TryParse(splitedUrl[4], out id);
+
+            return id;
+        }
+
         public static bool IsValidUrl(string i_Url)
         {
-            Regex regex = new Regex(@"stackoverflow.com\/questions\/\d+");
+            Regex regex = new Regex(@"stackoverflow.com\/questions\/[1-9]\d*");
             return regex.Match(i_Url).Success;
         }
         public async Task<IPage> ParseDataAndGetPageAsync()

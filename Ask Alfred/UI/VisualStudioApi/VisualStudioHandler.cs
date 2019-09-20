@@ -112,28 +112,17 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
         public static List<VisualStudioErrorCodeItem> GetCurrentLineErrorList()
         {
-            List<VisualStudioErrorCodeItem> visualStudioErrorCodeList = new List<VisualStudioErrorCodeItem>();
-
             ThreadHelper.ThrowIfNotOnUIThread();
+
+            string errorCode;
+            List<VisualStudioErrorCodeItem> visualStudioErrorCodeList = new List<VisualStudioErrorCodeItem>();
             List<ErrorItem> errorItemsList = getErrorListByCurrentLine();
             IErrorList errrorList = getErrorList();
             IEnumerable<ITableEntryHandle> tableEntries = errrorList.TableControl.Entries;
-            string errorCode;
-
-            //RightClickErrroList a = new RightClickErrroList();
-            //a.Initialize(); 
 
             foreach (ErrorItem item in errorItemsList)
             {
-                // TODO: move to other function
-                errorCode = null;
-
-                foreach (var tableEntry in tableEntries)
-                {
-                    if (item.Description == GetStringFromTableEntry(tableEntry, "text"))
-                        errorCode = GetStringFromTableEntry(tableEntry, "errorcode");
-                }
-                // until here
+                errorCode = getErrorCodeFromErrorItem(tableEntries, item);
 
                 visualStudioErrorCodeList.Add(new VisualStudioErrorCodeItem
                 {
@@ -148,6 +137,20 @@ namespace Ask_Alfred.UI.VisualStudioApi
 
             return visualStudioErrorCodeList;
         }
+
+        private static string getErrorCodeFromErrorItem(IEnumerable<ITableEntryHandle> i_TableEntries, ErrorItem i_ErrorItem)
+        {
+            string errorCode = null;
+
+            foreach (var tableEntry in i_TableEntries)
+            {
+                if (i_ErrorItem.Description == GetStringFromTableEntry(tableEntry, "text"))
+                    errorCode = GetStringFromTableEntry(tableEntry, "errorcode");
+            }
+
+            return errorCode;
+        }
+
         public static string GetProjectTypeAsString()
         {
             ThreadHelper.ThrowIfNotOnUIThread();

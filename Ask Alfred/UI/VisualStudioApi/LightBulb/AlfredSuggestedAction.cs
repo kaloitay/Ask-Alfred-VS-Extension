@@ -39,11 +39,8 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
         }
         public ImageMoniker IconMoniker
         {
-            // TODO:
             get
             {
-                // ImageMoniker imageMoniker = new ImageMoniker { Guid = new Guid("57db15c5-8e0b-4100-823b-20b10d041eb6"), Id = 0 };
-                // return imageMoniker;
                 return default(ImageMoniker);
             }
         }
