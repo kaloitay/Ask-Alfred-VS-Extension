@@ -100,7 +100,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             ThreadHelper.ThrowIfNotOnUIThread();
 
             IVsUIShell vsUIShell = (IVsUIShell)Package.GetGlobalService(typeof(SVsUIShell));
-            Guid guid = typeof(AskAlfredWindow).GUID;
+            Guid guid = typeof(AlfredWindow).GUID;
             IVsWindowFrame windowFrame;
 
             int result = vsUIShell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fFindFirst, ref guid, out windowFrame);   // Find MyToolWindow

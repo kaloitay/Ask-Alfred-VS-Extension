@@ -75,7 +75,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             ThreadHelper.ThrowIfNotOnUIThread();
             IVsWindowFrame windowFrame = openAlfredWithIVsUIShell();
 
-            AskAlfredWindow alfred = getAlfredToolWindow(windowFrame);
+            AlfredWindow alfred = getAlfredToolWindow(windowFrame);
             alfred.SearchSpecificInput(m_Input);
         }
 
@@ -84,7 +84,7 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             ThreadHelper.ThrowIfNotOnUIThread();
 
             IVsUIShell vsUIShell = (IVsUIShell)Package.GetGlobalService(typeof(SVsUIShell));
-            Guid guid = typeof(AskAlfredWindow).GUID;
+            Guid guid = typeof(AlfredWindow).GUID;
             IVsWindowFrame windowFrame;
 
             int result = vsUIShell.FindToolWindow((uint)__VSFINDTOOLWIN.FTW_fFindFirst, ref guid, out windowFrame);
@@ -98,14 +98,14 @@ namespace Ask_Alfred.UI.VisualStudioApi.LightBulbTest
             return windowFrame;
         }
 
-        private AskAlfredWindow getAlfredToolWindow(IVsWindowFrame i_WindowFrame)
+        private AlfredWindow getAlfredToolWindow(IVsWindowFrame i_WindowFrame)
         {
             ThreadHelper.ThrowIfNotOnUIThread();
 
             i_WindowFrame.GetProperty((int)__VSFPROPID.VSFPROPID_DocView, out object window);
 
-            if (window is AskAlfredWindow)
-                return window as AskAlfredWindow;
+            if (window is AlfredWindow)
+                return window as AlfredWindow;
 
             throw new NotSupportedException("Cannot get Alfred tool window.");
         }

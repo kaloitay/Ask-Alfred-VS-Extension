@@ -5,7 +5,7 @@ using Ask_Alfred.Infrastructure.Interfaces;
 
 namespace Ask_Alfred.UI
 {
-    public class AskAlfredResultUIElement
+    public class AlfredResultUIElement
     {
         private readonly string DATE_FORMAT = "dd/MM/yyyy";
         public DockPanel dockPanel { get; private set; }
@@ -15,7 +15,7 @@ namespace Ask_Alfred.UI
         private TextBlock dateTextBlock { get; set; }
         private TextBlock websiteNameTextBlock { get; set; }
         private TextBlock subjectTextBlock { get; set; }
-        public AskAlfredResultUIElement(IPage i_Page, ResourceDictionary i_Resources)
+        public AlfredResultUIElement(IPage i_Page, ResourceDictionary i_Resources)
         {
             createControls(i_Page);
             setControlsText(i_Page);

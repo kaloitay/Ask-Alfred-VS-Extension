@@ -4,8 +4,8 @@
         <Identity Id="Ask_Alfred.93479967-e20e-4020-a5ca-263913f9150b" Version="1.0" Language="en-US" Publisher="Company" />
         <DisplayName>Ask_Alfred</DisplayName>
         <Description xml:space="preserve">Empty VSIX Project.</Description>
-        <Icon>AskAlfred-icon.png</Icon>
-        <PreviewImage>AskAlfred.png</PreviewImage>
+        <Icon>Alfred-icon.png</Icon>
+        <PreviewImage>Alfred.png</PreviewImage>
     </Metadata>
     <Installation>
         <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[15.0, 16.0)" />
