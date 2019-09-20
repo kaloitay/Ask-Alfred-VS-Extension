@@ -65,17 +65,17 @@ namespace Ask_Alfred.Infrastructure
 
                 await Task.Run(() => CreateWebDataListFromGoogleResultsAsync(m_CancellationTokenSource.Token), m_CancellationTokenSource.Token);
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 StopSearch();
                 throw new WebException("No internet connection");
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
                 StopSearch();
                 throw new OperationCanceledException("Operation canceled - timeout expired");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 StopSearch();
                 throw new WebException("Uunexpected error");

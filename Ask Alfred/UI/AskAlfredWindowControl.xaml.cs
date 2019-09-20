@@ -141,15 +141,15 @@
                 await AlfredEngine.Instance.SearchAsync(i_Input);
                 searchIsFinished();
             }
-            catch (WebException ex)
+            catch (WebException)
             {
                 noInternetConnection();
             }
-            catch (OperationCanceledException ex)
+            catch (OperationCanceledException)
             {
                 timeoutExpired();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 unexpectedError();
             }
