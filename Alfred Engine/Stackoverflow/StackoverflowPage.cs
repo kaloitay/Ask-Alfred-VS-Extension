@@ -1,10 +1,15 @@
-﻿using Ask_Alfred.Infrastructure.Interfaces;
+﻿using Ask_Alfred.Infrastructure;
+using Ask_Alfred.Infrastructure.Interfaces;
 using System;
+using System.Diagnostics;
+using System.IO;
 
 namespace Ask_Alfred.Objects
 {
     public class StackoverflowPage : IPage
     {
+        private const int k_GoogleIndexWeight = 15;
+
         private const int k_ScoreMaximumWeight = 100;
         private const int k_ScoreThreshold = 20000;
 
@@ -17,6 +22,7 @@ namespace Ask_Alfred.Objects
         private readonly DateTime m_LaunchedDate = new DateTime(2008, 07, 01);
         private const int k_DateMaximumWeight = 1;
 
+        public int GoogleResultIndex { get; set; }
         public string WebsiteName { get; set; }
         public string Url { get; set; }
         public string Subject { get; set; }
@@ -26,14 +32,20 @@ namespace Ask_Alfred.Objects
         public int ViewCount { get; set; }
         public bool IsAcceptedAnswer { get; set; }
         public int AnswerCount { get; set; }
-
+       
         public double Rank
         {
             get
             {
-                return getAcceptedAnswerRank() + getScoreRank() + getViewsRank() + getDateRank();
+                return getGoogleIndexRank() + getAcceptedAnswerRank() + getScoreRank() + getViewsRank() + getDateRank();
             }
         }
+
+        private double getGoogleIndexRank()
+        {
+            return k_GoogleIndexWeight * (GoogleSearchEngine.k_EntriesPerPage - GoogleResultIndex);
+        }
+
         private double getAcceptedAnswerRank()
         {
             return (IsAcceptedAnswer == true) ? k_IsAcceptedAnswer : 0;

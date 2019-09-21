@@ -7,11 +7,12 @@ namespace Ask_Alfred.Infrastructure
 {
     public sealed class GoogleSearchEngine
     {
-        private static readonly Lazy<GoogleSearchEngine> lazy = new Lazy<GoogleSearchEngine> (() => new GoogleSearchEngine());
+        private static readonly Lazy<GoogleSearchEngine> lazy = new Lazy<GoogleSearchEngine>(() => new GoogleSearchEngine());
         public static GoogleSearchEngine Instance { get { return lazy.Value; } }
 
         private const string k_ApiKey = "AIzaSyBpIpws1ZmWUw8hyvpsHTXFT6C6tOmHVqQ";
         private const string k_CustomSearchKey = "000838436833929131088:wnddlp0oh68"; // cx
+        public const int k_EntriesPerPage = 10;
 
         public List<GoogleSearchResult> SearchResults = new List<GoogleSearchResult>();
 
@@ -53,15 +54,20 @@ namespace Ask_Alfred.Infrastructure
 
         private void insertSearchResults(dynamic i_JsonData)
         {
-            foreach (var item in i_JsonData.items)
+            int index = 1;
+
+            foreach (dynamic item in i_JsonData.items)
             {
                 SearchResults.Add(new GoogleSearchResult
                 {
                     Title = item.title,
                     Url = item.link,
                     Host = item.displayLink,
-                    Description = item.snippet
+                    Description = item.snippet,
+                    Index = index
                 });
+
+                index++;
             }
         }
     }

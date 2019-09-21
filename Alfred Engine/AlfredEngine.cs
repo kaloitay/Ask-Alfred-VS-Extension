@@ -99,7 +99,7 @@ namespace Ask_Alfred.Infrastructure
 
                 if (!isPageInList)
                 {
-                    IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult.Url);
+                    IWebDataSource dataSource = WebDataSourceFactory.CreateWebDataSource(googleResult);
 
                     if (dataSource != null)
                     {

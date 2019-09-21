@@ -18,10 +18,12 @@ namespace Ask_Alfred.Objects
         private const int k_ClientID = 15865;
         private readonly int m_ID;
         public IPage Page { get; private set; }
+        public int GoogleResultIndex { get; set; }
 
-        public StackoverflowDataSource(string i_Url)
+        public StackoverflowDataSource(GoogleSearchResult i_Result)
         {
-            m_ID = urlToStackoverflowId(i_Url);
+            m_ID = urlToStackoverflowId(i_Result.Url);
+            GoogleResultIndex = i_Result.Index;
         }
 
         private int urlToStackoverflowId(string i_Url)
@@ -57,6 +59,7 @@ namespace Ask_Alfred.Objects
 
                 page = new StackoverflowPage
                 {
+                    GoogleResultIndex = GoogleResultIndex,
                     WebsiteName = "Stackoverflow",
                     Url = "https://stackoverflow.com/questions/" + m_ID,
                     Subject = HttpUtility.HtmlDecode(question.Title),

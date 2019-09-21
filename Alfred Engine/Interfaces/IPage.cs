@@ -9,5 +9,6 @@ namespace Ask_Alfred.Infrastructure.Interfaces
         string Subject { get; }
         DateTime Date { get; }
         double Rank { get; }
+        int GoogleResultIndex { get; }
     }
 }
