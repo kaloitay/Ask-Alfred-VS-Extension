@@ -8,7 +8,7 @@ namespace Ask_Alfred.Objects
 {
     public class StackoverflowPage : IPage
     {
-        private const int k_GoogleIndexWeight = 15;
+        private const int k_GoogleIndexWeight = 20;
 
         private const int k_ScoreMaximumWeight = 100;
         private const int k_ScoreThreshold = 20000;

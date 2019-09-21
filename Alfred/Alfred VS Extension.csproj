@@ -61,24 +61,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UI\AlfredCommand.cs" />
-    <Compile Include="UI\AlfredCommandPackage.cs" />
-    <Compile Include="UI\AlfredResultUIElement.cs" />
-    <Compile Include="UI\AlfredWindow.cs" />
-    <Compile Include="UI\AlfredWindowControl.xaml.cs">
+    <Compile Include="AlfredCommand.cs" />
+    <Compile Include="AlfredCommandPackage.cs" />
+    <Compile Include="AlfredResultUIElement.cs" />
+    <Compile Include="AlfredWindow.cs" />
+    <Compile Include="AlfredWindowControl.xaml.cs">
       <DependentUpon>AlfredWindowControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UI\ComboBoxViewModel.cs" />
-    <Compile Include="UI\VisualStudioApi\AlfredInput.cs" />
-    <Compile Include="UI\VisualStudioApi\AlfredInputManager.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulb\AlfredSuggestedAction.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulb\AlfredSuggestedActionItem.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulb\SuggestedActionsSourceProvider.cs" />
-    <Compile Include="UI\VisualStudioApi\LightBulb\SuggestedActionsSource.cs" />
-    <Compile Include="UI\VisualStudioApi\StringValueAttribute.cs" />
-    <Compile Include="UI\VisualStudioApi\VisualStudioErrorCodeItem.cs" />
-    <Compile Include="UI\VisualStudioApi\VisualStudioHandler.cs" />
-    <Page Include="UI\Resources\AlfredResultStyle.xaml">
+    <Compile Include="ComboBoxViewModel.cs" />
+    <Compile Include="VisualStudioApi\AlfredInput.cs" />
+    <Compile Include="VisualStudioApi\AlfredInputManager.cs" />
+    <Compile Include="VisualStudioApi\LightBulb\AlfredSuggestedAction.cs" />
+    <Compile Include="VisualStudioApi\LightBulb\AlfredSuggestedActionItem.cs" />
+    <Compile Include="VisualStudioApi\LightBulb\SuggestedActionsSourceProvider.cs" />
+    <Compile Include="VisualStudioApi\LightBulb\SuggestedActionsSource.cs" />
+    <Compile Include="VisualStudioApi\StringValueAttribute.cs" />
+    <Compile Include="VisualStudioApi\VisualStudioErrorCodeItem.cs" />
+    <Compile Include="VisualStudioApi\VisualStudioHandler.cs" />
+    <Page Include="Resources\AlfredResultStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -92,14 +92,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="stylesheet.css" />
-    <Resource Include="UI\Resources\Icons\alfred_icon.png" />
-    <Resource Include="UI\Resources\Icons\go_to_web_icon_white.png" />
-    <Resource Include="UI\Resources\Icons\green_checkmark_stackoverflow_icon.png" />
-    <Resource Include="UI\Resources\Icons\loading_icon_black.png" />
-    <Resource Include="UI\Resources\Icons\loading_icon_white.png" />
-    <Resource Include="UI\Resources\Icons\not_loading_icon_black.png" />
-    <Resource Include="UI\Resources\Icons\not_loading_icon_white.png" />
-    <VSCTCompile Include="UI\AlfredCommandPackage.vsct">
+    <Resource Include="Resources\Icons\alfred_icon.png" />
+    <Resource Include="Resources\Icons\go_to_web_icon_white.png" />
+    <Resource Include="Resources\Icons\green_checkmark_stackoverflow_icon.png" />
+    <Resource Include="Resources\Icons\loading_icon_black.png" />
+    <Resource Include="Resources\Icons\loading_icon_white.png" />
+    <Resource Include="Resources\Icons\not_loading_icon_black.png" />
+    <Resource Include="Resources\Icons\not_loading_icon_white.png" />
+    <VSCTCompile Include="AlfredCommandPackage.vsct">
       <ResourceName>Menus.ctmenu</ResourceName>
     </VSCTCompile>
   </ItemGroup>
@@ -436,15 +436,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="UI\Resources\Icons\go_to_web_icon_black.png" />
-    <EmbeddedResource Include="UI\VSPackage.resx">
+    <Resource Include="Resources\Icons\go_to_web_icon_black.png" />
+    <EmbeddedResource Include="VSPackage.resx">
       <MergeWithCTO>true</MergeWithCTO>
       <ManifestResourceName>VSPackage</ManifestResourceName>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\AlfredWindowControl.xaml">
+    <Page Include="AlfredWindowControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
